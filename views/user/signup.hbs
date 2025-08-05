@@ -1,0 +1,292 @@
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-button { background-image: linear-gradient(to right, #8B5CF6, #6366F1); }
+        .background-effect {
+            background-color: #18181C;
+            background-image: url('/login-background.png');
+            background-size: cover;
+            background-position: center;
+        }
+        .errormsg { font-size: 12px; color: rgb(231, 39, 39); }
+        .password-strength { height: 4px; width: 100%; background-color: #404044; border-radius: 9999px; margin-top: 0.25rem; }
+        .strength-weak { background-color: #ef4444; }
+        .strength-fair { background-color: #f59e0b; }
+        .strength-good { background-color: #3b82f6; }
+        .strength-strong { background-color: #22c55e; }
+        .strength-text-weak { color: #ef4444; }
+        .strength-text-fair { color: #f59e0b; }
+        .strength-text-good { color: #3b82f6; }
+        .strength-text-strong { color: #22c55e; }
+        .error-input { border-color: #ef4444 !important; }
+        .success-input { border-color: #22c55e !important; }
+    </style>
+</head>
+<body>
+
+<!-- Main Container -->
+<div class="background-effect min-h-screen flex items-center justify-center p-4">
+    <div class="bg-[#242428] p-8 rounded-2xl shadow-2xl max-w-sm w-full border border-[#404044]">
+
+        <div class="text-center mb-6">
+            <h1 class="text-xl font-semibold text-white">Sign up to SonicBoom</h1>
+            <p class="text-gray-400 text-sm mt-1">Enter your details below</p>
+        </div>
+
+        <!-- Form Starts -->
+        <form id="signupForm" class="space-y-4" method="POST" action="/user/signup">
+
+            <!-- Name -->
+            <div>
+                <input type="text" id="name" name="name" placeholder="Name" class="bg-[#1E1E22] text-gray-300 border border-[#404044] rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200">
+                <div class="errormsg hidden" id="nameError"></div>
+            </div>
+
+            <!-- Email -->
+            <div>
+                <input type="email" id="email" name="email" placeholder="Email" class="bg-[#1E1E22] text-gray-300 border border-[#404044] rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200">
+                <div class="errormsg hidden" id="emailError"></div>
+            </div>
+
+            <!-- Password -->
+            <div>
+                <div class="relative">
+                    <input type="password" id="password" name="password" placeholder="Password"
+                        class="bg-[#1E1E22] text-gray-300 border border-[#404044] rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200 pr-10">
+                <button type="button" id="togglePassword"
+                    class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-white">
+                    <i class="fas fa-eye" id="passwordIcon"></i>
+                </button>
+                </div>
+                <div class="errormsg hidden" id="passwordError"></div>
+                <div class="password-strength" id="passwordStrength"></div>
+                <div id="passwordStrengthText" class="text-xs mt-1"></div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" class="bg-[#1E1E22] text-gray-300 border border-[#404044] rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200">
+                <div class="errormsg hidden" id="confirmPasswordError"></div>
+            </div>
+
+            <!-- Terms Checkbox -->
+            <div class="flex items-center">
+                <input type="checkbox" id="terms" name="terms" class="mr-2">
+                <label for="terms" class="text-gray-400 text-sm">I agree to the terms and privacy policy</label>
+            </div>
+            <div class="errormsg hidden" id="termsError"></div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="submitBtn" class="gradient-button text-white font-semibold py-3 px-6 rounded-lg w-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                <span id="submitText">Sign Up</span>
+                <span id="submitSpinner" class="hidden ml-2">Loading...</span>
+            </button>
+        </form>
+
+        <!-- Already have an account Link -->
+        <div class="text-center mt-4">
+            <a href="#" class="text-sm text-gray-400 hover:text-indigo-400 transition-colors duration-200">
+                Already have an account? <span class="text-indigo-400 font-medium">Sign In</span>
+            </a>
+        </div>
+
+        <!-- OR Separator -->
+        <div class="relative flex items-center justify-center my-6">
+            <div class="absolute inset-x-0 h-px bg-[#404044]"></div>
+            <span class="relative bg-[#242428] px-4 text-gray-500 text-sm">OR</span>
+        </div>
+
+        <!-- Google Sign In Button -->
+        <button class="flex items-center justify-center w-full bg-transparent text-gray-300 border border-[#404044] py-3 px-6 rounded-lg shadow-lg hover:bg-gray-800 transition-colors duration-200">
+            <svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.603 4.103-5.918 6.643-11.303 6.643-6.195 0-11.226-5.031-11.226-11.226s5.031-11.226 11.226-11.226c3.13 0 5.864 1.258 7.962 3.284l5.961-5.961c-3.69-3.554-8.799-5.77-13.923-5.77-11.272 0-20.428 9.156-20.428 20.428s9.156 20.428 20.428 20.428c11.272 0 19.865-8.324 20.428-20.106V20.083z"/>
+                <path fill="#FF3D00" d="M6.306 14.629l6.571 4.819C14.654 16.634 14.698 14.618 14.698 12.386c0-1.895-.246-3.722-.656-5.467l-7.05-5.467c-.822 1.63-.822 3.491-.044 5.25z"/>
+                <path fill="#4CAF50" d="M37.319 32.784c-.407-.225-.806-.51-1.196-.822l-6.113 4.757c2.396 1.865 5.263 2.876 8.356 2.876 2.222 0 4.316-.39 6.275-1.077l-6.422-5.064c-.314.186-.632.361-.95.534z"/>
+                <path fill="#1976D2" d="M24 44.975c-5.834 0-10.702-2.883-13.882-7.234l6.113-4.757c2.196 2.05 5.093 3.216 8.356 3.216 3.328 0 6.425-1.34 8.761-3.626l5.961 5.961c-3.414 3.298-8.082 5.37-13.149 5.37z"/>
+            </svg>
+            <span>Sign in with Google</span>
+        </button>
+
+    </div>
+</div>
+
+<script defer>
+    const form = document.getElementById('signupForm');
+    const fields = {
+        name: document.getElementById('name'),
+        email: document.getElementById('email'),
+        password: document.getElementById('password'),
+        confirmPassword: document.getElementById('confirmPassword'),
+        terms: document.getElementById('terms')
+    };
+    const errors = {};
+
+    document.addEventListener('DOMContentLoaded', () => {
+        Object.keys(fields).forEach(fieldName => {
+            const field = fields[fieldName];
+            if (field) {
+                field.addEventListener('blur', () => validateField(fieldName));
+                field.addEventListener('input', () => {
+                    clearError(fieldName);
+                    if (fieldName === 'password') updatePasswordStrength();
+                    if (fieldName === 'password' || fieldName === 'confirmPassword') validatePasswordMatch();
+                });
+            }
+        });
+
+        form.addEventListener('submit', (e) => handleSubmit(e));
+    });
+
+    function validateField(fieldName) {
+        const value = fields[fieldName].value.trim();
+        switch (fieldName) {
+            case 'name':
+                if (!value) return showError(fieldName, 'Name is required');
+                if (!/^[a-zA-Z\s\-']{2,50}$/.test(value)) return showError(fieldName, 'Enter a valid name (2-50 characters)');
+                showSuccess(fieldName);
+                return true
+                break;
+            case 'email':
+                if (!value) return showError(fieldName, 'Email is required');
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(value)) return showError(fieldName, 'Enter a valid email');
+                showSuccess(fieldName);
+                return true
+                break;
+            case 'password':
+                return validatePassword(value);
+            case 'confirmPassword':
+                return validatePasswordMatch();
+            case 'terms':
+                if (!fields.terms.checked) return showError(fieldName, 'You must agree to terms');
+                clearError(fieldName);
+                return true
+                break;
+        }
+    }
+
+    function validatePassword(value) {
+        if (!value) return showError('password', 'Password is required');
+        if (value.length < 8) return showError('password', 'Password must be at least 8 characters');
+        if (!/[A-Z]/.test(value)) return showError('password', 'Include at least one uppercase letter');
+        if (!/[a-z]/.test(value)) return showError('password', 'Include at least one lowercase letter');
+        if (!/\d/.test(value)) return showError('password', 'Include at least one number');
+        if (!/\W/.test(value)) return showError('password', 'Include at least one special character');
+        showSuccess('password');
+        return true;
+    }
+
+    function validatePasswordMatch() {
+        const password = fields.password.value;
+        const confirmPassword = fields.confirmPassword.value;
+        if (!confirmPassword) return showError('confirmPassword', 'Please confirm your password');
+        if (password !== confirmPassword) return showError('confirmPassword', 'Passwords do not match');
+        showSuccess('confirmPassword');
+        return true;
+    }
+
+    function updatePasswordStrength() {
+        const password = fields.password.value;
+        const strengthBar = document.getElementById('passwordStrength');
+        const strengthText = document.getElementById('passwordStrengthText');
+        let score = 0;
+        if (password.length >= 8) score++;
+        if (/[a-z]/.test(password)) score++;
+        if (/[A-Z]/.test(password)) score++;
+        if (/\d/.test(password)) score++;
+        if (/\W/.test(password)) score++;
+
+        strengthBar.className = 'password-strength';
+        switch (score) {
+            case 1:
+            case 2:
+                strengthBar.classList.add('strength-weak');
+                strengthText.classList.add('strength-text-weak')
+                strengthText.textContent = 'Weak';
+                break;
+            case 3:
+                strengthBar.classList.add('strength-fair');
+                strengthText.classList.add('strength-text-fair');
+                strengthText.textContent = 'Fair';
+                break;
+            case 4:
+                strengthBar.classList.add('strength-good');
+                strengthText.classList.add('strength-text-good');
+                strengthText.textContent = 'Good';
+                break;
+            case 5:
+                strengthBar.classList.add('strength-strong');
+                strengthText.classList.add('strength-text-strong');
+                strengthText.textContent = 'Strong';
+                break;
+            default:
+                strengthText.textContent = '';
+        }
+    }
+
+    function showError(fieldName, message) {
+        const field = fields[fieldName];
+        const errorDiv = document.getElementById(fieldName + 'Error');
+        field.classList.add('error-input');
+        field.classList.remove('success-input');
+        errorDiv.textContent = message;
+        errorDiv.classList.remove('hidden');
+        errors[fieldName] = message;
+        return false;
+    }
+
+    function showSuccess(fieldName) {
+        const field = fields[fieldName];
+        field.classList.remove('error-input');
+        field.classList.add('success-input');
+        const errorDiv = document.getElementById(fieldName + 'Error');
+        errorDiv.classList.add('hidden');
+        delete errors[fieldName];
+    }
+
+    function clearError(fieldName) {
+        const field = fields[fieldName];
+        const errorDiv = document.getElementById(fieldName + 'Error');
+        field.classList.remove('error-input');
+        errorDiv.classList.add('hidden');
+        delete errors[fieldName];
+    }
+
+    function handleSubmit(e) {
+        e.preventDefault();
+        console.log("form is submitted")
+        let isValid = true;
+        Object.keys(fields).forEach(fieldName => {
+            if (!validateField(fieldName)) isValid = false;
+        });
+        console.log(isValid)
+        if (!isValid) return;
+
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+            e.target.submit()
+        }, 2000);
+    }
+
+    function setLoading(loading) {
+        const submitBtn = document.getElementById('submitBtn');
+        const submitText = document.getElementById('submitText');
+        const submitSpinner = document.getElementById('submitSpinner');
+        submitBtn.disabled = loading;
+        submitText.textContent = loading ? 'Creating Account...' : 'Sign Up';
+        submitSpinner.classList.toggle('hidden', !loading);
+    }
+    document.getElementById('togglePassword').addEventListener('click', function() {
+    const passwordInput = document.getElementById('password');
+    const passwordIcon = document.getElementById('passwordIcon');
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    passwordIcon.classList.toggle('fa-eye');
+    passwordIcon.classList.toggle('fa-eye-slash');
+});
+</script>
+
