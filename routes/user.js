@@ -9,4 +9,6 @@ router.route('/signup')
     .get(userController.loadSignup)
     .post(validator, userController.signup)
 
+router.post('/validate_otp', userController.validateOtp)
+
 module.exports = router

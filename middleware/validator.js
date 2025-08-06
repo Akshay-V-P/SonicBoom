@@ -11,6 +11,11 @@ const validate = [
         .notEmpty().withMessage('Email is required')
         .isEmail().withMessage('Enter a valid Email'),
     
+    body('mobile')
+        .trim()
+        .notEmpty().withMessage('Mobile number is required')
+        .matches(/^[6-9]\d{9}$/).withMessage('Enter a valid 10-digit mobile number'),
+    
     body('password')
         .trim()
         .notEmpty().withMessage('Password is required')

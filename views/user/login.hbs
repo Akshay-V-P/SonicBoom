@@ -24,12 +24,17 @@
             background-size: cover;
             background-position: center;
         }
+        .my-swal-border {
+            border: 1px solid #404044 !important; /* Change color and thickness */
+            border-radius: 15px !important;
+        }
     </style>
 
 
 
     <!-- Main container for the entire page content -->
     <div class="background-effect min-h-screen flex items-center justify-center p-4">
+        <input type="text" id="message" value="{{message}}" placeholder="{{icon}}" hidden>
 
         <!-- Card for the sign-in form -->
         <div class="bg-[#242428] p-8 rounded-2xl shadow-2xl max-w-sm w-full border border-[#404044]">
@@ -137,3 +142,19 @@
 
         </div>
     </footer>
+
+    <script>
+        let msgValue = document.getElementById('message').value
+        let icon = document.getElementById('message').getAttribute('placeholder')
+        if(msgValue){
+            Swal.fire({
+                title: msgValue,
+                icon: icon,
+                background: "#242428",
+                color: 'white',
+                customClass: {
+                    popup: 'my-swal-border'
+                }
+            });
+        }
+    </script>

@@ -1,0 +1,119 @@
+
+    <!-- Use Tailwind CSS for responsive design and styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font for a modern look -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <!-- Use Font Awesome for social media icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Custom CSS to apply Inter font family to all elements */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* Custom gradient for the sign-in button to match the reference image */
+        .gradient-button {
+            background-image: linear-gradient(to right, #8B5CF6, #6366F1);
+        }
+        /* Style for the background "game covers" effect. */
+        .background-effect {
+            background-color: #18181C;
+            background-image:
+                /* linear-gradient(rgba(24, 24, 28, 0.8), rgba(24, 24, 28, 0.8)), */
+                url('/login-background.png');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+
+
+    <!-- Main container for the entire page content -->
+    <div class="background-effect min-h-screen flex items-center justify-center p-4">
+
+        <!-- Card for the OTP verification form -->
+        <div class="bg-[#242428] p-8 rounded-2xl shadow-2xl max-w-sm w-full border border-[#404044]">
+
+            <!-- OTP form header -->
+            <div class="text-center mb-6">
+                <p class="text-white text-sm font-medium">The OTP has been sent to your registered email</p>
+            </div>
+
+            <!-- OTP form fields and buttons -->
+            <form action="{{url}}" method="POST" id="submitForm" class="space-y-4">
+                <!-- OTP input field with resend button -->
+                <div class="relative">
+                    <input type="text" placeholder="Enter OTP" id="otpField" name="otp" class="bg-[#1E1E22] text-gray-300 border border-[#404044] rounded-lg p-3 pr-24 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200" required>
+                    <button type="button" id="resendBtn"
+                        class="absolute top-1/2 right-2 -translate-y-1/2 text-sm font-semibold text-white px-3 py-1 rounded-md bg-transparent hover:bg-gray-700 transition-colors duration-200">
+                        Resend
+                    </button>
+                </div>
+
+                <!-- Verify button -->
+                <button type="submit" class="gradient-button text-white font-semibold py-3 px-6 rounded-lg w-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+                    Verify
+                </button>
+            </form>
+
+            <!-- Go back link -->
+            <div class="text-center mt-4">
+                <a href="#" class="text-sm text-gray-400 hover:text-indigo-400 transition-colors duration-200">Go Back</a>
+            </div>
+
+        </div>
+
+    </div>
+<script>
+
+document.getElementById('submiForm').addEventListener('submit', (e)=>{
+    e.preventDefault()
+    const otp = document.getElementById('otpField').value.trim()
+    if(otp === ""){
+        alert("enter otp")
+        return
+    }
+    e.target.submit()
+})
+
+
+
+
+    const resendBtn = document.getElementById('resendBtn');
+    let countdown = 300; // 5 minutes in seconds
+
+    function startTimer() {
+        resendBtn.disabled = true;
+        resendBtn.classList.add('cursor-not-allowed', 'opacity-50');
+        updateButtonText();
+
+        const timerInterval = setInterval(() => {
+            countdown--;
+            updateButtonText();
+
+            if (countdown <= 0) {
+                clearInterval(timerInterval);
+                resendBtn.disabled = false;
+                resendBtn.classList.remove('cursor-not-allowed', 'opacity-50');
+                resendBtn.textContent = 'Resend';
+            }
+        }, 1000);
+    }
+
+    function updateButtonText() {
+        const minutes = Math.floor(countdown / 60);
+        const seconds = countdown % 60;
+        resendBtn.textContent = `Resend (${minutes}:${seconds.toString().padStart(2, '0')})`;
+    }
+
+    // Start timer on page load
+    window.onload = startTimer;
+
+    // If user clicks Resend (after time is up)
+    resendBtn.addEventListener('click', () => {
+        // Here you can call your resend OTP API logic...
+        // Then restart the timer:
+        countdown = 300;
+        startTimer();
+    });
+</script>

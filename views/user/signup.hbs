@@ -7,7 +7,7 @@
         .gradient-button { background-image: linear-gradient(to right, #8B5CF6, #6366F1); }
         .background-effect {
             background-color: #18181C;
-            background-image: url('/login-background.png');
+            background-image: url('/images/login-background.png');
             background-size: cover;
             background-position: center;
         }
@@ -30,6 +30,7 @@
 <!-- Main Container -->
 <div class="background-effect min-h-screen flex items-center justify-center p-4">
     <div class="bg-[#242428] p-8 rounded-2xl shadow-2xl max-w-sm w-full border border-[#404044]">
+        <input type="text" id="message" value="{{message}}" placeholder="{{icon}}" hidden>
 
         <div class="text-center mb-6">
             <h1 class="text-xl font-semibold text-white">Sign up to SonicBoom</h1>
@@ -49,6 +50,13 @@
             <div>
                 <input type="email" id="email" name="email" placeholder="Email" class="bg-[#1E1E22] text-gray-300 border border-[#404044] rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200">
                 <div class="errormsg hidden" id="emailError"></div>
+            </div>
+
+            <!-- Mobile Number -->
+            <div>
+                <input type="text" id="mobile" name="mobile" placeholder="Mobile Number"
+                    class="bg-[#1E1E22] text-gray-300 border border-[#404044] rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200">
+                <div class="errormsg hidden" id="mobileError"></div>
             </div>
 
             <!-- Password -->
@@ -88,7 +96,7 @@
 
         <!-- Already have an account Link -->
         <div class="text-center mt-4">
-            <a href="#" class="text-sm text-gray-400 hover:text-indigo-400 transition-colors duration-200">
+            <a href="/user/login" class="text-sm text-gray-400 hover:text-indigo-400 transition-colors duration-200">
                 Already have an account? <span class="text-indigo-400 font-medium">Sign In</span>
             </a>
         </div>
@@ -116,12 +124,13 @@
 <script defer>
     const form = document.getElementById('signupForm');
     const fields = {
-        name: document.getElementById('name'),
-        email: document.getElementById('email'),
-        password: document.getElementById('password'),
-        confirmPassword: document.getElementById('confirmPassword'),
-        terms: document.getElementById('terms')
-    };
+            name: document.getElementById('name'),
+            email: document.getElementById('email'),
+            mobile: document.getElementById('mobile'), // <-- added this line
+            password: document.getElementById('password'),
+            confirmPassword: document.getElementById('confirmPassword'),
+            terms: document.getElementById('terms')
+        };
     const errors = {};
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -141,32 +150,35 @@
     });
 
     function validateField(fieldName) {
-        const value = fields[fieldName].value.trim();
-        switch (fieldName) {
-            case 'name':
-                if (!value) return showError(fieldName, 'Name is required');
-                if (!/^[a-zA-Z\s\-']{2,50}$/.test(value)) return showError(fieldName, 'Enter a valid name (2-50 characters)');
-                showSuccess(fieldName);
-                return true
-                break;
-            case 'email':
-                if (!value) return showError(fieldName, 'Email is required');
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!emailRegex.test(value)) return showError(fieldName, 'Enter a valid email');
-                showSuccess(fieldName);
-                return true
-                break;
-            case 'password':
-                return validatePassword(value);
-            case 'confirmPassword':
-                return validatePasswordMatch();
-            case 'terms':
-                if (!fields.terms.checked) return showError(fieldName, 'You must agree to terms');
-                clearError(fieldName);
-                return true
-                break;
+            const value = fields[fieldName].value.trim();
+            switch (fieldName) {
+                case 'name':
+                    if (!value) return showError(fieldName, 'Name is required');
+                    if (!/^[a-zA-Z\s\-']{2,50}$/.test(value)) return showError(fieldName, 'Enter a valid name (2-50 characters)');
+                    showSuccess(fieldName);
+                    return true;
+                case 'email':
+                    if (!value) return showError(fieldName, 'Email is required');
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(value)) return showError(fieldName, 'Enter a valid email');
+                    showSuccess(fieldName);
+                    return true;
+                case 'mobile':
+                    if (!value) return showError(fieldName, 'Mobile number is required');
+                    if (!/^[6-9]\d{9}$/.test(value)) return showError(fieldName, 'Enter a valid 10-digit mobile number');
+                    showSuccess(fieldName);
+                    return true;
+                case 'password':
+                    return validatePassword(value);
+                case 'confirmPassword':
+                    return validatePasswordMatch();
+                case 'terms':
+                    if (!fields.terms.checked) return showError(fieldName, 'You must agree to terms');
+                    clearError(fieldName);
+                    return true;
+            }
         }
-    }
+
 
     function validatePassword(value) {
         if (!value) return showError('password', 'Password is required');
@@ -266,10 +278,8 @@
         if (!isValid) return;
 
         setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
-            e.target.submit()
-        }, 2000);
+        e.target.submit()
+
     }
 
     function setLoading(loading) {
@@ -288,5 +298,19 @@
     passwordIcon.classList.toggle('fa-eye');
     passwordIcon.classList.toggle('fa-eye-slash');
 });
+
+let msgValue = document.getElementById('message').value
+let icon = document.getElementById('message').getAttribute('placeholder')
+if(msgValue) {
+    Swal.fire({
+        title: msgValue,
+        icon: icon,
+        background: "#242428",
+        color: 'white',
+        customClass: {
+            popup: 'my-swal-border'
+        }
+    });
+}
 </script>
 
