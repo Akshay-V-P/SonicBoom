@@ -12,22 +12,24 @@ const userSchema = mongoose.Schema({
     },
     mobile: {
         type: String,
-        required: true,
+        required: function () {
+            return !this.googleId
+        },
         unique:true
     },
     password: {
         type: String,
-        required: true,
+        required: function () {
+            return !this.googleId
+        },
+    },
+    googleId: {
+        type:String
     },
     isBlocked: {
         type: Boolean,
         default:false,
         required: true,
-    },
-    isRemoved: {
-        type: Boolean,
-        default: false,
-        required: true
     },
     role: {
         type: String,

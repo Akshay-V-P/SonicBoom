@@ -1,0 +1,131 @@
+
+    <!-- Use Tailwind CSS for responsive design and styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font for a modern look -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <!-- Use Font Awesome for social media icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Custom CSS to apply Inter font family to all elements */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #121212; /* Very dark background for the whole page, matching the image */
+        }
+
+        /* Custom gradient for buttons */
+        .gradient-button {
+            background-image: linear-gradient(to right, #8B5CF6, #6366F1);
+        }
+
+        /* Keyframes for fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Keyframes for subtle pulse animation on 404 */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Apply animations */
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out forwards;
+        }
+        .animate-pulse-subtle {
+            animation: pulse 2s infinite ease-in-out;
+        }
+    </style>
+
+
+    <!-- Header Section -->
+    <header class="bg-[#18181C] p-4 border-b border-[#2C2C30]"> <!-- Adjusted header background and border -->
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-white text-2xl font-bold">SonicBoom</div>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="#" class="hover:text-white transition-colors duration-200">Home</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors duration-200">Account</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors duration-200">Shop</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors duration-200">Cart</a></li>
+                    <li><a href="#" class="hover:text-white transition-colors duration-200">Wishlist</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content - 404 Error Section -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="text-center">
+            <h1 class="text-9xl font-extrabold text-gray-500 mb-4 animate-pulse-subtle">404</h1> <!-- Adjusted 404 color -->
+            <p class="text-4xl md:text-5xl font-bold text-white mb-6 animate-fade-in" style="animation-delay: 0.3s;">
+                We couldn't find that page
+            </p>
+            <p class="text-lg text-gray-400 mb-8 animate-fade-in" style="animation-delay: 0.6s;">
+                The page you're looking for might have been removed, had its name changed, or is temporarily unavailable.
+            </p>
+            <a href="{{url}}" class="inline-block gradient-button text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-fade-in" style="animation-delay: 0.9s;">
+                Go Home
+            </a>
+        </div>
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-[#18181C] text-gray-400 p-8 border-t border-[#2C2C30]"> <!-- Adjusted footer background and border -->
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
+
+            <!-- Logo and Social Media -->
+            <div class="flex flex-col items-center md:items-start text-center md:text-left mb-6 md:mb-0">
+                <h2 class="text-2xl font-bold text-white mb-2">SonicBoom</h2>
+                <div class="flex space-x-4 text-gray-400">
+                    <a href="#" class="hover:text-white transition-colors duration-200"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="hover:text-white transition-colors duration-200"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="hover:text-white transition-colors duration-200"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+            <!-- Footer links container -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 text-center md:text-left">
+                <!-- Support links -->
+                <div>
+                    <h3 class="font-semibold text-white mb-3">Support</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><address>Kochi, Eranamkulam,<br>873302, Kerala</address></li>
+                        <li><a href="mailto:sonicboom@gmail.com" class="hover:text-white transition-colors duration-200">sonicboom@gmail.com</a></li>
+                        <li><a href="tel:+916744245234" class="hover:text-white transition-colors duration-200">+91 6744245234</a></li>
+                    </ul>
+                </div>
+
+                <!-- Account links -->
+                <div>
+                    <h3 class="font-semibold text-white mb-3">Account</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">My Account</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Login / Register</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Cart</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Wishlist</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Shop</a></li>
+                    </ul>
+                </div>
+
+                <!-- Quick links -->
+                <div>
+                    <h3 class="font-semibold text-white mb-3">Quick links</h3>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Terms of use</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">FAQ</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Contact</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors duration-200">Developers</a></li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </footer>
+
+

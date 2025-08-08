@@ -37,4 +37,23 @@ const validate = [
         .equals('on').withMessage('You must agree the terms')
 ]
 
-module.exports = validate
+const validateSignin = [
+    body('email')
+        .trim()
+        .notEmpty().withMessage('Email is required')
+        .isEmail().withMessage('Enter a valid Email'),
+    
+    body('password')
+        .trim()
+        .notEmpty().withMessage('Password is required')
+        .isLength({ min: 8 }).withMessage('Password must be atleast 8 characters')
+        .matches(/[A-Z]/).withMessage('Password must contain an uppercase letter')
+        .matches(/[a-z]/).withMessage('Password must contain a lowercase letter')
+        .matches(/\d/).withMessage('Password must contain a number')
+        .matches(/\W/).withMessage('Password must contain a special character'),
+]
+
+module.exports = {
+    validate,
+    validateSignin
+}

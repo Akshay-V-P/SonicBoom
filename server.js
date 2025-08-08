@@ -6,6 +6,9 @@ const path = require('path')
 const app = express()
 const session = require('express-session')
 const connectDB = require('./db/connectDB')
+const passport = require('passport')
+
+require('./config/passport')
 
 // session
 app.use(session({
@@ -16,6 +19,10 @@ app.use(session({
         maxAge:24*60*60*1000
     }
 }))
+
+app.use(passport.initialize())
+app.use(passport.session())
+
 
 // view engine
 app.set('view engine', 'hbs')
