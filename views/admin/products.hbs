@@ -1,0 +1,306 @@
+
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .account-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .products-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .add-product-btn {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .refresh-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .sort-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .sort-filter label {
+            font-size: 14px;
+            color: #999;
+        }
+
+        .sort-filter select {
+            padding: 8px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background-color: #1a1a1a;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 380px));
+            gap: 30px;
+        }
+
+        .product-card {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .product-card .edit-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(74, 144, 226, 0.8);
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .product-image-container {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            overflow: hidden;
+        }
+
+        .product-image {
+            position: absolute;
+            aspect-ratio: 3/4;
+            top: 0;
+            left: 0;
+            height: 100%;
+            object-fit: cover;
+            border-bottom: 1px solid #333;
+        }
+
+        .product-info {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-info .category {
+            background-color: #4a90e2;
+            color: #fff;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            align-self: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .product-info .product-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .product-info .product-stock {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .product-info .price-old {
+            font-size: 14px;
+            color: #666;
+            text-decoration: line-through;
+        }
+
+        .product-info .price-new {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .product-info .description {
+            font-size: 12px;
+            color: #999;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .product-info .unlist-btn {
+            background-color: #e24a4a;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        #nothingToShow{
+            position: absolute;
+            width:280px;
+            left: calc(50% - 140px);
+            top: 40%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 8px;
+        }
+
+        .page-btn {
+            background: #333;
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+        }
+
+        .page-btn.active {
+            background: #4a90e2;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .products-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .products-actions, .sort-filter {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+        }
+
+       
+    </style>
+    <input type="text" id="pageName" value="products" hidden>
+            <div class="header">
+                <h1 class="page-title">Products</h1>
+                <button class="account-btn">Account</button>
+            </div>
+
+            <div class="products-header">
+                <div class="products-actions">
+                    <a href="/admin/products/add"><button class="add-product-btn">Add Product</button></a>
+                    <button class="refresh-btn">Refresh</button>
+                </div>
+                <div class="sort-filter">
+                    <label for="sort-by">Sort</label>
+                    <select name="sort-by" id="sort-by">
+                        <option value="name">Product Name</option>
+                        <option value="price">Price</option>
+                        <option value="date">Date Added</option>
+                    </select>
+                    <select name="sort-order" id="sort-order">
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+                    </select>
+                    <button class="refresh-btn">Filter</button>
+                </div>
+            </div>
+
+            <div class="product-grid">
+                {{#if products}}
+                    {{#each products}}
+                        <div class="product-card">
+                            <a href="/admin/products/{{this._id}}/edit"><button class="edit-btn">Edit</button></a>
+                            <div class="product-image-container">
+                                <img src="{{this.thumbnail}}" class="product-image">
+                            </div>
+                            <div class="product-info">
+                                <span class="category">{{this.categoryId}}</span>
+                                <h3 class="product-title">{{this.name}}</h3>
+                                <p class="product-stock">Stock - {{this.stock}} Nos</p>
+                                <p>
+                                    <span class="price-old">₹{{this.price}}</span>
+                                    <span class="price-new">₹{{this.offerPrice}}</span>
+                                </p>
+                                <p class="description">{{this.description}}</p>
+                                <button class="unlist-btn">Unlist</button>
+                            </div>
+                        </div>
+                    {{/each}}
+                {{else}}
+                    <div id="nothingToShow">
+                        <h2>Nothing to show here</h2>
+                        <p style="color: #666;">You can add a product</p>
+                        <a href="/admin/products/add"><button class="add-product-btn">Add Product</button></a>
+                    </div>
+                {{/if}}
+                
+            </div>
+
+            <div class="pagination">
+                    {{#if (gt currentPage 1)}}
+                        <a href="?currentPage={{dec currentPage}}&limit=9" class="page-btn">Prev</a>
+                    {{/if}}
+                        <p class="page-btn active">{{currentPage}} of {{totalPages}}</p>
+                    {{#if (ls currentPage totalPages)}}
+                        <a href="?currentPage={{inc currentPage}}&limit=9" class="page-btn">Next</a>
+                    {{/if}}
+            </div>

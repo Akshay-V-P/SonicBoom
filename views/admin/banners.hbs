@@ -1,0 +1,260 @@
+
+    <style>
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .account-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* Banner Management Section */
+        .banner-management-section {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .banner-header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .banner-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .banner-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+            gap: 15px;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .banner-item:last-child {
+            border-bottom: none;
+        }
+        
+        .banner-label {
+            font-size: 14px;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .banner-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .banner-input-group span {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .banner-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background-color: #2a2a2a;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .update-btn {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .banner-management-section {
+                padding: 20px;
+            }
+
+            .banner-header {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .banner-item {
+                grid-template-columns: 1fr;
+                gap: 10px;
+                padding: 20px;
+                border: 1px solid #333;
+                border-radius: 8px;
+            }
+
+            .banner-item:not(:last-child) {
+                border-bottom: 1px solid #333;
+            }
+            
+            .update-btn {
+                width: 100%;
+            }
+        }
+
+    </style>
+        <input type="text" id="pageName" value="banner" hidden>
+            <div class="header">
+                <h1 class="page-title">Banner Management</h1>
+                <button class="account-btn">Account</button>
+            </div>
+
+            <div class="banner-management-section">
+                <div class="banner-header">
+                    <div class="sort-options">
+                        <label for="sort">Sort</label>
+                        <select id="sort" class="filter-select">
+                            <option>End date</option>
+                        </select>
+                    </div>
+                    <div class="sort-by-options">
+                        <label for="by">By</label>
+                        <select id="by" class="filter-select">
+                            <option>Ascending</option>
+                        </select>
+                    </div>
+                    <div class="filter-options">
+                        <label for="filter">Filter</label>
+                        <select id="filter" class="filter-select">
+                            <option>All</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="banner-list">
+                    <div class="banner-item">
+                        <div class="banner-input-group">
+                            <span class="banner-label">Banner for home page</span>
+                            <span class="max-size">Max size 1440px x 300px</span>
+                        </div>
+                        <select class="banner-input">
+                            <option>Upload</option>
+                        </select>
+                        <div class="banner-input-group">
+                            <span class="banner-label">Starting Date</span>
+                            <input type="text" class="banner-input" value="14/05/2023">
+                        </div>
+                        <div class="banner-input-group">
+                            <span class="banner-label">Ending Date</span>
+                            <input type="text" class="banner-input" value="14/05/2023">
+                        </div>
+                        <div class="banner-input-group">
+                            <span class="banner-label">Status</span>
+                            <input type="text" class="banner-input" value="30 Days Left">
+                        </div>
+                        <button class="update-btn">Update</button>
+                    </div>
+
+                    <div class="banner-item">
+                        <div class="banner-input-group">
+                            <span class="banner-label">Banner for shopping cart</span>
+                            <span class="max-size">Max size 1440px x 300px</span>
+                        </div>
+                        <select class="banner-input">
+                            <option>Upload</option>
+                        </select>
+                        <div class="banner-input-group">
+                            <span class="banner-label">Starting Date</span>
+                            <input type="text" class="banner-input" value="14/05/2023">
+                        </div>
+                        <div class="banner-input-group">
+                            <span class="banner-label">Ending Date</span>
+                            <input type="text" class="banner-input" value="14/05/2023">
+                        </div>
+                        <div class="banner-input-group">
+                            <span class="banner-label">Status</span>
+                            <input type="text" class="banner-input" value="30 Days Left">
+                        </div>
+                        <button class="update-btn">Update</button>
+                    </div>
+
+                    <div class="banner-item">
+                        <div class="banner-input-group">
+                            <span class="banner-label">Banner for checkout page</span>
+                            <span class="max-size">Max size 1440px x 300px</span>
+                        </div>
+                        <select class="banner-input">
+                            <option>Upload</option>
+                        </select>
+                        <div class="banner-input-group">
+                            <span class="banner-label">Starting Date</span>
+                            <input type="text" class="banner-input" value="14/05/2023">
+                        </div>
+                        <div class="banner-input-group">
+                            <span class="banner-label">Ending Date</span>
+                            <input type="text" class="banner-input" value="14/05/2023">
+                        </div>
+                        <div class="banner-input-group">
+                            <span class="banner-label">Status</span>
+                            <input type="text" class="banner-input" value="30 Days Left">
+                        </div>
+                        <button class="update-btn">Update</button>
+                    </div>
+
+                    <div class="banner-item">
+                        <div class="banner-input-group">
+                            <span class="banner-label">Banner for shop page</span>
+                            <span class="max-size">Max size 1440px x 300px</span>
+                        </div>
+                        <select class="banner-input">
+                            <option>Upload</option>
+                        </select>
+                        <div class="banner-input-group">
+                            <span class="banner-label">Starting Date</span>
+                            <input type="text" class="banner-input" value="14/05/2023">
+                        </div>
+                        <div class="banner-input-group">
+                            <span class="banner-label">Ending Date</span>
+                            <input type="text" class="banner-input" value="14/05/2023">
+                        </div>
+                        <div class="banner-input-group">
+                            <span class="banner-label">Status</span>
+                            <input type="text" class="banner-input" value="30 Days Left">
+                        </div>
+                        <button class="update-btn">Update</button>
+                    </div>
+                </div>
+            </div>

@@ -40,11 +40,11 @@
 	<div class="bg-[#242428] p-8 rounded-2xl shadow-2xl max-w-sm w-full border border-[#404044]">
 
 		<div class="text-center mb-6">
-			<h1 class="text-xl font-semibold text-white">Sign in to SonicBoom</h1>
+			<h1 class="text-xl font-semibold text-white">Administration</h1>
 			<p class="text-gray-400 text-sm mt-1">Enter your details</p>
 		</div>
 
-		<form id="signInForm" action="/user/login" method="POST" class="space-y-4">
+		<form id="signInForm" action="/admin/login" method="POST" class="space-y-4">
 			<div>
 				<input type="email" id="email" name="email" placeholder="Email" class="bg-[#1E1E22] text-gray-300 border border-[#404044] rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200" >
 				<span id="email-error" class="text-red-500 text-sm mt-1 hidden"></span>
@@ -53,7 +53,7 @@
 				<input type="password" id="password" name="password" placeholder="Password" class="bg-[#1E1E22] text-gray-300 border border-[#404044] rounded-lg p-3 w-full focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors duration-200" >
 				<span id="password-error" class="text-red-500 text-sm mt-1 hidden"></span>
 				<div class="text-right mt-2">
-					<a href="/user/forgot_password" class="text-sm text-gray-400 hover:text-indigo-400 transition-colors duration-200">Forgot
+					<a href="/admin/forgot_password" class="text-sm text-gray-400 hover:text-indigo-400 transition-colors duration-200">Forgot
 						password?</a>
 				</div>
 			</div>
@@ -62,26 +62,6 @@
 				Sign In
 			</button>
 		</form>
-
-		<div class="text-center mt-4">
-			<span class="text-sm text-gray-400">New Here? <a href="/user/signup" class="text-indigo-400 font-medium hover:text-indigo-300 transition-colors duration-200">Create an account</a></span>
-		</div>
-
-		<div class="relative flex items-center justify-center my-6">
-			<div class="absolute inset-x-0 h-px bg-[#404044]"></div>
-			<span class="relative bg-[#242428] px-4 text-gray-500 text-sm">OR</span>
-		</div>
-
-		<a href="/user/auth/google"><button class="flex items-center justify-center w-full bg-transparent text-gray-300 border border-[#404044] py-3 px-6 rounded-lg shadow-lg hover:bg-gray-800 transition-colors duration-200">
-			<svg class="w-5 h-5 mr-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-				<path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.603 4.103-5.918 6.643-11.303 6.643-6.195 0-11.226-5.031-11.226-11.226s5.031-11.226 11.226-11.226c3.13 0 5.864 1.258 7.962 3.284l5.961-5.961c-3.69-3.554-8.799-5.77-13.923-5.77-11.272 0-20.428 9.156-20.428 20.428s9.156 20.428 20.428 20.428c11.272 0 19.865-8.324 20.428-20.106V20.083z" />
-				<path fill="#FF3D00" d="M6.306 14.629l6.571 4.819C14.654 16.634 14.698 14.618 14.698 12.386c0-1.895-.246-3.722-.656-5.467l-7.05-5.467c-.822 1.63-.822 3.491-.044 5.25z" />
-				<path fill="#4CAF50" d="M37.319 32.784c-.407-.225-.806-.51-1.196-.822l-6.113 4.757c2.396 1.865 5.263 2.876 8.356 2.876 2.222 0 4.316-.39 6.275-1.077l-6.422-5.064c-.314.186-.632.361-.95.534z" />
-				<path fill="#1976D2" d="M24 44.975c-5.834 0-10.702-2.883-13.882-7.234l6.113-4.757c2.196 2.05 5.093 3.216 8.356 3.216 3.328 0 6.425-1.34 8.761-3.626l5.961 5.961c-3.414 3.298-8.082 5.37-13.149 5.37z" />
-			</svg>
-			<span>Login with Google</span>
-		</button>
-		</a>
 	</div>
 
 </div>

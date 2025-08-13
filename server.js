@@ -7,9 +7,16 @@ const app = express()
 const session = require('express-session')
 const connectDB = require('./db/connectDB')
 const passport = require('passport')
+const nocache = require('nocache')
+const attachUser = require('./middleware/attachUser')
+const hbs = require('hbs')
+
+
+// test
+
 
 require('./config/passport')
-
+app.use(nocache())
 // session
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -23,6 +30,24 @@ app.use(session({
 app.use(passport.initialize())
 app.use(passport.session())
 
+app.use(attachUser)
+
+
+// hbs helpers
+hbs.registerHelper('inc', function(value) {
+    return parseInt(value) + 1;
+});
+
+hbs.registerHelper('dec', function(value) {
+    return parseInt(value) - 1;
+});
+
+hbs.registerHelper('or', function(a, b) {
+    return a || b;
+});
+
+hbs.registerHelper("ls", (a, b) => a < b);
+hbs.registerHelper("gt", (a, b) => a > b);
 
 // view engine
 app.set('view engine', 'hbs')

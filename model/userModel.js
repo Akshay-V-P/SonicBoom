@@ -12,10 +12,11 @@ const userSchema = mongoose.Schema({
     },
     mobile: {
         type: String,
+        unique: true,
+        sparse:true,
         required: function () {
             return !this.googleId
-        },
-        unique:true
+        }
     },
     password: {
         type: String,
@@ -33,12 +34,14 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        enum:['User', 'Admin'],
-        default:"User",
+        enum:['user', 'admin'],
+        default:"user",
         required: true,
     }
 }, {
     timestamps:true
 })
+
+
 
 module.exports = mongoose.model('Users', userSchema)

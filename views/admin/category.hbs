@@ -1,0 +1,376 @@
+
+    <style>
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .account-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* Category Sections */
+        .category-list-section {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin-bottom: 30px;
+        }
+        
+        .category-table-container {
+            overflow-x: auto;
+        }
+
+        .category-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table-header th {
+            padding: 15px 12px;
+            text-align: left;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 500;
+            border-bottom: 1px solid #333;
+            white-space: nowrap;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #333;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-row td {
+            padding: 15px 12px;
+            font-size: 14px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #4a90e2;
+            transition: .4s;
+            border-radius: 20px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #ccc;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .category-add-section {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin-bottom: 30px;
+        }
+
+        .add-category-form-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .category-form-group {
+            margin-bottom: 15px;
+        }
+
+        .category-form-group label {
+            font-size: 14px;
+            color: #ffffff;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .category-form-group input,
+        .category-form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background-color: #2a2a2a;
+            color: #fff;
+            font-size: 14px;
+            resize: vertical;
+        }
+        
+        .add-category-btn {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .category-list-section, .category-add-section {
+                padding: 20px;
+            }
+            .category-table,
+            .category-table thead,
+            .category-table tbody,
+            .category-table th,
+            .category-table td,
+            .category-table tr {
+                display: block;
+            }
+            
+            .category-table thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            .category-table tr {
+                border: 1px solid #333;
+                margin-bottom: 10px;
+                padding: 10px;
+                border-radius: 8px;
+            }
+
+            .category-table td {
+                border: none;
+                position: relative;
+                padding: 8px 0 8px 30%;
+                text-align: right;
+            }
+
+            .category-table td:before {
+                content: attr(data-label) ": ";
+                position: absolute;
+                left: 10px;
+                width: 28%;
+                padding-right: 10px;
+                white-space: nowrap;
+                color: #666;
+                font-size: 12px;
+                text-transform: uppercase;
+                text-align: left;
+            }
+
+            .action-btns {
+                justify-content: flex-end;
+            }
+            
+            .add-category-btn {
+                width: 100%;
+            }
+        }
+        
+    </style>
+    <input type="text" id="pageName" value="category" hidden>
+            <div class="header">
+                <h1 class="page-title">Categorys</h1>
+                <button class="account-btn">Account</button>
+            </div>
+
+            <div class="category-list-section">
+                <div class="category-table-container">
+                    <table class="category-table">
+                        <thead class="table-header">
+                            <tr>
+                                <th>S.No</th>
+                                <th>Category Name</th>
+                                <th>List / Unlist</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-row">
+                                <td data-label="S.No">1</td>
+                                <td data-label="Category Name">Action</td>
+                                <td data-label="List / Unlist">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">
+                                            ✏️
+                                        </button>
+                                        <button class="action-btn">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="table-row">
+                                <td data-label="S.No">2</td>
+                                <td data-label="Category Name">Adventure</td>
+                                <td data-label="List / Unlist">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">
+                                            ✏️
+                                        </button>
+                                        <button class="action-btn">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="table-row">
+                                <td data-label="S.No">3</td>
+                                <td data-label="Category Name">Strategy</td>
+                                <td data-label="List / Unlist">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">
+                                            ✏️
+                                        </button>
+                                        <button class="action-btn">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="table-row">
+                                <td data-label="S.No">4</td>
+                                <td data-label="Category Name">Horror</td>
+                                <td data-label="List / Unlist">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">
+                                            ✏️
+                                        </button>
+                                        <button class="action-btn">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr class="table-row">
+                                <td data-label="S.No">5</td>
+                                <td data-label="Category Name">Racing</td>
+                                <td data-label="List / Unlist">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">
+                                            ✏️
+                                        </button>
+                                        <button class="action-btn">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="category-add-section">
+                <h2 class="add-category-form-header">Add Catagory</h2>
+                <div class="add-category-form-content">
+                    <div class="category-form-group">
+                        <label for="categoryName">Category Information</label>
+                        <input type="text" id="categoryName" placeholder="Type category name here...">
+                    </div>
+                    <div class="category-form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" rows="4" placeholder="Type category description here..."></textarea>
+                    </div>
+                    <div class="category-form-group">
+                        <label for="offer">Offer</label>
+                        <input type="text" id="offer">
+                    </div>
+                    <div>
+                        <button class="add-category-btn">➕ Add Category</button>
+                    </div>
+                </div>
+            </div>
+     

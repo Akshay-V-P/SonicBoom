@@ -1,0 +1,222 @@
+
+    <style>
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .account-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        /* Settings Section */
+        .settings-section {
+            display: flex;
+            gap: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        .user-info-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            text-align: center;
+        }
+
+        .profile-picture {
+            width: 100px;
+            height: 100px;
+            background-color: #333;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            color: #999;
+        }
+
+        .username {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 12px;
+            background-color: #333;
+            padding: 4px 10px;
+            border-radius: 12px;
+            color: #999;
+        }
+        
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .personal-info-section {
+            flex-grow: 1;
+            max-width: 500px;
+        }
+
+        .personal-info-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .personal-info-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / span 2;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: #999;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background-color: #2a2a2a;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .change-password-link {
+            color: #4a90e2;
+            text-decoration: none;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .update-btn {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .settings-section {
+                flex-direction: column;
+                align-items: center;
+                padding: 20px;
+                gap: 20px;
+            }
+            .user-info-section {
+                width: 100%;
+            }
+            .personal-info-form {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            .form-group.full-width {
+                grid-column: auto;
+            }
+            .update-btn {
+                width: 100%;
+                text-align: center;
+                margin-top: 15px;
+            }
+        }
+        
+    </style>
+        <input type="text" id="pageName" value="settings" hidden>
+            <div class="header">
+                <h1 class="page-title">Settings</h1>
+                <button class="account-btn">Account</button>
+            </div>
+
+            <div class="settings-section">
+                <div class="user-info-section">
+                    <div class="profile-picture">👤</div>
+                    <div class="username">Akshay</div>
+                    <div class="user-role">Admin</div>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <span>📧</span> rizwan@gmail.com
+                        </div>
+                        <div class="contact-item">
+                            <span>📱</span> 7902536866
+                        </div>
+                    </div>
+                </div>
+
+                <div class="personal-info-section">
+                    <h2 class="personal-info-title">Personal Information</h2>
+                    <form class="personal-info-form">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" value="Akshay">
+                        </div>
+                        <div class="form-group">
+                            <label for="dob">Date Of Birth</label>
+                            <input type="text" id="dob" value="19-04-2004">
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile">Mobile Number</label>
+                            <input type="text" id="mobile" value="+91 7902536866">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
+                            <input type="email" id="email" value="rizwan@gmail.com">
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" value="********">
+                            <a href="#" class="change-password-link">Change Password</a>
+                        </div>
+                        <div class="form-group full-width">
+                            <button type="submit" class="update-btn">Update Information</button>
+                        </div>
+                    </form>
+                </div>
+            </div>

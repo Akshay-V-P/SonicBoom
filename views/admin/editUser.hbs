@@ -1,0 +1,245 @@
+
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .account-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .account-details {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* User Edit Form */
+        .user-edit-form {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #999;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background-color: #2a2a2a;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .action-button.block {
+            background-color: #484848;
+            color: #fff;
+        }
+
+        .action-button.block:hover {
+            background-color: #838383;
+        }
+
+        .action-button.save {
+            background-color: #4a90e2;
+            color: #fff;
+        }
+
+        .action-button.save:hover {
+            background-color: #357abd;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.85em;
+            margin-top: 4px;
+            display: block;
+        }
+        input.error {
+            border: 1px solid red;
+        }
+
+        .swal2-small-title {
+            font-size: 14px !important;
+        }
+
+        .swal2-small-text {
+            font-size: 12px !important;
+        }
+
+        .swal2-small-button {
+            font-size: 12px !important;
+            padding: 4px 8px !important;
+        }
+
+        .my-swal-border {
+		border: 1px solid #404044 !important;
+		/* Change color and thickness */
+		border-radius: 15px !important;
+	}
+       
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+            .user-edit-form {
+                padding: 20px;
+            }
+        }
+    </style>
+        <input type="text" id="pageName" value="users" hidden>
+            <div class="header">
+                <h1 class="account-details">Edit User</h1>
+                <button class="account-btn">Edit</button>
+            </div>
+            {{#if user}}
+                <div class="user-edit-form">
+                        <div class="form-group">
+                            <label for="firstName">Name</label>
+                            <input type="text" id="firstName" value="{{user.name}}">
+                            <small class="error-message"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Mobile</label>
+                            <input type="text" id="phone" placeholder="Add a Number" value="{{user.mobile}}">
+                            <small class="error-message"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" value="{{user.email}}">
+                            <small class="error-message"></small>
+                        </div>
+                        <div class="form-actions">
+                            <a href="/admin/users">
+                                <button type="button" class="action-button block">Go Back</button>
+                            </a>
+                            <button onclick="submitChanges()" class="action-button save">Save changes</button>
+                        </div>
+                </div>
+                {{/if}}
+
+
+
+<script>
+    const form = document.querySelector(".user-edit-form");
+    const fields = {
+        firstName: document.getElementById("firstName"),
+        phone: document.getElementById("phone"),
+        email: document.getElementById("email")
+    };
+
+    function submitChanges(){
+        let isValid = true;
+
+        // Reset errors
+        form.querySelectorAll(".error-message").forEach(msg => msg.textContent = "");
+        form.querySelectorAll("input").forEach(input => input.classList.remove("error"));
+
+        // First Name
+        if (!fields.firstName.value.trim() || fields.firstName.value.trim().length < 2 || /[^a-zA-Z\s]/.test(fields.firstName.value.trim())) {
+            showError(fields.firstName, "First name must be at least 2 letters and only alphabets allowed.");
+            isValid = false;
+        }
+
+        // Mobile
+        if (!/^\d{10}$/.test(fields.phone.value.trim())) {
+            showError(fields.phone, "Mobile number must be exactly 10 digits.");
+            isValid = false;
+        }
+
+        // Email
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email.value.trim())) {
+            showError(fields.email, "Invalid email format.");
+            isValid = false;
+        }
+
+        if (!isValid) {
+            return
+        }
+
+        let body = {
+            name:fields.firstName.value.trim(),
+            mobile:fields.phone.value.trim(),
+            email:fields.email.value.trim()
+        }
+        fetch('/admin/users/edit', {
+            method:'PATCH',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body:JSON.stringify(body)
+        })
+        .then(response =>{
+            if(!response.ok){
+                console.log('failed to fetch')
+            }
+            return response.json()
+        })
+        .then(data =>{
+            console.log(data)
+            console.log(fields.firstName)
+            document.getElementById("firstName").value = data.name || '';
+            document.getElementById("phone").value = data.mobile || '';
+            document.getElementById("email").value = data.email || '';
+            Swal.fire({
+                icon: "success",
+                title: "Changes saved",
+                background: "#242428",
+                showConfirmButton: false,
+                timer: 1500,
+                customClass: {
+				    popup: 'my-swal-border'
+			    }
+            });
+        })
+        .catch(error => console.log("Error",error))
+    }
+
+    function showError(input, message) {
+        const errorContainer = input.parentElement.querySelector(".error-message");
+        errorContainer.textContent = message;
+        input.classList.add("error");
+    }
+</script>

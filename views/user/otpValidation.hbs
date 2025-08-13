@@ -25,6 +25,13 @@
             background-size: cover;
             background-position: center;
         }
+        #resend-error{
+            text-align: right;
+            color: rgb(215, 31, 31);
+            margin-top: 2px;
+            transition: 1ms ease;
+            display: none;
+        }
     </style>
 
 
@@ -38,6 +45,7 @@
             <div class="text-center mb-6">
                 <p class="text-white text-sm font-medium">The OTP has been sent to your registered email</p>
             </div>
+            <input type="text" value="{{createdAt}}" id="createdAt" hidden>
 
             <!-- OTP form fields and buttons -->
             <form action="{{url}}" method="POST" id="submitForm" class="space-y-4">
@@ -49,6 +57,7 @@
                         Resend
                     </button>
                 </div>
+                <p id="resend-error">{{message}}</p>
 
                 <!-- Verify button -->
                 <button type="submit" class="gradient-button text-white font-semibold py-3 px-6 rounded-lg w-full shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
@@ -66,7 +75,7 @@
     </div>
 <script>
 
-document.getElementById('submiForm').addEventListener('submit', (e)=>{
+document.getElementById('submitForm').addEventListener('submit', (e)=>{
     e.preventDefault()
     const otp = document.getElementById('otpField').value.trim()
     if(otp === ""){
@@ -77,10 +86,13 @@ document.getElementById('submiForm').addEventListener('submit', (e)=>{
 })
 
 
-
+const createdAt = document.getElementById('createdAt').value
+console.log(createdAt)
+    const now = Date.now();
+    let countdown = 60 - Math.floor((now - createdAt) / 1000); 
+    if (countdown < 0) countdown = 0;
 
     const resendBtn = document.getElementById('resendBtn');
-    let countdown = 300; // 5 minutes in seconds
 
     function startTimer() {
         resendBtn.disabled = true;
@@ -106,14 +118,22 @@ document.getElementById('submiForm').addEventListener('submit', (e)=>{
         resendBtn.textContent = `Resend (${minutes}:${seconds.toString().padStart(2, '0')})`;
     }
 
-    // Start timer on page load
+
     window.onload = startTimer;
 
-    // If user clicks Resend (after time is up)
+    
     resendBtn.addEventListener('click', () => {
-        // Here you can call your resend OTP API logic...
-        // Then restart the timer:
-        countdown = 300;
-        startTimer();
+        fetch('/user/validate_otp')
+            .then(response => {
+                if(!response.ok){
+                    throw new Error(`HTTP error! status ${response.status}`)
+                }
+            })
     });
+
+    const resendError = document.getElementById('resend-error')
+    if(resendError.value){
+        resendError.style.display = 'block'
+        setTimeout( () => resendError.style.display = 'none' ,2000)
+    }
 </script>

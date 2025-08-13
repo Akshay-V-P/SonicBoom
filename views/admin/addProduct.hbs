@@ -1,0 +1,375 @@
+<!-- Try these alternative CDN links -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+
+<style>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .account-btn {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .add-product-form {
+        background-color: #1a1a1a;
+        padding: 30px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .form-header {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 8px;
+        color: #999;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #333;
+        border-radius: 6px;
+        background-color: #2a2a2a;
+        color: #fff;
+        font-size: 14px;
+    }
+
+    .form-group textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    .image-preview {
+        margin-top: 10px;
+        border-radius: 8px;
+        overflow: hidden;
+        background: #2a2a2a;
+        border: 1px solid #333;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 150px;
+    }
+    .image-preview img {
+        width: 100%;
+        display: block;
+    }
+
+    .form-actions {
+        margin-top: 30px;
+        text-align: right;
+    }
+
+    .add-product-submit {
+        background-color: #4a90e2;
+        color: #fff;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    /* Crop Modal Styling */
+    #cropModal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8);
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+   #cropModal .modal-content {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    max-width: 90%;
+    max-height: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    }
+
+    #cropModal img {
+        max-width: 100%;
+        max-height: 70vh;
+        object-fit: contain;
+        border-radius: 6px;
+    }
+    .modal-buttons {
+        margin-top: 10px;
+        text-align: right;
+    }
+    .modal-buttons button {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+    .btn-confirm {
+        background: #4a90e2;
+        color: white;
+    }
+    .btn-cancel {
+        background: #333;
+        color: white;
+        margin-left: 8px;
+    }
+
+    /* Loading indicator */
+    .loading {
+        color: #4a90e2;
+        font-size: 14px;
+    }
+
+    #thumbnailPreview{
+        max-width: 50%;
+    }
+    .imageInput{
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+    }
+</style>
+
+<div class="header">
+    <h1 class="page-title">Add Product</h1>
+    <button class="account-btn">Account</button>
+</div>
+
+<div class="add-product-form">
+    <h2 class="form-header">Product details</h2>
+
+    <form action="/admin/products/add" method="POST" enctype="multipart/form-data" id="addProductForm">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Product Name</label>
+                <input type="text" name="name" placeholder="Product Name" required>
+            </div>
+            <div class="form-group">
+                <label>Developer</label>
+                <input type="text" name="developer" placeholder="Developer" required>
+            </div>
+            <div class="form-group">
+                <label>Category</label>
+                <select name="category" required>
+                    <option value="">Category</option>
+                    <option value="adventure">Adventure</option>
+                    <option value="rpg">RPG</option>
+                </select>
+            </div>
+            <div class="form-group full-width">
+                <label>Description</label>
+                <textarea name="description" placeholder="Description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Price</label>
+                <input type="number" name="price" placeholder="Price" required>
+            </div>
+            <div class="form-group">
+                <label>Offer Price</label>
+                <input type="number" name="offerPrice" placeholder="Offer Price">
+            </div>
+            <div class="form-group">
+                <label>Stock</label>
+                <input type="number" name="stock" placeholder="Stock" required>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Add Cover Image (16:9)</label>
+                <input type="file" name="coverImage" class="imageInput" accept="image/jpeg,image/png">
+                <div class="image-preview" id="coverPreview">
+                    <span style="color:#777; font-size:13px;">No image selected</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Add Thumbnail (3:4)</label>
+                <input type="file" name="thumbnail" class="imageInput" accept="image/jpeg,image/png">
+                <div class="image-preview" id="thumbnailPreview">
+                    <span style="color:#777; font-size:13px;">No image selected</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="add-product-submit">Add Product</button>
+        </div>
+    </form>
+</div>
+
+
+<div id="cropModal">
+    <div class="modal-content">
+        <img id="cropImage">
+        <div class="modal-buttons">
+            <button id="cropConfirm" type="button" class="btn-confirm">Crop & Save</button>
+            <button id="cropCancel" type="button" class="btn-cancel">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("addProductForm");
+    const submitBtn = form.querySelector(".add-product-submit");
+
+    form.addEventListener("submit", function (e) {
+        // If already disabled, stop the second submission
+        if (submitBtn.disabled) {
+            e.preventDefault();
+            return;
+        }
+
+        // Disable the button & change text
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Processing...";
+
+        // Optionally, add a spinner style if you want
+        submitBtn.style.opacity = "0.6";
+        submitBtn.style.cursor = "not-allowed";
+    });
+});
+// Check if Cropper loaded successfully
+window.addEventListener('load', function() {
+    if (typeof Cropper === 'undefined') {
+        console.error('Cropper.js failed to load from CDN');
+        // Fallback: disable cropping functionality
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function() {
+                if (this.files[0]) {
+                    const reader = new FileReader();
+                    const previewId = this.name === 'coverImage' ? 'coverPreview' : 'thumbnailPreview';
+                    reader.onload = function(e) {
+                        document.getElementById(previewId).innerHTML = `<img src="${e.target.result}">`;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        });
+        return;
+    }
+
+    // Original cropper functionality
+    let cropper;
+    let currentInput;
+    let currentPreview;
+    let aspectRatios = {
+        coverImage: 16 / 9,
+        thumbnail: 3 / 4
+    };
+
+    function openCropper(file, inputName) {
+        currentInput = document.querySelector(`input[name="${inputName}"]`);
+        currentPreview = document.getElementById(inputName === "coverImage" ? "coverPreview" : "thumbnailPreview");
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const cropImageEl = document.getElementById('cropImage');
+            cropImageEl.src = e.target.result;
+            document.getElementById('cropModal').style.display = 'flex';
+
+            if (cropper) cropper.destroy();
+            cropper = new Cropper(cropImageEl, {
+                aspectRatio: aspectRatios[inputName],
+                viewMode: 1,
+                background: false
+            });
+        };
+        reader.readAsDataURL(file);
+    }
+
+    const coverInput = document.querySelector('input[name="coverImage"]');
+    if (coverInput) {
+        coverInput.addEventListener('change', function () {
+            if (this.files[0]) openCropper(this.files[0], 'coverImage');
+        });
+    }
+
+    const thumbInput = document.querySelector('input[name="thumbnail"]');
+    if (thumbInput) {
+        thumbInput.addEventListener('change', function () {
+            if (this.files[0]) openCropper(this.files[0], 'thumbnail');
+        });
+    }
+
+    const cropConfirmBtn = document.getElementById('cropConfirm');
+    if (cropConfirmBtn) {
+        cropConfirmBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            if (!cropper) return;
+
+            const canvas = cropper.getCroppedCanvas();
+            if (!canvas) return;
+
+            canvas.toBlob(function (blob) {
+                const file = new File([blob], "cropped.jpg", { type: "image/jpeg" });
+
+                let dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                currentInput.files = dataTransfer.files;
+
+                const previewReader = new FileReader();
+                previewReader.onload = function (e) {
+                    currentPreview.innerHTML = `<img src="${e.target.result}">`;
+                };
+                previewReader.readAsDataURL(file);
+
+                document.getElementById('cropModal').style.display = 'none';
+                cropper.destroy();
+                cropper = null;
+            }, 'image/jpeg');
+        });
+    }
+
+    const cropCancelBtn = document.getElementById('cropCancel');
+    if (cropCancelBtn) {
+        cropCancelBtn.addEventListener('click', function () {
+            document.getElementById('cropModal').style.display = 'none';
+        });
+    }
+});
+</script>

@@ -1,0 +1,392 @@
+
+    <style>
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .account-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* Orders Section */
+        .orders-section {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #333;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .orders-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .search-and-filter {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            width: 200px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .search-btn {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .filter-select {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .orders-table-container {
+            overflow-x: auto;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-header th {
+            padding: 15px 12px;
+            text-align: left;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 500;
+            border-bottom: 1px solid #333;
+            white-space: nowrap;
+        }
+
+        .table-header th:first-child {
+            width: 50px;
+            text-align: center;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #333;
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-row td {
+            padding: 15px 12px;
+            font-size: 14px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .checkbox-cell {
+            text-align: center;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-paid {
+            background-color: #34c759;
+            color: #1a1a1a;
+        }
+        
+        .status-unpaid {
+            background-color: #ff3b30;
+            color: #fff;
+        }
+        
+        .status-cancelled {
+            background-color: #6c757d;
+            color: #fff;
+        }
+        
+        .pagination {
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pagination-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination-btn:disabled {
+            background-color: #1a1a1a;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background-color: #4a90e2;
+        }
+        
+        @media (max-width: 768px) {
+            .orders-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-and-filter {
+                flex-direction: column;
+            }
+
+            .search-input, .search-btn, .filter-select {
+                width: 100%;
+            }
+            
+            .orders-table,
+            .orders-table thead,
+            .orders-table tbody,
+            .orders-table th,
+            .orders-table td,
+            .orders-table tr {
+                display: block;
+            }
+            
+            .orders-table thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            .orders-table tr {
+                border: 1px solid #333;
+                margin-bottom: 10px;
+                padding: 10px;
+                border-radius: 8px;
+            }
+
+            .orders-table td {
+                border: none;
+                position: relative;
+                padding: 8px 0 8px 30%;
+                text-align: right;
+            }
+
+            .orders-table td:before {
+                content: attr(data-label) ": ";
+                position: absolute;
+                left: 10px;
+                width: 28%;
+                padding-right: 10px;
+                white-space: nowrap;
+                color: #666;
+                font-size: 12px;
+                text-transform: uppercase;
+                text-align: left;
+            }
+        }
+       
+    </style>
+        <input type="text" id="pageName" value="orders" hidden>
+            <div class="header">
+                <h1 class="page-title">Orders</h1>
+                <button class="account-btn">Account</button>
+            </div>
+
+            <div class="orders-section">
+                <div class="orders-header">
+                    <input type="text" class="search-input" placeholder="Search">
+                    <div class="search-and-filter">
+                        <select name="amount" id="amount" class="filter-select">
+                            <option value="">Amount</option>
+                            <option value="asc">Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
+                        <select name="payment" id="payment" class="filter-select">
+                            <option value="">Payment</option>
+                            <option value="upi">UPI</option>
+                            <option value="cod">COD</option>
+                            <option value="bank">BANK</option>
+                        </select>
+                        <select name="status" id="status" class="filter-select">
+                            <option value="">Status</option>
+                            <option value="paid">Paid</option>
+                            <option value="unpaid">Unpaid</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <button class="search-btn">Search</button>
+                    </div>
+                </div>
+
+                <div class="orders-table-container">
+                    <table class="orders-table">
+                        <thead class="table-header">
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAll">
+                                </th>
+                                <th>Reference No</th>
+                                <th>Amount</th>
+                                <th>Payment</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-row">
+                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                <td data-label="Reference No">#112-11321112344</td>
+                                <td data-label="Amount">₹1249</td>
+                                <td data-label="Payment">UPI</td>
+                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                <td data-label="Reference No">#112-11321112344</td>
+                                <td data-label="Amount">₹2999</td>
+                                <td data-label="Payment">COD</td>
+                                <td data-label="Status"><span class="status-badge status-unpaid">Unpaid</span></td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                <td data-label="Reference No">#112-11321112344</td>
+                                <td data-label="Amount">₹4563</td>
+                                <td data-label="Payment">BANK</td>
+                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                <td data-label="Reference No">#112-11321112344</td>
+                                <td data-label="Amount">₹1999</td>
+                                <td data-label="Payment">UPI</td>
+                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                <td data-label="Reference No">#112-11321112344</td>
+                                <td data-label="Amount">₹1249</td>
+                                <td data-label="Payment">UPI</td>
+                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                <td data-label="Reference No">#112-11321112344</td>
+                                <td data-label="Amount">₹1249</td>
+                                <td data-label="Payment">UPI</td>
+                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                <td data-label="Reference No">#112-11321112353</td>
+                                <td data-label="Amount">₹1249</td>
+                                <td data-label="Payment">UPI</td>
+                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                <td data-label="Reference No">#112-11321112344</td>
+                                <td data-label="Amount">₹1249</td>
+                                <td data-label="Payment">UPI</td>
+                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                <td data-label="Reference No">#112-11321112344</td>
+                                <td data-label="Amount">₹1249</td>
+                                <td data-label="Payment">UPI</td>
+                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
+                            </tr>
+                            <tr class="table-row">
+                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                <td data-label="Reference No">#112-11321112344</td>
+                                <td data-label="Amount">₹1249</td>
+                                <td data-label="Payment">UPI</td>
+                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <div class="pagination-info">
+                        1 to 10 of 30 Pages
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="pagination-btn">
+                            &lt;
+                        </button>
+                        <button class="pagination-btn active">
+                            1
+                        </button>
+                        <button class="pagination-btn">
+                            &gt;
+                        </button>
+                    </div>
+                </div>
+            </div>
+

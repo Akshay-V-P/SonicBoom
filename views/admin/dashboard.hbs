@@ -1,0 +1,251 @@
+
+   <link rel="stylesheet" href="/css/dashboard.css">
+        <input type="text" id="pageName" value="dashboard" hidden>
+            <div class="header">
+                <h1 class="account-details">Account Details</h1>
+                <button class="account-btn">Account</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">₹ 5,55,000</div>
+                    <div class="stat-label">Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2,500</div>
+                    <div class="stat-label">Products</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1,500</div>
+                    <div class="stat-label">Customers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1,013</div>
+                    <div class="stat-label">Orders</div>
+                </div>
+            </div>
+
+            <div class="chart-section">
+                <div class="chart-header">
+                    <h3 class="chart-title">Total Revenue</h3>
+                    <div class="chart-value">₹50,25,780 • showing data • for last</div>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-bar" style="height: 120px;"></div>
+                    <div class="chart-bar" style="height: 80px;"></div>
+                    <div class="chart-bar" style="height: 160px;"></div>
+                    <div class="chart-bar" style="height: 90px;"></div>
+                    <div class="chart-bar" style="height: 140px;"></div>
+                    <div class="chart-bar" style="height: 180px;"></div>
+                    <div class="chart-bar" style="height: 100px;"></div>
+                    <div class="chart-bar" style="height: 60px;"></div>
+                    <div class="chart-bar" style="height: 40px;"></div>
+                    <div class="chart-bar" style="height: 110px;"></div>
+                    <div class="chart-bar" style="height: 170px;"></div>
+                    <div class="chart-bar" style="height: 130px;"></div>
+                    <div class="chart-bar" style="height: 190px;"></div>
+                    <div class="chart-bar" style="height: 85px;"></div>
+                    <div class="chart-bar" style="height: 200px;"></div>
+                    <div class="chart-bar" style="height: 150px;"></div>
+                </div>
+            </div>
+
+            <div class="orders-section">
+                <div class="orders-header">
+                    <h3 class="orders-title">Latest Orders</h3>
+                </div>
+                
+                <table class="orders-table" id="ordersTable">
+                    <thead class="table-header">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Product</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Total</th>
+                            <th>Payment</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersTableBody">
+                        <!-- Table rows will be dynamically populated -->
+                    </tbody>
+                </table>
+
+                <div class="pagination">
+                    <div class="pagination-info">
+                        <span id="paginationInfo">Showing 1 to 5 of 28 entries</span>
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="pagination-btn" id="prevBtn" disabled>Previous</button>
+                        <div class="pagination-numbers" id="paginationNumbers">
+                            <!-- Page numbers will be dynamically populated -->
+                        </div>
+                        <button class="pagination-btn" id="nextBtn">Next</button>
+                    </div>
+                </div>
+            </div>
+
+    <script>
+        // Sample orders data
+        const ordersData = [
+            { id: '#000184', product: 'GTX', productCount: '17 Products', date: '03 Dec 2022', customer: 'john doe', total: '₹35600', payment: '25 July 2023', status: 'Delivered' },
+            { id: '#000183', product: 'GTX', productCount: '17 Products', date: '03 Dec 2022', customer: 'jane smith', total: '₹28900', payment: '24 July 2023', status: 'Delivered' },
+            { id: '#000182', product: 'RTX', productCount: '12 Products', date: '02 Dec 2022', customer: 'mike johnson', total: '₹42100', payment: '23 July 2023', status: 'Processing' },
+            { id: '#000181', product: 'GTX', productCount: '8 Products', date: '02 Dec 2022', customer: 'sarah wilson', total: '₹19500', payment: '22 July 2023', status: 'Delivered' },
+            { id: '#000180', product: 'RTX', productCount: '25 Products', date: '01 Dec 2022', customer: 'david brown', total: '₹67800', payment: '21 July 2023', status: 'Shipped' },
+            { id: '#000179', product: 'GTX', productCount: '14 Products', date: '01 Dec 2022', customer: 'emma davis', total: '₹31200', payment: '20 July 2023', status: 'Delivered' },
+            { id: '#000178', product: 'RTX', productCount: '19 Products', date: '30 Nov 2022', customer: 'alex miller', total: '₹53400', payment: '19 July 2023', status: 'Processing' },
+            { id: '#000177', product: 'GTX', productCount: '11 Products', date: '30 Nov 2022', customer: 'lisa garcia', total: '₹24600', payment: '18 July 2023', status: 'Delivered' },
+            { id: '#000176', product: 'RTX', productCount: '16 Products', date: '29 Nov 2022', customer: 'tom anderson', total: '₹44800', payment: '17 July 2023', status: 'Shipped' },
+            { id: '#000175', product: 'GTX', productCount: '22 Products', date: '29 Nov 2022', customer: 'anna taylor', total: '₹58700', payment: '16 July 2023', status: 'Delivered' },
+            { id: '#000174', product: 'RTX', productCount: '9 Products', date: '28 Nov 2022', customer: 'kevin white', total: '₹21300', payment: '15 July 2023', status: 'Processing' },
+            { id: '#000173', product: 'GTX', productCount: '13 Products', date: '28 Nov 2022', customer: 'rachel green', total: '₹29100', payment: '14 July 2023', status: 'Delivered' },
+            { id: '#000172', product: 'RTX', productCount: '18 Products', date: '27 Nov 2022', customer: 'mark lee', total: '₹48900', payment: '13 July 2023', status: 'Shipped' },
+            { id: '#000171', product: 'GTX', productCount: '15 Products', date: '27 Nov 2022', customer: 'sophie clark', total: '₹33400', payment: '12 July 2023', status: 'Delivered' },
+            { id: '#000170', product: 'RTX', productCount: '21 Products', date: '26 Nov 2022', customer: 'chris martin', total: '₹56200', payment: '11 July 2023', status: 'Processing' },
+            { id: '#000169', product: 'GTX', productCount: '10 Products', date: '26 Nov 2022', customer: 'natalie hall', total: '₹22800', payment: '10 July 2023', status: 'Delivered' },
+            { id: '#000168', product: 'RTX', productCount: '17 Products', date: '25 Nov 2022', customer: 'james wilson', total: '₹46500', payment: '09 July 2023', status: 'Shipped' },
+            { id: '#000167', product: 'GTX', productCount: '12 Products', date: '25 Nov 2022', customer: 'olivia moore', total: '₹27300', payment: '08 July 2023', status: 'Delivered' },
+            { id: '#000166', product: 'RTX', productCount: '24 Products', date: '24 Nov 2022', customer: 'ryan taylor', total: '₹63100', payment: '07 July 2023', status: 'Processing' },
+            { id: '#000165', product: 'GTX', productCount: '14 Products', date: '24 Nov 2022', customer: 'mia jackson', total: '₹31900', payment: '06 July 2023', status: 'Delivered' },
+            { id: '#000164', product: 'RTX', productCount: '16 Products', date: '23 Nov 2022', customer: 'daniel brown', total: '₹43700', payment: '05 July 2023', status: 'Shipped' },
+            { id: '#000163', product: 'GTX', productCount: '11 Products', date: '23 Nov 2022', customer: 'zoe davis', total: '₹25100', payment: '04 July 2023', status: 'Delivered' },
+            { id: '#000162', product: 'RTX', productCount: '20 Products', date: '22 Nov 2022', customer: 'lucas miller', total: '₹54600', payment: '03 July 2023', status: 'Processing' },
+            { id: '#000161', product: 'GTX', productCount: '13 Products', date: '22 Nov 2022', customer: 'grace garcia', total: '₹28700', payment: '02 July 2023', status: 'Delivered' },
+            { id: '#000160', product: 'RTX', productCount: '18 Products', date: '21 Nov 2022', customer: 'ethan anderson', total: '₹49800', payment: '01 July 2023', status: 'Shipped' },
+            { id: '#000159', product: 'GTX', productCount: '15 Products', date: '21 Nov 2022', customer: 'chloe taylor', total: '₹34200', payment: '30 June 2023', status: 'Delivered' },
+            { id: '#000158', product: 'RTX', productCount: '22 Products', date: '20 Nov 2022', customer: 'noah white', total: '₹59400', payment: '29 June 2023', status: 'Processing' },
+            { id: '#000157', product: 'GTX', productCount: '9 Products', date: '20 Nov 2022', customer: 'ava green', total: '₹20700', payment: '28 June 2023', status: 'Delivered' }
+        ];
+
+        // Pagination variables
+        let currentPage = 1;
+        const itemsPerPage = 5;
+        const totalItems = ordersData.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        // Get status badge HTML
+        function getStatusBadge(status) {
+            const statusClasses = {
+                'Delivered': 'status-badge',
+                'Processing': 'status-badge',
+                'Shipped': 'status-badge'
+            };
+            return `<span class="${statusClasses[status] || 'status-badge'}">${status}</span>`;
+        }
+
+        // Render table rows
+        function renderTableRows() {
+            const tableBody = document.getElementById('ordersTableBody');
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = startIndex + itemsPerPage;
+            const currentItems = ordersData.slice(startIndex, endIndex);
+
+            tableBody.innerHTML = currentItems.map(order => `
+                <tr class="table-row">
+                    <td data-label="Order ID">${order.id}</td>
+                    <td data-label="Product" class="product-cell">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiMzMzMiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzMzMyIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzY2NiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+UHJvZHVjdDwvdGV4dD48L3N2Zz4=" alt="Product" class="product-image">
+                        <div class="product-info">
+                            <h4>${order.product}</h4>
+                            <p>${order.productCount}</p>
+                        </div>
+                    </td>
+                    <td data-label="Date">${order.date}</td>
+                    <td data-label="Customer">${order.customer}</td>
+                    <td data-label="Total">${order.total}</td>
+                    <td data-label="Payment">${order.payment}</td>
+                    <td data-label="Status">${getStatusBadge(order.status)}</td>
+                    <td data-label="Action" class="action-dots">⋯</td>
+                </tr>
+            `).join('');
+        }
+
+        // Update pagination info
+        function updatePaginationInfo() {
+            const startItem = (currentPage - 1) * itemsPerPage + 1;
+            const endItem = Math.min(currentPage * itemsPerPage, totalItems);
+            document.getElementById('paginationInfo').textContent = 
+                `Showing ${startItem} to ${endItem} of ${totalItems} entries`;
+        }
+
+        // Generate page numbers
+        function generatePageNumbers() {
+            const paginationNumbers = document.getElementById('paginationNumbers');
+            let numbersHTML = '';
+
+            // Show first page
+            if (currentPage > 3) {
+                numbersHTML += `<button class="pagination-number" data-page="1">1</button>`;
+                if (currentPage > 4) {
+                    numbersHTML += `<span class="pagination-ellipsis">...</span>`;
+                }
+            }
+
+            // Show pages around current page
+            for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) {
+                numbersHTML += `<button class="pagination-number ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`;
+            }
+
+            // Show last page
+            if (currentPage < totalPages - 2) {
+                if (currentPage < totalPages - 3) {
+                    numbersHTML += `<span class="pagination-ellipsis">...</span>`;
+                }
+                numbersHTML += `<button class="pagination-number" data-page="${totalPages}">${totalPages}</button>`;
+            }
+
+            paginationNumbers.innerHTML = numbersHTML;
+
+            // Add click events to page numbers
+            document.querySelectorAll('.pagination-number').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const page = parseInt(e.target.dataset.page);
+                    goToPage(page);
+                });
+            });
+        }
+
+        // Update pagination buttons
+        function updatePaginationButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
+
+        // Go to specific page
+        function goToPage(page) {
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderTableRows();
+                updatePaginationInfo();
+                generatePageNumbers();
+                updatePaginationButtons();
+            }
+        }
+
+        // Initialize pagination
+        function initPagination() {
+            renderTableRows();
+            updatePaginationInfo();
+            generatePageNumbers();
+            updatePaginationButtons();
+
+            // Add event listeners for prev/next buttons
+            document.getElementById('prevBtn').addEventListener('click', () => {
+                if (currentPage > 1) {
+                    goToPage(currentPage - 1);
+                }
+            });
+
+            document.getElementById('nextBtn').addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    goToPage(currentPage + 1);
+                }
+            });
+        }
+    </script>

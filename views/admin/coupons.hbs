@@ -1,0 +1,292 @@
+
+    <style>
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .account-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* Coupon Management Sections */
+        .coupon-section {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin-bottom: 30px;
+        }
+
+        .coupon-table-container {
+            overflow-x: auto;
+        }
+
+        .coupon-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table-header th {
+            padding: 15px 12px;
+            text-align: left;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 500;
+            border-bottom: 1px solid #333;
+            white-space: nowrap;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #333;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-row td {
+            padding: 15px 12px;
+            font-size: 14px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-expired {
+            background-color: #ff3b30;
+            color: #1a1a1a;
+        }
+        
+        .coupon-add-form {
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        
+        .form-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            align-items: flex-end;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: #999;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #333;
+            border-radius: 4px;
+            background-color: #2a2a2a;
+            color: #fff;
+            font-size: 14px;
+        }
+        
+        .form-group input::placeholder {
+            color: #666;
+        }
+
+        .form-grid-2-col {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .add-coupon-btn {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: auto;
+        }
+        
+        @media (max-width: 768px) {
+            .coupon-section {
+                padding: 20px;
+            }
+
+            .coupon-table,
+            .coupon-table thead,
+            .coupon-table tbody,
+            .coupon-table th,
+            .coupon-table td,
+            .coupon-table tr {
+                display: block;
+            }
+            
+            .coupon-table thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            .coupon-table tr {
+                border: 1px solid #333;
+                margin-bottom: 10px;
+                padding: 10px;
+                border-radius: 8px;
+            }
+
+            .coupon-table td {
+                border: none;
+                position: relative;
+                padding: 8px 0 8px 30%;
+                text-align: right;
+            }
+
+            .coupon-table td:before {
+                content: attr(data-label) ": ";
+                position: absolute;
+                left: 10px;
+                width: 28%;
+                padding-right: 10px;
+                white-space: nowrap;
+                color: #666;
+                font-size: 12px;
+                text-transform: uppercase;
+                text-align: left;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .add-coupon-btn {
+                width: 100%;
+            }
+
+        }
+        
+        
+    </style>
+        <input type="text" id="pageName" value="coupon" hidden>
+            <div class="header">
+                <h1 class="page-title">Coupon Management</h1>
+                <button class="account-btn">Account</button>
+            </div>
+
+            <div class="coupon-section">
+                <div class="coupon-table-header">
+                    </div>
+                <div class="coupon-table-container">
+                    <table class="coupon-table">
+                        <thead class="table-header">
+                            <tr>
+                                <th>Code</th>
+                                <th>Coupon type</th>
+                                <th>Min amount</th>
+                                <th>Discount</th>
+                                <th>Usage Limit</th>
+                                <th>Expiry Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-row">
+                                <td data-label="Code">FIRSTBUY20</td>
+                                <td data-label="Coupon type">New user Join</td>
+                                <td data-label="Min amount">150</td>
+                                <td data-label="Discount">20% off</td>
+                                <td data-label="Usage Limit">1</td>
+                                <td data-label="Expiry Date">16/05/2023 <span class="status-badge status-expired">Expired</span></td>
+                            </tr>
+                            <tr class="table-row">
+                                <td data-label="Code">MAX150FF</td>
+                                <td data-label="Coupon type">Above 1000 order</td>
+                                <td data-label="Min amount">200</td>
+                                <td data-label="Discount">15% off</td>
+                                <td data-label="Usage Limit">3</td>
+                                <td data-label="Expiry Date">20/05/2023 <span class="status-badge status-expired">Expired</span></td>
+                            </tr>
+                            <tr class="table-row">
+                                <td data-label="Code">MAX300FF</td>
+                                <td data-label="Coupon type">Above 5000 order</td>
+                                <td data-label="Min amount">250</td>
+                                <td data-label="Discount">30% off</td>
+                                <td data-label="Usage Limit">2</td>
+                                <td data-label="Expiry Date">21/05/2023 <span class="status-badge status-expired">Expired</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="coupon-add-form">
+                <h2 class="form-title">Add Coupon</h2>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="code">Code</label>
+                        <input type="text" id="code" placeholder="Code">
+                    </div>
+                    <div class="form-group">
+                        <label for="couponType">Coupon Type</label>
+                        <input type="text" id="couponType" placeholder="Coupon Type">
+                    </div>
+                    <div class="form-group">
+                        <label for="percentage">Percentage</label>
+                        <input type="text" id="percentage" placeholder="Percentage">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <input type="text" id="description" placeholder="Description">
+                    </div>
+                </div>
+                <div class="form-grid form-grid-2-col" style="margin-top: 20px;">
+                    <div class="form-group">
+                        <label for="usageLimit">Usage Limit</label>
+                        <input type="text" id="usageLimit" placeholder="Usage Limit">
+                    </div>
+                    <div class="form-group">
+                        <label for="expiryDate">Expiry Date</label>
+                        <input type="text" id="expiryDate" placeholder="Expiry Date">
+                    </div>
+                    <div class="form-group">
+                        <label for="minAmount">Min amount</label>
+                        <input type="text" id="minAmount" placeholder="Min amount">
+                    </div>
+                    <div style="grid-column: 2 / 3; text-align: right; margin-top: 15px;">
+                        <button class="add-coupon-btn">Add</button>
+                    </div>
+                </div>
+            </div>
+    

@@ -1,0 +1,713 @@
+
+    <style>
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .account-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .account-details {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+        }
+
+        /* Chart Section */
+        .chart-section {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin-bottom: 40px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chart-value {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .chart-container {
+            height: 200px;
+            display: flex;
+            align-items: end;
+            justify-content: space-between;
+            padding: 20px 0;
+        }
+
+        .chart-bar {
+            width: 20px;
+            background-color: #4a90e2;
+            margin: 0 2px;
+            border-radius: 2px 2px 0 0;
+            opacity: 0.8;
+        }
+
+        .chart-bar:nth-child(even) {
+            background-color: #6ab7ff;
+        }
+
+        /* Orders Table */
+        .orders-section {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+
+        .orders-header {
+            padding: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .orders-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-header {
+            background-color: #0f0f0f;
+        }
+
+        .table-header th {
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 500;
+            border-bottom: 1px solid #333;
+        }
+
+        .table-row {
+            border-bottom: 1px solid #333;
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-row td {
+            padding: 15px 20px;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .product-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .product-image {
+            width: 40px;
+            height: 40px;
+            background-color: #333;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        .product-info h4 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .product-info p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .status-badge {
+            background-color: #4a90e2;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .action-dots {
+            color: #666;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        /* New styles for the users table and pagination */
+        .users-section {
+            background-color: #1a1a1a;
+            border-radius: 8px;
+            border: 1px solid #333;
+            overflow: hidden;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-table thead {
+            background-color: #0f0f0f;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 15px 20px;
+            text-align: left;
+            font-size: 14px;
+            border-bottom: 1px solid #333;
+        }
+
+        .users-table th {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .users-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-btn {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            color: white;
+        }
+
+        .status-btn.active {
+            background-color: #4a90e2; /* Blue */
+        }
+
+        .status-btn.blocked {
+            background-color: #e24a4a; /* Red */
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #4a90e2;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .action-btn.delete {
+            color: #e24a4a;
+        }
+
+        
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            
+
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 15px;
+            }
+
+            .chart-container {
+                height: 150px;
+            }
+
+            .orders-table {
+                font-size: 12px;
+            }
+
+            .table-header th,
+            .table-row td {
+                padding: 10px 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: stretch;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .chart-container {
+                height: 120px;
+            }
+
+            .orders-table,
+            .orders-table thead,
+            .orders-table tbody,
+            .orders-table th,
+            .orders-table td,
+            .orders-table tr {
+                display: block;
+            }
+
+            .orders-table thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            .orders-table tr {
+                border: 1px solid #333;
+                margin-bottom: 10px;
+                padding: 10px;
+                border-radius: 8px;
+            }
+
+            .orders-table td {
+                border: none;
+                position: relative;
+                padding: 8px 0 8px 25%;
+            }
+
+            .orders-table td:before {
+                content: attr(data-label) ": ";
+                position: absolute;
+                left: 6px;
+                width: 22%;
+                padding-right: 10px;
+                white-space: nowrap;
+                color: #666;
+                font-size: 12px;
+                text-transform: uppercase;
+            }
+
+           
+        }
+
+        @media (max-width: 480px) {
+            
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .chart-section,
+            .orders-section {
+                padding: 15px;
+            }
+        }
+
+
+        /* Pagination Styles */
+        .pagination-container {
+            padding: 20px;
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pagination-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background-color: #4a90e2;
+        }
+
+        .pagination-btn.disabled {
+            background-color: #1a1a1a;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .pagination-numbers {
+            display: flex;
+            gap: 4px;
+        }
+
+        .pagination-number {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination-number:hover {
+            background-color: #4a90e2;
+        }
+
+        .pagination-number.active {
+            background-color: #4a90e2;
+            font-weight: bold;
+        }
+
+        .pagination-ellipsis {
+            color: #666;
+            padding: 0 8px;
+            font-size: 13px;
+        }
+        /* Search Section Styles */
+        .search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search input[type="text"] {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            padding: 8px 14px;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+            width: 250px;
+            transition: border-color 0.5s, box-shadow 0.5s;
+        }
+
+        .search input[type="text"]:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 4px rgba(74, 144, 226, 0.5);
+        }
+
+        .search a {
+            background-color: #4a90e2;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .search a:hover {
+            background-color: #6ab7ff;
+        }
+
+        #clearBtn{
+             background-color: #5f5f5f;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        /* Responsive for smaller devices */
+        @media (max-width: 768px) {
+            .search {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+
+            .search input[type="text"] {
+                width: 100%;
+            }
+
+            .search a {
+                text-align: center;
+            }
+        }
+
+
+        @media (max-width: 768px) {
+            .pagination-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .pagination-controls {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+
+   <div class="header">
+    <input type="text" id="pageName" value="users" hidden>
+                <h1 class="account-details">Users</h1>
+                <button class="account-btn">Account</button>
+            </div>
+            <div class="search">
+                <input type="text" id="searchInput" placeholder="Search users...">
+                <a href="#" id="searchBtn">Search</a>
+                <button id="clearBtn">Clear</button>
+            </div>
+            <div class="users-section">
+                <table class="users-table">
+                    <thead>
+                        <tr class="table-header">
+                            <th>S.No</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Mobile</th>
+                            <th>Status</th>
+                            <th>Update</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        {{#each users}}
+                        <tr>
+                            <td>{{inc @index}}</td>
+                            <td>{{this.name}}</td>
+                            <td>{{this.email}}</td>
+                            <td>{{this.mobile}}</td>
+                            <td>
+                                {{#if this.isBlocked}}
+                                    <button class="status-btn blocked" onclick="active('{{this._id}}', this)">Blocked</button>
+                                {{else}}
+                                    <button class="status-btn active" onclick="block('{{this._id}}', this)">Active</button>
+                                {{/if}}
+                            </td>
+                            <td>
+                                <a href="/admin/users/{{this._id}}/edit"><button class="action-btn">Edit</button></a>
+                                <button class="action-btn delete">Delete</button>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+                
+                <div class="pagination-container">
+                    <div class="pagination-info">{{currentPage}} of {{totalPages}} Pages</div>
+                    <div class="pagination-controls">
+                        {{#if (gt currentPage 1)}}
+                            <a href="/admin/users?currentPage={{dec currentPage}}&limit=10" class="pagination-btn">&lt;</a>
+                        {{/if}}
+                        <div class="pagination-numbers">
+                            <button class="pagination-number active">1</button>
+                        </div>
+                        {{#if (ls currentPage totalPages)}}
+                            <a href="/admin/users?currentPage={{inc currentPage}}&limit=10" class="pagination-btn">&gt;</a>
+                        {{/if}}
+                    </div>
+                </div>
+            </div>
+
+<script>
+
+    document.getElementById("searchBtn").addEventListener("click", function (e) {
+    e.preventDefault();
+    const searchValue = document.getElementById("searchInput").value.trim();
+
+    if (!searchValue) {
+        const input = document.getElementById("searchInput");
+        input.style.borderColor = "#e24a4a";
+        input.style.boxShadow = "0 0 4px rgba(226, 74, 74, 0.5)";
+
+        setTimeout(() => {
+            input.style.borderColor = "#333";
+            input.style.boxShadow = "none";
+        }, 1500);
+
+        return;
+    }
+    fetchUser(`/admin/users/search?query=${encodeURIComponent(searchValue)}&currentPage=1&limit=10`)
+});
+
+
+document.getElementById('clearBtn').addEventListener('click', ()=>{
+    document.getElementById("searchInput").value = ""
+    fetchUser(`/admin/users/search?currentPage=1&limit=10`)
+})
+
+
+
+
+function fetchUser(url){
+    fetch(url)
+        .then(res => {
+            if(!res.ok) throw new Error("Failed to fetch")
+            return res.json()
+        })
+        .then(data => {
+            const tbody = document.getElementById('tableBody')
+            tbody.innerHTML = ""
+            console.log(data)
+            if(data.result.length == 0){
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#999;">No users found</td></tr>`
+                return
+            }
+            let index = 0
+            data.result.forEach((user)=>{
+                tbody.innerHTML += `
+                        <tr>
+                            <td>${++index}</td>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td>${user.mobile ? user.mobile : ""}</td>
+                            <td>
+                                    ${user.isBlocked ? `<button class="status-btn blocked" onclick="active('${user._id}', this)">Blocked</button>` : `<button class="status-btn active" onclick="block('${user._id}', this)">Active</button>`}
+                                    
+                            </td>
+                            <td>
+                                <a href="/admin/users/${user._id}/edit"><button class="action-btn">Edit</button></a>
+                                <button class="action-btn delete">Delete</button>
+                            </td>
+                        </tr>
+            `
+            })
+
+            const pagination = document.querySelector('.pagination-container')
+            console.log(pagination)
+            pagination.innerHTML = `
+                <div class="pagination-info">1 of ${data.totalPages} Pages</div>
+                    <div class="pagination-controls">
+                        <a href="/admin/users/search?currentPage=${data.currentPage-1}&limit=10"><button class="pagination-btn ${data.currentPage>1? "" : "disabled"}">&lt;</button></a>
+                        <div class="pagination-numbers">
+                            <button class="pagination-number">${data.currentPage}</button>
+                        </div>
+                        <a href="/admin/users/search?currentPage=${data.currentPage+1}&limit=10"><button class="pagination-btn ${data.currentPage<data.totalPages? "":"disabled"}">&gt;</button></a>
+                    </div>
+            `
+            
+
+        })
+        .catch(error => console.log(error))
+}
+
+
+
+
+
+    function active(id, button){
+            fetch(`/admin/users/${id}/active`,{
+                method:'PATCH',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify({isBlocked:false})
+            })
+            .then(response => {
+                if(!response.ok){
+                    throw new Error("Failed to fetch")
+                }
+
+                
+                button.classList.remove('blocked')
+                button.classList.add('active')
+                button.textContent = 'Active'
+
+                button.setAttribute('onclick', `block('${id}', this)`)
+            })
+            .catch(error=>{
+                console.log("Error", error)
+            })
+    }
+
+    function block(id, button){
+            fetch(`/admin/users/${id}/block`,{
+                method:'PATCH',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify({isBlocked:true})
+            })
+            .then(response => {
+                if(!response.ok){
+                    throw new Error("Failed to fetch")
+                }
+                
+                button.classList.remove('active')
+                button.classList.add('blocked')
+                button.textContent = 'Blocked'
+
+                button.setAttribute('onclick', `active('${id}', this)`)
+            })
+            .catch(error => {
+                console.log("Error", error)
+            })
+    }
+</script>

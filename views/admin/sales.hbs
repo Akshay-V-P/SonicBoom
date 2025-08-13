@@ -1,0 +1,338 @@
+
+    <style>
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .account-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* Sales Report Section */
+        .sales-report-section {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .report-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .export-btn {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .report-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .report-table-container {
+            overflow-x: auto;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-header th {
+            padding: 15px 12px;
+            text-align: left;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: 500;
+            border-bottom: 1px solid #333;
+            white-space: nowrap;
+        }
+        
+        .table-row {
+            border-bottom: 1px solid #333;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-row td {
+            padding: 15px 12px;
+            font-size: 14px;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        
+        .pagination {
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pagination-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination-btn:disabled {
+            background-color: #1a1a1a;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background-color: #4a90e2;
+        }
+
+        @media (max-width: 768px) {
+            .sales-report-section {
+                padding: 20px;
+            }
+
+            .report-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .report-filters {
+                justify-content: space-between;
+            }
+
+            .filter-select {
+                flex: 1;
+            }
+            
+            .report-table,
+            .report-table thead,
+            .report-table tbody,
+            .report-table th,
+            .report-table td,
+            .report-table tr {
+                display: block;
+            }
+            
+            .report-table thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+
+            .report-table tr {
+                border: 1px solid #333;
+                margin-bottom: 10px;
+                padding: 10px;
+                border-radius: 8px;
+            }
+
+            .report-table td {
+                border: none;
+                position: relative;
+                padding: 8px 0 8px 30%;
+                text-align: right;
+            }
+
+            .report-table td:before {
+                content: attr(data-label) ": ";
+                position: absolute;
+                left: 10px;
+                width: 28%;
+                padding-right: 10px;
+                white-space: nowrap;
+                color: #666;
+                font-size: 12px;
+                text-transform: uppercase;
+                text-align: left;
+            }
+        }
+        
+      
+    </style>
+        <input type="text" id="pageName" value="sales" hidden>
+            <div class="header">
+                <h1 class="page-title">Sales Report</h1>
+                <button class="account-btn">Account</button>
+            </div>
+
+            <div class="sales-report-section">
+                <div class="report-actions">
+                    <button class="export-btn">Export</button>
+                    <div class="report-filters">
+                        <select class="filter-select">
+                            <option>Sales</option>
+                        </select>
+                        <select class="filter-select">
+                            <option>Year</option>
+                        </select>
+                        <select class="filter-select">
+                            <option>Month</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="report-table-container">
+                    <table class="report-table">
+                        <thead class="table-header">
+                            <tr>
+                                <th>Buyer</th>
+                                <th>Product Name</th>
+                                <th>Product Id</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>GST</th>
+                                <th>Category</th>
+                                <th>Unit/Type</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="table-row">
+                                <td data-label="Buyer">Megan</td>
+                                <td data-label="Product Name">GTA V</td>
+                                <td data-label="Product Id">#23712323e</td>
+                                <td data-label="Qty">1</td>
+                                <td data-label="Price">9000</td>
+                                <td data-label="GST">18%</td>
+                                <td data-label="Category">Action</td>
+                                <td data-label="Unit/Type">N/A</td>
+                                <td data-label="Total">9999</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td data-label="Buyer">Merin</td>
+                                <td data-label="Product Name">Spiderman</td>
+                                <td data-label="Product Id">#23712323e</td>
+                                <td data-label="Qty">1</td>
+                                <td data-label="Price">10000</td>
+                                <td data-label="GST">18%</td>
+                                <td data-label="Category">Adventure</td>
+                                <td data-label="Unit/Type">N/A</td>
+                                <td data-label="Total">115000</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td data-label="Buyer">David</td>
+                                <td data-label="Product Name">GTA V</td>
+                                <td data-label="Product Id">#23712323e</td>
+                                <td data-label="Qty">1</td>
+                                <td data-label="Price">9000</td>
+                                <td data-label="GST">18%</td>
+                                <td data-label="Category">Action</td>
+                                <td data-label="Unit/Type">N/A</td>
+                                <td data-label="Total">9999</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td data-label="Buyer">Shijas</td>
+                                <td data-label="Product Name">Spiderman</td>
+                                <td data-label="Product Id">#23712323e</td>
+                                <td data-label="Qty">1</td>
+                                <td data-label="Price">100000</td>
+                                <td data-label="GST">18%</td>
+                                <td data-label="Category">Adventure</td>
+                                <td data-label="Unit/Type">N/A</td>
+                                <td data-label="Total">115000</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td data-label="Buyer">Merin</td>
+                                <td data-label="Product Name">GTA V</td>
+                                <td data-label="Product Id">#23712323e</td>
+                                <td data-label="Qty">1</td>
+                                <td data-label="Price">9000</td>
+                                <td data-label="GST">18%</td>
+                                <td data-label="Category">Action</td>
+                                <td data-label="Unit/Type">N/A</td>
+                                <td data-label="Total">9999</td>
+                            </tr>
+                            <tr class="table-row">
+                                <td data-label="Buyer">David</td>
+                                <td data-label="Product Name">Spiderman</td>
+                                <td data-label="Product Id">#23712323e</td>
+                                <td data-label="Qty">1</td>
+                                <td data-label="Price">100000</td>
+                                <td data-label="GST">18%</td>
+                                <td data-label="Category">Adventure</td>
+                                <td data-label="Unit/Type">N/A</td>
+                                <td data-label="Total">115000</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <div class="pagination-info">
+                        1 of 10 Pages
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="pagination-btn" disabled>
+                            &lt;
+                        </button>
+                        <button class="pagination-btn active">
+                            1
+                        </button>
+                        <button class="pagination-btn">
+                            &gt;
+                        </button>
+                    </div>
+                </div>
+            </div>
