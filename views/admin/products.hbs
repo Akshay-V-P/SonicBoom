@@ -49,7 +49,7 @@
         }
 
         .refresh-btn {
-            background-color: #333;
+            background-color: #4a90e2;
             color: #fff;
             border: none;
             padding: 8px 16px;
@@ -109,23 +109,21 @@
         }
 
         .product-image-container {
-            position: relative;
-            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            padding:12px;
             overflow: hidden;
+            display: flex;
         }
 
         .product-image {
-            position: absolute;
             aspect-ratio: 3/4;
-            top: 0;
-            left: 0;
+            width: 150px;
             height: 100%;
             object-fit: cover;
-            border-bottom: 1px solid #333;
+            border-radius: 6px;
         }
 
         .product-info {
-            padding: 15px;
+            padding: 0 15px 15px;
             display: flex;
             flex-direction: column;
             flex-grow: 1;
@@ -136,7 +134,7 @@
             color: #fff;
             font-size: 10px;
             padding: 4px 8px;
-            border-radius: 12px;
+            border-radius: 2px;
             align-self: flex-start;
             margin-bottom: 10px;
         }
@@ -217,6 +215,61 @@
             font-weight: bold;
         }
 
+        .stock-details{
+            color: #a8a8a8;
+        }
+
+        /* Search Section Styles */
+        .search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+        }
+
+        .search input[type="text"] {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            padding: 8px 14px;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+            width: 250px;
+            transition: border-color 0.5s, box-shadow 0.5s;
+        }
+
+        .search input[type="text"]:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 4px rgba(74, 144, 226, 0.5);
+        }
+
+        .search a {
+            background-color: #4a90e2;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .search a:hover {
+            background-color: #6ab7ff;
+        }
+
+        #clearBtn{
+            background-color: #333;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border:  none;
+        }
+
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -241,13 +294,16 @@
     <input type="text" id="pageName" value="products" hidden>
             <div class="header">
                 <h1 class="page-title">Products</h1>
-                <button class="account-btn">Account</button>
             </div>
 
             <div class="products-header">
                 <div class="products-actions">
                     <a href="/admin/products/add"><button class="add-product-btn">Add Product</button></a>
-                    <button class="refresh-btn">Refresh</button>
+                    <div class="search">
+                        <input type="text" id="searchInput" placeholder="Search users...">
+                        <a href="#" id="searchBtn">Search</a>
+                        <button id="clearBtn">Clear</button>
+                    </div>
                 </div>
                 <div class="sort-filter">
                     <label for="sort-by">Sort</label>
@@ -260,7 +316,7 @@
                         <option value="asc">Ascending</option>
                         <option value="desc">Descending</option>
                     </select>
-                    <button class="refresh-btn">Filter</button>
+                    <button class="refresh-btn">Apply</button>
                 </div>
             </div>
 
@@ -271,15 +327,25 @@
                             <a href="/admin/products/{{this._id}}/edit"><button class="edit-btn">Edit</button></a>
                             <div class="product-image-container">
                                 <img src="{{this.thumbnail}}" class="product-image">
+                                <div style="margin-left: 12px; margin-top:6px">
+                                    <h3 class="product-title" style="margin-bottom: 12px;">Stocks</h3>
+                                    <p class="product-stock stock-details">Base Game - {{this.stock}} Nos</p>
+                                    {{#if products.varients}}{{#each products.varients}}<p class="product-stock stock-details">Edition - {{this.stock}} Nos</p>{{/each}}{{/if}}
+                                    <h3 class="product-title" style="margin-top: 12px; margin-bottom: 12px;">Prices</h3>
+                                    <p>
+                                        <span class="price-old stock-details">Base Game - </span>
+                                        <span class="price-new stock-details">₹{{this.offerPrice}}</span>
+                                    </p>
+                                    <p>
+                                        <span class="price-old stock-details">Edition - </span>
+                                        <span class="price-new stock-details">₹{{this.offerPrice}}</span>
+                                    </p>
+                                </div>
+                                
                             </div>
                             <div class="product-info">
-                                <span class="category">{{this.categoryId}}</span>
+                                <span class="category">{{this.categoryId.name}}</span>
                                 <h3 class="product-title">{{this.name}}</h3>
-                                <p class="product-stock">Stock - {{this.stock}} Nos</p>
-                                <p>
-                                    <span class="price-old">₹{{this.price}}</span>
-                                    <span class="price-new">₹{{this.offerPrice}}</span>
-                                </p>
                                 <p class="description">{{this.description}}</p>
                                 <button class="unlist-btn">Unlist</button>
                             </div>
@@ -296,11 +362,7 @@
             </div>
 
             <div class="pagination">
-                    {{#if (gt currentPage 1)}}
-                        <a href="?currentPage={{dec currentPage}}&limit=9" class="page-btn">Prev</a>
-                    {{/if}}
-                        <p class="page-btn active">{{currentPage}} of {{totalPages}}</p>
-                    {{#if (ls currentPage totalPages)}}
-                        <a href="?currentPage={{inc currentPage}}&limit=9" class="page-btn">Next</a>
-                    {{/if}}
+                        <a href="" class="page-btn">Prev</a>
+                        <p class="page-btn active"> of </p>
+                        <a href="?currentPage=&limit=9" class="page-btn">Next</a>
             </div>

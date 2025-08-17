@@ -178,6 +178,7 @@
 
 <div class="add-product-form">
     <h2 class="form-header">Product details</h2>
+     <input type="text" id="pageName" value="users" hidden>
 
     <form action="/admin/products/add" method="POST" enctype="multipart/form-data" id="addProductForm">
         <div class="form-grid">
@@ -192,9 +193,9 @@
             <div class="form-group">
                 <label>Category</label>
                 <select name="category" required>
-                    <option value="">Category</option>
-                    <option value="adventure">Adventure</option>
-                    <option value="rpg">RPG</option>
+                    {{#each categorys}}
+                    <option value="{{this._id}}">{{this.name}}</option>
+                    {{/each}}
                 </select>
             </div>
             <div class="form-group full-width">
@@ -218,9 +219,10 @@
         <div class="form-grid">
             <div class="form-group">
                 <label>Add Cover Image (16:9)</label>
-                <input type="file" name="coverImage" class="imageInput" accept="image/jpeg,image/png">
+                <input type="file" name="coverImage" id="coverImage" class="imageInput" 
+                    accept="image/jpeg,image/png" multiple>
                 <div class="image-preview" id="coverPreview">
-                    <span style="color:#777; font-size:13px;">No image selected</span>
+                    <span style="color:#777; font-size:13px;">No images selected</span>
                 </div>
             </div>
             <div class="form-group">
@@ -253,54 +255,28 @@
 
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("addProductForm");
-    const submitBtn = form.querySelector(".add-product-submit");
-
-    form.addEventListener("submit", function (e) {
-        // If already disabled, stop the second submission
-        if (submitBtn.disabled) {
-            e.preventDefault();
-            return;
-        }
-
-        // Disable the button & change text
-        submitBtn.disabled = true;
-        submitBtn.textContent = "Processing...";
-
-        // Optionally, add a spinner style if you want
-        submitBtn.style.opacity = "0.6";
-        submitBtn.style.cursor = "not-allowed";
-    });
-});
-// Check if Cropper loaded successfully
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     if (typeof Cropper === 'undefined') {
-        console.error('Cropper.js failed to load from CDN');
-        // Fallback: disable cropping functionality
-        document.querySelectorAll('input[type="file"]').forEach(input => {
-            input.addEventListener('change', function() {
-                if (this.files[0]) {
-                    const reader = new FileReader();
-                    const previewId = this.name === 'coverImage' ? 'coverPreview' : 'thumbnailPreview';
-                    reader.onload = function(e) {
-                        document.getElementById(previewId).innerHTML = `<img src="${e.target.result}">`;
-                    };
-                    reader.readAsDataURL(this.files[0]);
-                }
-            });
-        });
+        console.error('Cropper.js failed to load');
         return;
     }
 
-    // Original cropper functionality
     let cropper;
     let currentInput;
     let currentPreview;
-    let aspectRatios = {
-        coverImage: 16 / 9,
-        thumbnail: 3 / 4
-    };
+    let aspectRatios = { coverImage: 16 / 9, thumbnail: 3 / 4 };
+
+    let coverFiles = [];
+    let cropQueue = [];
+
+    function startCropQueue() {
+        if (cropQueue.length === 0) {
+            updateCoverPreview();
+            return;
+        }
+        const file = cropQueue.shift();
+        openCropper(file, 'coverImage');
+    }
 
     function openCropper(file, inputName) {
         currentInput = document.querySelector(`input[name="${inputName}"]`);
@@ -322,53 +298,83 @@ window.addEventListener('load', function() {
         reader.readAsDataURL(file);
     }
 
-    const coverInput = document.querySelector('input[name="coverImage"]');
-    if (coverInput) {
-        coverInput.addEventListener('change', function () {
-            if (this.files[0]) openCropper(this.files[0], 'coverImage');
-        });
-    }
+    document.getElementById('coverImage').addEventListener('change', function () {
+        if (this.files.length < 3) {
+            alert("Please select at least 3 images for the cover.");
+            this.value = "";
+            return;
+        }
+        cropQueue = Array.from(this.files);
+        coverFiles = [];
+        startCropQueue();
+    });
 
-    const thumbInput = document.querySelector('input[name="thumbnail"]');
-    if (thumbInput) {
-        thumbInput.addEventListener('change', function () {
-            if (this.files[0]) openCropper(this.files[0], 'thumbnail');
-        });
-    }
+    document.querySelector('input[name="thumbnail"]').addEventListener('change', function () {
+        if (this.files.length !== 1) {
+            alert("Please select exactly one thumbnail image.");
+            this.value = "";
+            return;
+        }
+        openCropper(this.files[0], 'thumbnail');
+    });
 
-    const cropConfirmBtn = document.getElementById('cropConfirm');
-    if (cropConfirmBtn) {
-        cropConfirmBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (!cropper) return;
+    document.getElementById('cropConfirm').addEventListener('click', function () {
+        if (!cropper) return;
+        const canvas = cropper.getCroppedCanvas();
+        if (!canvas) return;
 
-            const canvas = cropper.getCroppedCanvas();
-            if (!canvas) return;
+        canvas.toBlob(function (blob) {
+            const file = new File([blob], `${currentInput.name}_${Date.now()}.jpg`, { type: "image/jpeg" });
 
-            canvas.toBlob(function (blob) {
-                const file = new File([blob], "cropped.jpg", { type: "image/jpeg" });
-
+            if (currentInput.name === 'coverImage') {
+                coverFiles.push(file);
+                let dataTransfer = new DataTransfer();
+                coverFiles.forEach(f => dataTransfer.items.add(f));
+                currentInput.files = dataTransfer.files;
+                updateCoverPreview();
+                startCropQueue();
+            } else if (currentInput.name === 'thumbnail') {
                 let dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
                 currentInput.files = dataTransfer.files;
 
-                const previewReader = new FileReader();
-                previewReader.onload = function (e) {
-                    currentPreview.innerHTML = `<img src="${e.target.result}">`;
-                };
-                previewReader.readAsDataURL(file);
+                const preview = document.getElementById('thumbnailPreview');
+                preview.innerHTML = "";
+                const img = document.createElement('img');
+                img.style.maxWidth = "100px";
+                img.src = URL.createObjectURL(file);
+                preview.appendChild(img);
+            }
 
-                document.getElementById('cropModal').style.display = 'none';
-                cropper.destroy();
-                cropper = null;
-            }, 'image/jpeg');
-        });
-    }
-
-    const cropCancelBtn = document.getElementById('cropCancel');
-    if (cropCancelBtn) {
-        cropCancelBtn.addEventListener('click', function () {
             document.getElementById('cropModal').style.display = 'none';
+            cropper.destroy();
+            cropper = null;
+        }, 'image/jpeg');
+    });
+
+
+    document.getElementById('cropCancel').addEventListener('click', function () {
+        document.getElementById('cropModal').style.display = 'none';
+        if (cropper) {
+            cropper.destroy();
+            cropper = null;
+        }
+        startCropQueue(); 
+    });
+
+    function updateCoverPreview() {
+        const preview = document.getElementById('coverPreview');
+        preview.innerHTML = "";
+        coverFiles.forEach(file => {
+            const img = document.createElement('img');
+            img.style.maxWidth = "100px";
+            img.style.marginRight = "5px";
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+            preview.appendChild(img);
         });
     }
 });

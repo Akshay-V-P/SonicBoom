@@ -107,6 +107,10 @@
             font-size: 14px;
             cursor: pointer;
         }
+        .banner-preview{
+            aspect-ratio: 14/3;
+            background-color: #666;
+        }
         
         @media (max-width: 768px) {
             .banner-management-section {
@@ -167,12 +171,16 @@
                 <div class="banner-list">
                     <div class="banner-item">
                         <div class="banner-input-group">
+                            <div class="banner-preview">
+                            
+                            </div>
                             <span class="banner-label">Banner for home page</span>
                             <span class="max-size">Max size 1440px x 300px</span>
                         </div>
-                        <select class="banner-input">
-                            <option>Upload</option>
-                        </select>
+                        <div class="banner-input-group">
+                            <span class="banner-label">Upload</span>
+                            <input type="file" class="banner-input" value="14/05/2023">
+                        </div>
                         <div class="banner-input-group">
                             <span class="banner-label">Starting Date</span>
                             <input type="text" class="banner-input" value="14/05/2023">

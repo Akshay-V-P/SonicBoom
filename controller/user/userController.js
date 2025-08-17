@@ -1,9 +1,9 @@
 const { validationResult } = require('express-validator')
-const otpModel = require('../model/otpModel')
-const userModel = require('../model/userModel')
-const generateOtp = require('../helper/randomOtp')
+const otpModel = require('../../model/otpModel')
+const userModel = require('../../model/userModel')
+const generateOtp = require('../../helper/randomOtp')
 const bcrypt = require('bcrypt')
-const mailSender = require('../utils/mailSender')
+const mailSender = require('../../utils/mailSender')
 
 // Page loading functions
 const loadLogin = (req, res) => {

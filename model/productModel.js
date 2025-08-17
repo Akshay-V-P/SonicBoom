@@ -15,8 +15,8 @@ const productSchema = mongoose.Schema({
     },
     categoryId: {
         type:String,
-        // type: mongoose.Schema.Types.ObjectId,
-        // ref:'category',
+        type: mongoose.Schema.Types.ObjectId,
+        ref:'category',
         required:true
     },
     price: {
@@ -28,7 +28,8 @@ const productSchema = mongoose.Schema({
         required:true
     },
     coverImage: {
-        type: String,
+        type: [String],
+        default:[],
         required:true
     },
     thumbnail: {

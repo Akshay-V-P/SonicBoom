@@ -48,6 +48,7 @@ hbs.registerHelper('or', function(a, b) {
 
 hbs.registerHelper("ls", (a, b) => a < b);
 hbs.registerHelper("gt", (a, b) => a > b);
+hbs.registerHelper("eq", (a, b) => a.toString() === b.toString());
 
 // view engine
 app.set('view engine', 'hbs')
@@ -61,6 +62,9 @@ app.use(express.urlencoded({extended:true}))
 // Routes
 app.use('/user', userRoute)
 app.use('/admin', adminRoute)
+app.get('/',(req, res)=> {
+    res.redirect('/admin/orders')
+})
 
 connectDB()
 app.listen(process.env.PORT, ()=> console.log(`Server is listening on port ${process.env.PORT}`))

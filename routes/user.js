@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const userController = require('../controller/userController')
+const userController = require('../controller/user/userController')
 const { validate, validateSignin } = require('../middleware/validator')
 const passport = require('passport')
 const userAuth = require('../middleware/userAuth')

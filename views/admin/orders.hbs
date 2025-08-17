@@ -53,13 +53,18 @@
         }
 
         .search-input {
-            width: 200px;
+            width: 300px;
             padding: 8px 12px;
             border-radius: 4px;
             border: 1px solid #333;
             background-color: #2a2a2a;
             color: #fff;
             font-size: 14px;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #4a90e2;
+            box-shadow: 0 0 4px rgba(74, 144, 226, 0.5);
         }
 
         .search-btn {
@@ -194,6 +199,22 @@
         .pagination-btn.active {
             background-color: #4a90e2;
         }
+        #clearBtn{
+             background-color: #5f5f5f;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .my-swal-border {
+            border: 1px solid #404044 !important;
+            /* Change color and thickness */
+            border-radius: 15px !important;
+	    }
         
         @media (max-width: 768px) {
             .orders-header {
@@ -265,12 +286,12 @@
                     <div class="search-and-filter">
                         <select name="amount" id="amount" class="filter-select">
                             <option value="">Amount</option>
-                            <option value="asc">Ascending</option>
-                            <option value="desc">Descending</option>
+                            <option value="1">Ascending</option>
+                            <option value="-1">Descending</option>
                         </select>
                         <select name="payment" id="payment" class="filter-select">
                             <option value="">Payment</option>
-                            <option value="upi">UPI</option>
+                            <option value="UPI">UPI</option>
                             <option value="cod">COD</option>
                             <option value="bank">BANK</option>
                         </select>
@@ -278,9 +299,10 @@
                             <option value="">Status</option>
                             <option value="paid">Paid</option>
                             <option value="unpaid">Unpaid</option>
-                            <option value="cancelled">Cancelled</option>
+                            <option value="failed">Cancelled</option>
                         </select>
-                        <button class="search-btn">Search</button>
+                        <button class="search-btn" id="search">Search</button>
+                        <button id="clearBtn">Clear</button>
                     </div>
                 </div>
 
@@ -289,104 +311,182 @@
                         <thead class="table-header">
                             <tr>
                                 <th>
-                                    <input type="checkbox" id="selectAll">
+                                    NO
                                 </th>
                                 <th>Reference No</th>
                                 <th>Amount</th>
                                 <th>Payment</th>
+                                <th>Payment Status</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="tableBody">
                             <tr class="table-row">
-                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                <td class="checkbox-cell" data-label="All">1</td>
                                 <td data-label="Reference No">#112-11321112344</td>
                                 <td data-label="Amount">₹1249</td>
                                 <td data-label="Payment">UPI</td>
                                 <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
+                                <td data-label="Status"><span class="status-badge status-paid">Delivered</span></td>
                             </tr>
                             <tr class="table-row">
-                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                <td class="checkbox-cell" data-label="All">2</td>
                                 <td data-label="Reference No">#112-11321112344</td>
                                 <td data-label="Amount">₹2999</td>
                                 <td data-label="Payment">COD</td>
                                 <td data-label="Status"><span class="status-badge status-unpaid">Unpaid</span></td>
+                                <td data-label="Status"><span class="status-badge status-unpaid">Cancelled</span></td>
                             </tr>
                             <tr class="table-row">
-                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                <td class="checkbox-cell" data-label="All">3</td>
                                 <td data-label="Reference No">#112-11321112344</td>
                                 <td data-label="Amount">₹4563</td>
                                 <td data-label="Payment">BANK</td>
                                 <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
+                                <td data-label="Status"><span class="status-badge status-paid">Delivered</span></td>
                             </tr>
                             <tr class="table-row">
-                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
+                                
+                                <td class="checkbox-cell" data-label="All">4</td>
                                 <td data-label="Reference No">#112-11321112344</td>
                                 <td data-label="Amount">₹1999</td>
                                 <td data-label="Payment">UPI</td>
                                 <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
+                                <td data-label="Status"><span class="status-badge status-paid">Delivered</span></td>
                             </tr>
-                            <tr class="table-row">
-                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
-                                <td data-label="Reference No">#112-11321112344</td>
-                                <td data-label="Amount">₹1249</td>
-                                <td data-label="Payment">UPI</td>
-                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
-                            </tr>
-                            <tr class="table-row">
-                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
-                                <td data-label="Reference No">#112-11321112344</td>
-                                <td data-label="Amount">₹1249</td>
-                                <td data-label="Payment">UPI</td>
-                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
-                            </tr>
-                            <tr class="table-row">
-                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
-                                <td data-label="Reference No">#112-11321112353</td>
-                                <td data-label="Amount">₹1249</td>
-                                <td data-label="Payment">UPI</td>
-                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
-                            </tr>
-                            <tr class="table-row">
-                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
-                                <td data-label="Reference No">#112-11321112344</td>
-                                <td data-label="Amount">₹1249</td>
-                                <td data-label="Payment">UPI</td>
-                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
-                            </tr>
-                            <tr class="table-row">
-                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
-                                <td data-label="Reference No">#112-11321112344</td>
-                                <td data-label="Amount">₹1249</td>
-                                <td data-label="Payment">UPI</td>
-                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
-                            </tr>
-                            <tr class="table-row">
-                                <td class="checkbox-cell" data-label="All"><input type="checkbox"></td>
-                                <td data-label="Reference No">#112-11321112344</td>
-                                <td data-label="Amount">₹1249</td>
-                                <td data-label="Payment">UPI</td>
-                                <td data-label="Status"><span class="status-badge status-paid">Paid</span></td>
-                            </tr>
+                            
                         </tbody>
                     </table>
                 </div>
 
-                <div class="pagination">
-                    <div class="pagination-info">
-                        1 to 10 of 30 Pages
-                    </div>
-                    <div class="pagination-controls">
-                        <button class="pagination-btn">
-                            &lt;
-                        </button>
-                        <button class="pagination-btn active">
-                            1
-                        </button>
-                        <button class="pagination-btn">
-                            &gt;
-                        </button>
-                    </div>
+                <div class="pagination" id="pagination-container">
+                    
                 </div>
             </div>
 
+<script>
+    let current = 1
+    let lim = 10
+    document.addEventListener('DOMContentLoaded', function(){
+        current = localStorage.getItem('currentPage')
+        fetchOrders(`/admin/orders/search?currentPage=${current}&limit=10`)
+    })
+
+    document.getElementById('search').addEventListener('click', ()=>{
+        current = localStorage.getItem('ordersCurrentPage')
+        let url = `/admin/orders/search?currentPage=${current}`
+        const search = document.querySelector('.search-input').value.trim()
+        const filterAmount = document.getElementById('amount').value.trim()
+        const filterPayment = document.getElementById('payment').value.trim()
+        const filterStatus = document.getElementById('status').value.trim()
+        if(search){
+            url += `&limit=1&search=${search}`
+        }else{
+            url += `&limit=10`
+        }
+        if(filterAmount){
+            url += `&filterAmount=${filterAmount}`
+        }
+        if(filterPayment){
+            url += `&filterPayment=${filterPayment}`
+        }
+        if(filterStatus){
+            url += `&filterStatus=${filterStatus}`
+        }
+        fetchOrders(url)
+        
+    })
+
+    document.getElementById('clearBtn').addEventListener('click', ()=>{
+        const search = document.querySelector('.search-input')
+        const filterAmount = document.getElementById('amount')
+        const filterPayment = document.getElementById('payment')
+        const filterStatus = document.getElementById('status')
+        search.value = ''
+        filterAmount.value = ''
+        filterPayment.value = ''
+        filterStatus.value = ''
+        fetchOrders('/admin/orders/search?currentPage=1&limit=10')
+    })
+
+    document.querySelectorAll('.orderDetails').forEach((e)=>{
+        console.log(e)
+        e.addEventListener('click', ()=>{
+            console.log('Get in')
+            const value = e.querySelector('.userId').value
+            window.location.href = '/admin/orders/:id'
+        })
+    })
+
+    function fetchOrders(url){
+        fetch(url)
+            .then(res => {
+                if(!res.ok) throw new Error("Failed to fetch")
+                return res.json()
+            })
+            .then(data => {
+                const tbody = document.getElementById('tableBody')
+                tbody.innerHTML = ""
+                if(data.result.length == 0){
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#999;">No orders found</td></tr>`
+                    return
+                }
+                let index = 0
+                data.result.forEach((user)=>{
+                    tbody.innerHTML += `
+                        <tr class="table-row orderDetails">
+                            <td value="${user._id}" class="userId" hidden></td>
+                            <td class="checkbox-cell" data-label="All">${++index}</td>
+                            <td data-label="Reference No">${user.transactionId}</td>
+                            <td data-label="Amount">₹${user.total}</td>
+                            <td data-label="Payment">${user.paymentMethod}</td>
+                            <td data-label="Status"><span class="status-badge ${user.paymentStatus == 'paid'? 'status-paid': 'status-unpaid'}">${user.paymentStatus}</span></td>
+                            <td data-label="Status"><span class="status-badge ${user.status.toLowerCase() == 'cancelled'? 'status-unpaid': 'status-paid'}">${user.status}</span></td>
+                        </tr>`
+                })
+
+                document.querySelectorAll('.orderDetails').forEach((e)=>{
+                    e.addEventListener('click', ()=>{
+                        console.log('Get in')
+                        const value = e.querySelector('.userId').value
+                        window.location.href = '/admin/orders/:id'
+                    })
+                })
+
+                current = data.currentPage
+                localStorage.setItem('ordersCurrentPage', current)
+                const pagination = document.getElementById('pagination-container')
+                
+                // setting url for next Page
+                let tempUrl = new URL(url, window.location.origin);
+                let currentPage = parseInt(tempUrl.searchParams.get("currentPage"), 10);
+                tempUrl.searchParams.set("currentPage", currentPage+1);
+
+                let nextUrl = tempUrl.pathname + '?' + tempUrl.searchParams.toString();
+                
+                // setting url for previous page
+                tempUrl = new URL(url, window.location.origin);
+                currentPage = parseInt(tempUrl.searchParams.get("currentPage"), 10);
+                tempUrl.searchParams.set("currentPage", currentPage-1);
+
+                let prevUrl = tempUrl.pathname + '?' + tempUrl.searchParams.toString();
+
+                
+                pagination.innerHTML = `
+                    <div class="pagination-info">
+                        ${data.currentPage} to ${data.totalPages} Pages
+                    </div>
+                    <div class="pagination-controls">
+                        ${data.currentPage>1? `<button onclick="fetchOrders('${prevUrl}')" class="pagination-btn ${data.currentPage>1? "" : "disabled"}">&lt;</button>` : ''}
+                        <button class="pagination-btn active">
+                            ${data.currentPage}
+                        </button>
+                        ${data.currentPage<data.totalPages ? `<button onclick="fetchOrders('${nextUrl}')" class="pagination-btn ${data.currentPage<data.totalPages? "":"disabled"}">&gt;</button>` : ''}
+                    </div>
+                `
+                
+
+            })
+            .catch(error => console.log(error))
+        }
+</script>

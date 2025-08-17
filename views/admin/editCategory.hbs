@@ -1,0 +1,454 @@
+<style>
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .account-btn {
+        background-color: #333;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .container{
+        width: 100%;
+        display: flex;
+        gap: 20px;
+    }
+
+    .page-title {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    /* Category Sections */
+    .category-list-section {
+        background-color: #1a1a1a;
+        padding: 30px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        margin-bottom: 30px;
+        width: 60%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .category-table-container {
+        overflow-x: auto;
+    }
+
+    .category-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .table-header th {
+        padding: 15px 12px;
+        text-align: left;
+        font-size: 12px;
+        color: #666;
+        text-transform: uppercase;
+        font-weight: 500;
+        border-bottom: 1px solid #333;
+        white-space: nowrap;
+    }
+
+    .table-row {
+        border-bottom: 1px solid #333;
+    }
+    
+    .table-row:last-child {
+        border-bottom: none;
+    }
+
+    .table-row td {
+        padding: 15px 12px;
+        font-size: 14px;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 20px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #4a90e2;
+        transition: .4s;
+        border-radius: 20px;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 16px;
+        width: 16px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+
+    input:checked + .slider {
+        background-color: #ccc;
+    }
+    
+    input:checked + .slider:before {
+        transform: translateX(20px);
+    }
+    
+    .action-btns {
+        display: flex;
+        gap: 10px;
+    }
+    
+    .action-btn {
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+    }
+
+    .category-add-section {
+        background-color: #1a1a1a;
+        padding: 30px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        margin-bottom: 30px;
+    }
+
+    .add-category-form-header {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 20px;
+    }
+
+    .category-form-group {
+        margin-bottom: 15px;
+    }
+
+    .category-form-group label {
+        font-size: 14px;
+        color: #ffffff;
+        font-weight: 500;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .category-form-group input,
+    .category-form-group textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #333;
+        border-radius: 4px;
+        background-color: #2a2a2a;
+        color: #fff;
+        font-size: 14px;
+        resize: vertical;
+    }
+
+    /* Error styling */
+    .error-message {
+        color: #ff4d4d;
+        font-size: 12px;
+        margin-top: 4px;
+        display: none;
+    }
+    
+    .add-category-btn {
+        background-color: #4a90e2;
+        color: #fff;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: auto;
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        gap: 10px;
+    }
+
+    .page-btn {
+        background-color: #4a90e2;
+        color: #fff;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 4px;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .page-btn:disabled {
+        background-color: #666;
+        cursor: not-allowed;
+    }
+
+    .page-info {
+        font-size: 14px;
+        color: #ccc;
+    }
+    
+    .active {
+        background-color: #4a90e2; /* Blue */
+    }
+
+    .blocked {
+        background-color: #e24a4a; /* Red */
+    }
+
+    .status-btn {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            color: white;
+    }
+
+    .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+.breadcrumb{
+    display: flex;
+    gap: 4px;
+}
+
+.icon{
+    padding-top: 2.5%;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+    @media (max-width: 768px) {
+        .category-list-section, .category-add-section {
+            padding: 20px;
+        }
+        .category-table,
+        .category-table thead,
+        .category-table tbody,
+        .category-table th,
+        .category-table td,
+        .category-table tr {
+            display: block;
+        }
+        
+        .category-table thead tr {
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        .category-table tr {
+            border: 1px solid #333;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .category-table td {
+            border: none;
+            position: relative;
+            padding: 8px 0 8px 30%;
+            text-align: right;
+        }
+
+        .category-table td:before {
+            content: attr(data-label) ": ";
+            position: absolute;
+            left: 10px;
+            width: 28%;
+            padding-right: 10px;
+            white-space: nowrap;
+            color: #666;
+            font-size: 12px;
+            text-transform: uppercase;
+            text-align: left;
+        }
+
+        .action-btns {
+            justify-content: flex-end;
+        }
+        
+        .add-category-btn {
+            width: 100%;
+        }
+
+        .container{
+            flex-direction: column;
+        }
+
+        .category-add-section{
+            width: 100%;
+        }
+
+        .category-list-section{
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="header">
+    <div class="breadcrumb">
+        <a href="/admin/category" style="text-decoration: none; color:white;"><h2 class="page-title">Categories</h2></a>
+            <span class="material-symbols-outlined icon">
+            arrow_forward_ios
+            </span> 
+        <h2 class="page-title">Edit Category</h2>
+    </div>
+    <button class="account-btn">Account</button>
+</div>
+<input type="text" id="pageName" value="category" hidden>
+<div class="category-add-section">
+    <h2 class="add-category-form-header">Update Category</h2>
+    <form id="editCategoryForm" novalidate>
+{{#if category}}
+        <input type="hidden" id="categoryId" value="{{category._id}}" hidden>
+
+        <div class="category-form-group">
+            <label for="categoryName">Category Information</label>
+            <input type="text" id="categoryName" value="{{category.name}}" placeholder="Type category name here..." required>
+            <div class="error-message" id="categoryNameError">Please enter a category name.</div>
+        </div>
+
+        <div class="category-form-group">
+            <label for="description">Description</label>
+            <textarea id="description" rows="4" placeholder="Type category description here..." required>{{category.description}}</textarea>
+            <div class="error-message" id="descriptionError">Please enter a description.</div>
+        </div>
+
+        <div class="category-form-group">
+            <label for="offer">Offer</label>
+            <input type="text" id="offer" value="{{category.offer}}" placeholder="Enter offer..." required>
+            <div class="error-message" id="offerError">Please enter an offer.</div>
+        </div>
+
+        <div>
+            <button type="submit" class="add-category-btn">Save Changes</button>
+        </div>
+{{/if}}
+    </form>
+</div>
+
+<script>
+
+    document.getElementById("editCategoryForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    let valid = true;
+
+    const Id = document.getElementById('categoryId').value 
+
+    const categoryName = document.getElementById("categoryName");
+    const description = document.getElementById("description");
+    const offer = document.getElementById("offer");
+    const saveBtn = document.querySelector(".add-category-btn");
+
+    // Reset button state before validation
+    saveBtn.disabled = false;
+    saveBtn.innerHTML = "Save Changes";
+
+    if (categoryName.value.trim() === "") {
+        document.getElementById("categoryNameError").style.display = "block";
+        valid = false;
+    } else {
+        document.getElementById("categoryNameError").style.display = "none";
+    }
+
+    if (description.value.trim() === "") {
+        document.getElementById("descriptionError").style.display = "block";
+        valid = false;
+    } else {
+        document.getElementById("descriptionError").style.display = "none";
+    }
+
+    if (offer.value.trim() === "") {
+        document.getElementById("offerError").style.display = "block";
+        valid = false;
+    } else {
+        document.getElementById("offerError").style.display = "none";
+    }
+
+    if (!valid) return;
+
+    // Disable button & show processing animation
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = `<span class="spinner"></span> Processing...`;
+
+    const payload = {
+        name: categoryName.value.trim(),
+        description: description.value.trim(),
+        offer: offer.value.trim()
+    };
+
+    fetch(`/admin/category?_id=${Id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Failed to update category");
+        return res.json();
+    })
+    .then(() => {
+        Swal.fire({
+            title: "Done",
+            background: "#242428",
+            text: "Category updated successfully",
+            icon: "success",
+            customClass: { popup: 'my-swal-border' }
+        }).then(() => {
+            window.location.href = "/admin/category";
+        });
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Error updating category");
+        // Re-enable button if error
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = "💾 Save Changes";
+    });
+});
+
+</script>
