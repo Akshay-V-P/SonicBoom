@@ -477,11 +477,11 @@
                         ${data.currentPage} to ${data.totalPages} Pages
                     </div>
                     <div class="pagination-controls">
-                        ${data.currentPage>1? `<button onclick="fetchOrders('${prevUrl}')" class="pagination-btn ${data.currentPage>1? "" : "disabled"}">&lt;</button>` : ''}
+                        <button onclick="fetchOrders('${prevUrl}')" class="pagination-btn" style="${data.currentPage>1? "" : "display:none;"}">&lt;</button>
                         <button class="pagination-btn active">
                             ${data.currentPage}
                         </button>
-                        ${data.currentPage<data.totalPages ? `<button onclick="fetchOrders('${nextUrl}')" class="pagination-btn ${data.currentPage<data.totalPages? "":"disabled"}">&gt;</button>` : ''}
+                        <button onclick="fetchOrders('${nextUrl}')" class="pagination-btn" style="${data.currentPage<data.totalPages? "":"display:none;"}">&gt;</button>
                     </div>
                 `
                 

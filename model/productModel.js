@@ -52,10 +52,11 @@ const productSchema = mongoose.Schema({
     },
     variants: {
         type: [{
-            name: { type: String, require: true },
-            price: { type: Number, require: true },
-            thumbnail: { type: String, require: true },
-            stock:{type:String, require:true}
+            name: { type: String, required: true },
+            price: { type: Number, required: true },
+            offerPrice: { type: Number, required: true },
+            thumbnail: { type: String, required: true },
+            stock:{type:Number, required:true}
         }],
         default:[],
         required:true

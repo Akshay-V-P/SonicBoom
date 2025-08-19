@@ -39,10 +39,16 @@ router.patch('/users/:id/active', userController.changeUserStatus)
 // products
 router.route('/products')
     .get(productController.loadProducts)
+router.get('/products/show', productController.loadProductsShow)
+
 router.route('/products/add')
     .get(productController.loadProductsAdd)
-    .post(upload.fields([{name:'coverImage', maxCount:5},{name:'thumbnail', maxCount:1}]), productController.addProduct)
-router.get('/products/:_id/edit', productController.editProduct)
+    .post(upload, productController.addProduct)
+router.route('/products/:_id/edit')
+    .get(productController.editProduct)
+    .patch(upload, productController.updateProduct)
+
+
 
 // orders
 router.route('/orders')

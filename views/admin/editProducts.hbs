@@ -156,6 +156,10 @@
         .form-actions {
             margin-top: 30px;
             text-align: right;
+            justify-content: end;
+            display: flex;
+            padding-right: 10%;
+            margin-bottom: 24px;
         }
 
         .add-product-submit {
@@ -233,6 +237,38 @@
         position: relative;
     }
 
+    .editionThumb{
+        max-width: 280px;
+    }
+
+    /* Add this to your existing <style> block on the form page */
+
+    .add-product-submit {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .add-product-submit:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+    }
+
+    .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: #fff;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 10px;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -266,21 +302,23 @@
             </div>
                 <button class="account-btn">Account</button>
             </div>
-            <input type="text" id="pageName" value="products" hidden>
+            <input type="text" id="pageName" name="product" value="products" hidden>
     {{#if product}}
-            <form class="edit-product-form">
+            <form class="edit-product-form" action="/admin/products/edit" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <h2 class="form-section-title">Product details</h2>
                 </div>
 
+                <input type="text" id="productId" name="productId" value="{{product._id}}" hidden>
+
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="productName">Product Name</label>
-                        <input type="text" id="productName" value="{{product.name}}">
+                        <input type="text" id="productName" name="name" value="{{product.name}}">
                     </div>
                     <div class="form-group">
                         <label for="developer">Developer</label>
-                        <input type="text" id="developer" value="{{product.developer}}">
+                        <input type="text" id="developer" name="developer" value="{{product.developer}}">
                     </div>
                     <div class="form-group">
                         <label for="category">Category</label>
@@ -292,19 +330,19 @@
                     </div>
                     <div class="form-group full-width">
                         <label for="description">Description</label>
-                        <textarea id="description">{{product.description}}</textarea>
+                        <textarea id="description" name="description">{{product.description}}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="price">Price</label>
-                        <input type="text" id="price" value="{{product.price}}">
+                        <input type="text" id="price" name="price" value="{{product.price}}">
                     </div>
                     <div class="form-group">
                         <label for="offer">Offer</label>
-                        <input type="text" id="offer" value="{{product.offerPrice}}">
+                        <input type="text" id="offer" name="offerPrice" value="{{product.offerPrice}}">
                     </div>
                     <div class="form-group">
                         <label for="stock">Stock</label>
-                        <input type="text" id="offer" value="{{product.stock}}">
+                        <input type="text" id="offer" name="stock" value="{{product.stock}}">
                     </div>
                     
                 </div>
@@ -363,19 +401,39 @@
                 </div>
                 <button type="button" class="add-edition-btn">Add Edition</button>
                 <div class="form-actions">
-                    <button class="add-product-submit">Add Product</button>
+                    <button type="submit" class="add-product-submit">Update</button>
                 </div>
     {{/if}}
             </form>
         </main>
     </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 <script>
+// Add styles for validation errors
+const style = document.createElement('style');
+style.innerHTML = `
+    .form-group input.error,
+    .form-group select.error,
+    .form-group textarea.error {
+        border-color: #e57373; /* A soft red for dark mode */
+    }
+    .error-message {
+        color: #ef5350;
+        font-size: 13px;
+        margin-top: 6px;
+        display: block;
+    }
+`;
+document.head.appendChild(style);
+
+
 window.addEventListener('DOMContentLoaded', function () {
     let cropper;
     let currentImageElement;
     let currentType;
+    let currentEditionIndex; // Keep track of edition index for cropping
     const aspectRatios = { cover: 16 / 9, thumbnail: 3 / 4, edition: 3 / 4 };
 
     // Hidden file input
@@ -407,7 +465,7 @@ window.addEventListener('DOMContentLoaded', function () {
     const cropConfirmBtn = modal.querySelector('#cropConfirm');
     const cropCancelBtn = modal.querySelector('#cropCancel');
 
-    // ✅ Attach listeners to all current and future "Change" buttons
+    
     function attachCropListeners() {
         document.querySelectorAll('.image-upload-box .remove-btn, .thumbnail .remove-btn').forEach(btn => {
             btn.onclick = function (e) {
@@ -415,17 +473,23 @@ window.addEventListener('DOMContentLoaded', function () {
                 currentImageElement = this.nextElementSibling;
                 const labelText = this.parentElement.querySelector('p')?.innerText.toLowerCase() || '';
 
-                if (labelText.includes('cover')) currentType = 'cover';
-                else if (labelText.includes('thumbnail') && this.closest('.edit-edition-container')) currentType = 'edition';
-                else currentType = 'thumbnail';
+                if (labelText.includes('cover')) {
+                    currentType = 'cover';
+                } else if (this.closest('.edit-edition-container')) {
+                    currentType = 'edition';
+                    currentEditionIndex = currentImageElement.dataset.index; 
+                } else {
+                    currentType = 'thumbnail';
+                }
 
                 fileInput.click();
             };
         });
     }
-    attachCropListeners(); // initial
 
-    // File input → open cropper
+    attachCropListeners();
+
+    
     fileInput.addEventListener('change', function () {
         if (this.files.length !== 1) return;
         const file = this.files[0];
@@ -444,37 +508,47 @@ window.addEventListener('DOMContentLoaded', function () {
         reader.readAsDataURL(file);
     });
 
-    // Confirm crop
     cropConfirmBtn.addEventListener('click', function () {
         if (!cropper) return;
         const canvas = cropper.getCroppedCanvas();
         canvas.toBlob(function (blob) {
             const file = new File([blob], `${currentType}_${Date.now()}.jpg`, { type: "image/jpeg" });
 
-            // Update preview
             currentImageElement.src = URL.createObjectURL(file);
 
-            // Hidden input
-            let hiddenInput = document.querySelector(`input[name="${currentType}Image"]`);
-            if (!hiddenInput) {
-                hiddenInput = document.createElement('input');
-                hiddenInput.type = 'file';
-                hiddenInput.name = `${currentType}Image`;
-                hiddenInput.style.display = 'none';
-                document.querySelector('form').appendChild(hiddenInput);
+            let hiddenInput;
+            if (currentType === "edition") {
+                hiddenInput = document.querySelector(`input[name="variants[${currentEditionIndex}][thumbnail]"]`);
+                if (!hiddenInput) {
+                    hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'file';
+                    hiddenInput.name = `variants[${currentEditionIndex}][thumbnail]`;
+                    hiddenInput.style.display = 'none';
+                    document.querySelector('form').appendChild(hiddenInput);
+                }
+            } else {
+                const inputName = `${currentType}Image`;
+                hiddenInput = document.querySelector(`input[name="${inputName}"]`);
+                if (!hiddenInput) {
+                    hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'file';
+                    hiddenInput.name = inputName;
+                    hiddenInput.style.display = 'none';
+                    document.querySelector('form').appendChild(hiddenInput);
+                }
             }
+
             const dt = new DataTransfer();
             dt.items.add(file);
             hiddenInput.files = dt.files;
 
             modal.style.display = 'none';
-            cropper.destroy();
+            if (cropper) cropper.destroy();
             cropper = null;
             fileInput.value = '';
         }, 'image/jpeg');
     });
 
-    // Cancel crop
     cropCancelBtn.addEventListener('click', function () {
         modal.style.display = 'none';
         if (cropper) {
@@ -484,45 +558,213 @@ window.addEventListener('DOMContentLoaded', function () {
         fileInput.value = '';
     });
 
-    // ✅ Add edition + rebind cropper
+    let varIndex = -1;
+
     document.querySelector('.add-edition-btn').addEventListener('click', () => {
-        const form = document.querySelector('.edit-product-form');
-        form.insertAdjacentHTML('beforeend', `
-            <div class="edit-edition-container">
-                <h2 class="form-section-title">Editions</h2>
+        varIndex++;
+        const editionContainer = document.querySelector('.edit-product-form');
+        const newEditionHTML = `
+            <div class="edit-edition-container" style="border-top:1px solid #333; padding-top:30px; margin-top:20px;">
+                <h2 class="form-section-title">New Edition</h2>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="editionName">Product Name</label>
-                        <input type="text" id="editionName" value="GTA V Premium Edition">
-                    </div>
-                    <div class="form-group">
-                        <label for="editionDeveloper">Developer</label>
-                        <input type="text" id="editionDeveloper" value="Rockstar Games">
+                        <label for="editionName_${varIndex}">Edition Name</label>
+                        <input type="text" id="editionName_${varIndex}" name="variants[${varIndex}][name]" placeholder="Enter name">
                     </div>
                     <div class="form-group full-width">
-                        <label for="editionDescription">Description</label>
-                        <textarea id="editionDescription">Experienced entertainment blockbusters Grand Theft Auto V...</textarea>
+                        <label for="editionDescription_${varIndex}">Description</label>
+                        <textarea id="editionDescription_${varIndex}" name="variants[${varIndex}][description]" placeholder="Enter Description"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="editionPrice">Price</label>
-                        <input type="text" id="editionPrice" value="1700">
+                        <label for="editionPrice_${varIndex}">Price</label>
+                        <input type="text" id="editionPrice_${varIndex}" name="variants[${varIndex}][price]" placeholder="Enter Price">
                     </div>
                     <div class="form-group">
-                        <label for="editionOffer">Offer</label>
-                        <input type="text" id="editionOffer" value="15">
+                        <label for="editionOffer_${varIndex}">Offer (%)</label>
+                        <input type="text" id="editionOffer_${varIndex}" name="variants[${varIndex}][offerPrice]" placeholder="Enter Offer Price">
+                    </div>
+                    <div class="form-group">
+                        <label for="editionStock_${varIndex}">Stock</label>
+                        <input type="text" id="editionStock_${varIndex}" name="variants[${varIndex}][stock]" placeholder="Enter Stock">
                     </div>
                 </div>
                 <div class="image-upload-container">
                     <div class="thumbnail">
-                        <button class="remove-btn">Change</button>
-                        <img src="https://via.placeholder.com/100x150.png?text=Edition+Thumbnail" alt="Edition Thumbnail">
+                        <button type="button" class="remove-btn">Upload</button>
+                        <img src="https://via.placeholder.com/150x200.png?text=Edition+Thumb" 
+                            class="editionThumb" 
+                            data-index="${varIndex}" 
+                            alt="Edition Thumbnail">
                         <p>Thumbnail</p>
                     </div>
                 </div>
             </div>
-        `);
-        attachCropListeners(); // rebind cropper for new edition
+        `;
+        
+        editionContainer.insertAdjacentHTML('beforeend', newEditionHTML);
+        attachCropListeners();
     });
+});
+
+const form = document.querySelector('.edit-product-form');
+
+
+function clearErrors() {
+    form.querySelectorAll('.error-message').forEach(el => el.remove());
+    form.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+}
+
+
+function showError(inputElement, message) {
+    inputElement.classList.add('error');
+    const formGroup = inputElement.closest('.form-group');
+    if (formGroup) {
+        const error = document.createElement('span');
+        error.className = 'error-message';
+        error.textContent = message;
+        formGroup.appendChild(error);
+    }
+}
+
+
+function validateForm() {
+    let isValid = true;
+
+    // --- Main Product Fields ---
+    const productName = form.querySelector('#productName');
+    const developer = form.querySelector('#developer');
+    const description = form.querySelector('#description');
+    const price = form.querySelector('#price');
+    const offer = form.querySelector('input[name="offerPrice"]');
+    const stock = form.querySelector('input[name="stock"]');
+
+    if (productName.value.trim() === '') {
+        showError(productName, 'Product name cannot be empty.');
+        isValid = false;
+    }
+    if (developer.value.trim() === '') {
+        showError(developer, 'Developer name cannot be empty.');
+        isValid = false;
+    }
+    if (description.value.trim().length < 10) {
+        showError(description, 'Description must be at least 10 characters long.');
+        isValid = false;
+    }
+    if (price.value.trim() === '' || isNaN(price.value) || Number(price.value) <= 0) {
+        showError(price, 'Price must be a valid positive number.');
+        isValid = false;
+    }
+    if (offer.value.trim() !== '' && (isNaN(offer.value) || Number(offer.value) < 0 || Number(offer.value) >= Number(price.value))) {
+        showError(offer, 'Offer must be a number smaller than the price.');
+        isValid = false;
+    }
+    if (stock.value.trim() === '' || !/^\d+$/.test(stock.value) || parseInt(stock.value) < 0) {
+        showError(stock, 'Stock must be a non-negative integer (e.g., 0, 1, 50).');
+        isValid = false;
+    }
+
+    // --- Dynamically Added Edition Fields ---
+    document.querySelectorAll('.edit-edition-container').forEach(container => {
+        const editionName = container.querySelector('input[name*="[name]"]');
+        const editionPrice = container.querySelector('input[name*="[price]"]');
+        const editionStock = container.querySelector('input[name*="[stock]"]');
+        
+        if(editionName && editionName.value.trim() === ''){
+            showError(editionName, 'Edition name is required.');
+            isValid = false;
+        }
+        if(editionPrice && (editionPrice.value.trim() === '' || isNaN(editionPrice.value) || Number(editionPrice.value) <= 0)){
+            showError(editionPrice, 'Edition price must be a positive number.');
+            isValid = false;
+        }
+        if(editionStock && (editionStock.value.trim() === '' || !/^\d+$/.test(editionStock.value) || parseInt(editionStock.value) < 0)){
+            showError(editionStock, 'Edition stock must be a non-negative integer.');
+            isValid = false;
+        }
+    });
+
+
+    return isValid;
+}
+
+const submitButton = document.querySelector('.add-product-submit')
+
+form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    
+    // 1. Clear previous errors
+    clearErrors();
+    
+    // 2. Validate the form
+    const isFormValid = validateForm();
+
+    // 3. If not valid, stop the submission
+    if (!isFormValid) {
+        Swal.fire({
+            title: "Check Your Form",
+            background: "#242428",
+            color: "#fff",
+            text: "Please fix the errors before submitting.",
+            icon: "warning",
+            customClass: { popup: 'my-swal-border' }
+        });
+        return; 
+    }
+
+    const originalButtonText = submitButton.innerHTML;
+    
+    submitButton.disabled = true;
+    submitButton.innerHTML = `<span class="spinner"></span>Processing...`;
+
+    // 4. If valid, proceed with sending the data
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch(`/admin/products/${formData.get('productId')}/edit`, {
+            method: "PATCH", 
+            body: formData
+        });
+
+        if (response.ok) {
+            Swal.fire({
+                title: 'Success!',
+                text: 'Product updated successfully.',
+                icon: 'success',
+                background: "#242428",
+                color: "#fff",
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.href = "/admin/products";
+            });
+        } else {
+             const errorData = await response.json();
+             Swal.fire({
+                 title: "Update Failed",
+                 background: "#242428",
+                 color: "#fff",
+                 text: errorData.message || "An unknown error occurred.",
+                 icon: "error",
+                 customClass: { popup: 'my-swal-border' }
+             });
+
+             submitButton.disabled = false
+             submitButton.innerHTML = originalButtonText
+        }
+    } catch (error) {
+         Swal.fire({
+             title: "Network Error",
+             background: "#242428",
+             color: "#fff",
+             text: "Could not connect to the server.",
+             icon: "error",
+             customClass: { popup: 'my-swal-border' }
+         });
+
+         submitButton.disabled = false
+         submitButton.innerHTML = originalButtonText
+    }
 });
 </script>
 

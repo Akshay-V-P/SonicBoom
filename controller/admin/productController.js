@@ -2,19 +2,50 @@ const productModel = require('../../model/productModel')
 const categoryModel = require('../../model/categoryModel')
 const paginate = require('../../helper/pagination')
 
+
 const loadProducts = async (req, res) => {
     try {
-        const page = parseInt(req.query.currentPage) || 1
-        const limit = parseInt(req.query.limit) || 9
-        const result = await paginate(productModel, limit, page, null, JSON.stringify({ createdAt: -1 }), "categoryId")
-        const products = result.result
-        console.log(products)
-        if (products.length == 0) return res.render('admin/products', { layout: 'admin' })
-        console.log(result.currentPage, result.totalPages)
-        res.render('admin/products', {layout:'admin', products, currentPage:result.currentPage, totalPages:result.totalPages})
+        const categorys = await categoryModel.find()
+        console.log('Hello')
+        res.render('admin/products', {layout:'admin', categorys})
     } catch (error) {
         console.log(error)
         res.render('admin/500Error')
+    }
+}
+
+const loadProductsShow = async (req, res) => {
+    try {
+        const page = parseInt(req.query.currentPage) || 1
+        const limit = parseInt(req.query.limit) || 9
+        const search = req.query.search
+        const sort = req.query.sort || null
+        const filter = req.query.filter || null
+
+        const findQuery = {}
+        const sortQuery = {}
+
+        if (search) {
+            findQuery.name = search
+        }
+
+        if (filter) {
+            findQuery.categoryId = filter
+        }
+
+        if (sort) {
+            const parts = sort.split(":")
+            console.log(parts)
+            sortQuery[parts[0]] = parseInt(parts[1])
+        }
+
+        console.log(findQuery)
+
+        const result = await paginate(productModel, limit, page, JSON.stringify(findQuery), JSON.stringify(sortQuery), "categoryId")
+        res.status(200).json(result)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message:"Internal server error"})
     }
 }
 
@@ -30,10 +61,13 @@ const loadProductsAdd = async(req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        console.log("ENtered")
         const { name, developer, category, description, price, offerPrice, stock } = req.body
         const findProduct = await productModel.findOne({ name, description, price, offerPrice })
         if (findProduct) return res.redirect('/admin/products/add')
+        const thumbnailFile = req.files.find(file => file.fieldname === 'thumbnail');
+        const coverImagePaths = req.files
+            .filter(file => file.fieldname === 'coverImage')
+            .map(file => file.path);
         const newProduct = new productModel({
             name,
             developer,
@@ -42,8 +76,8 @@ const addProduct = async (req, res) => {
             price,
             offerPrice,
             stock,
-            coverImage: req.files.coverImage ? req.files.coverImage.map(file => file.path) : [],
-            thumbnail: req.files.thumbnail?.[0]?.path || null
+            coverImage: coverImagePaths,
+            thumbnail: thumbnailFile ? thumbnailFile.path : null
         })
         await newProduct.save()
         res.redirect('/admin/products')
@@ -66,9 +100,35 @@ const editProduct = async(req, res) => {
     }
 }
 
+const updateProduct = async (req, res) => {
+    try {
+        const { _id } = req.params
+        const data = { ...req.body }
+        delete data.productId
+        const fileMap = new Map()
+        req.files.forEach(file => fileMap.set(file.fieldname, file.path))
+
+        if (data.variants) {
+            data.variants.forEach((variant, index) => {
+                variant.thumbnail = fileMap.get(`variants[${index}][thumbnail]`)
+            })
+        }
+        
+        console.log(_id)
+        console.log(req.files)
+        res.status(404).json({message: "cant find"})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message: "cant find"})
+    }
+}
+
+
 module.exports = {
     loadProducts,
     loadProductsAdd,
     addProduct,
-    editProduct
+    editProduct,
+    updateProduct,
+    loadProductsShow
 }

@@ -169,6 +169,25 @@
         color: white;
         border: none;
     }
+
+    /* Spinner animation */
+    .spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #fff;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    margin-right: 8px;
+    vertical-align: middle;
+    }
+
+    @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+    }
+
 </style>
 
 <div class="header">
@@ -180,7 +199,7 @@
     <h2 class="form-header">Product details</h2>
      <input type="text" id="pageName" value="users" hidden>
 
-    <form action="/admin/products/add" method="POST" enctype="multipart/form-data" id="addProductForm">
+    <form action="/admin/products/add" method="POST" enctype="multipart/form-data" id="addProductForm" novalidate>
         <div class="form-grid">
             <div class="form-group">
                 <label>Product Name</label>
@@ -299,8 +318,8 @@ window.addEventListener('load', function () {
     }
 
     document.getElementById('coverImage').addEventListener('change', function () {
-        if (this.files.length < 3) {
-            alert("Please select at least 3 images for the cover.");
+        if (this.files.length < 1) {
+            alert("Please select at least 1 images for the cover.");
             this.value = "";
             return;
         }
@@ -378,4 +397,54 @@ window.addEventListener('load', function () {
         });
     }
 });
+
+document.getElementById("addProductForm").addEventListener("submit", function (e) {
+    let isValid = true;
+    let errors = [];
+
+    const name = this.querySelector("input[name='name']").value.trim();
+    const developer = this.querySelector("input[name='developer']").value.trim();
+    const category = this.querySelector("select[name='category']").value;
+    const description = this.querySelector("textarea[name='description']").value.trim();
+    const price = parseFloat(this.querySelector("input[name='price']").value);
+    const offerPrice = this.querySelector("input[name='offerPrice']").value.trim();
+    const stock = parseInt(this.querySelector("input[name='stock']").value);
+    const coverImage = this.querySelector("input[name='coverImage']").files;
+    const thumbnail = this.querySelector("input[name='thumbnail']").files;
+
+    if (!name) { isValid = false; errors.push("Product name is required."); }
+    if (!developer) { isValid = false; errors.push("Developer is required."); }
+    if (!category) { isValid = false; errors.push("Please select a category."); }
+    if (!description) { isValid = false; errors.push("Description is required."); }
+    if (isNaN(price) || price <= 0) { isValid = false; errors.push("Price must be positive."); }
+    if (offerPrice && (isNaN(offerPrice) || parseFloat(offerPrice) <= 0)) {
+        isValid = false; errors.push("Offer price must be positive.");
+    } else if (offerPrice && parseFloat(offerPrice) > price) {
+        isValid = false; errors.push("Offer price cannot be greater than price.");
+    }
+    if (isNaN(stock) || stock < 0) { isValid = false; errors.push("Stock must be non-negative."); }
+    if (!coverImage.length) { isValid = false; errors.push("At least one cover image required."); }
+    if (thumbnail.length !== 1) { isValid = false; errors.push("Exactly one thumbnail required."); }
+
+    
+    if (!isValid) {
+        e.preventDefault();
+        Swal.fire({
+			title: "Please fix the following errors:\n\n" + errors.join("\n"),
+			icon: icon,
+			background: "#242428",
+			color: 'white',
+			customClass: {
+				popup: 'my-swal-border'
+			}
+		});
+        return;
+    }
+
+    
+    const submitBtn = this.querySelector(".add-product-submit");
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = `<span class="spinner"></span> Submitting...`;
+});
+
 </script>

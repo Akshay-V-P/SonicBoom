@@ -180,7 +180,20 @@
             border-radius: 6px;
             font-size: 14px;
             cursor: pointer;
-            width: 100%;
+        }
+
+        .product-info .updatestock-btn {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .product-info .updatestock-btn:hover {
+            background-color: #6ab7ff;
         }
 
         #nothingToShow{
@@ -270,6 +283,57 @@
             border:  none;
         }
 
+        #btn-div{
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* --- Add these styles for the suggestion bar --- */
+
+        /* Make the search container a positioning context */
+        .search {
+            position: relative; /* This is crucial for positioning the suggestions */
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .suggestions-list {
+            display: none; /* Hidden by default */
+            position: absolute;
+            top: 100%; /* Position it right below the search input */
+            left: 0;
+            width: 100%; /* Make it the same width as the search container */
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-top: none; /* Avoid double border with the input */
+            border-radius: 0 0 6px 6px;
+            z-index: 1000; /* Ensure it appears above other content */
+            max-height: 250px; /* Limit height and allow scrolling */
+            overflow-y: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .suggestion-item {
+            padding: 10px 14px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            border-bottom: 1px solid #333;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none; /* Remove border from the last item */
+        }
+
+        .suggestion-item:hover {
+            background-color: #4a90e2; /* Highlight on hover */
+        }
+
+        .suggestions-list.active {
+            display: block; /* Show the list when it has the 'active' class */
+        }
+
         @media (max-width: 768px) {
             .header {
                 flex-direction: column;
@@ -303,51 +367,65 @@
                         <input type="text" id="searchInput" placeholder="Search users...">
                         <a href="#" id="searchBtn">Search</a>
                         <button id="clearBtn">Clear</button>
+
+                        <div id="suggestions-box" class="suggestions-list"></div>
                     </div>
                 </div>
                 <div class="sort-filter">
+                    <label for="filter-by">Filter</label>
+                    <select name="filter-by" id="filter-by">
+                        <option value="" disabled selected>Categorys</option>
+                        {{#each categorys}}
+                        <option value="{{this._id}}">{{this.name}}</option>
+                        {{/each}}
+                    </select>
                     <label for="sort-by">Sort</label>
                     <select name="sort-by" id="sort-by">
-                        <option value="name">Product Name</option>
-                        <option value="price">Price</option>
-                        <option value="date">Date Added</option>
+                        <option value="createdAt">Date Added</option>
+                        <option value="offerPrice">Price</option>
+                        <option value="stock">Stock</option>
                     </select>
                     <select name="sort-order" id="sort-order">
-                        <option value="asc">Ascending</option>
-                        <option value="desc">Descending</option>
+                        <option value="-1">Descending</option>
+                        <option value="1">Ascending</option>
                     </select>
-                    <button class="refresh-btn">Apply</button>
+                    <button class="refresh-btn" id="applyfilters">Apply</button>
                 </div>
             </div>
 
             <div class="product-grid">
-                {{#if products}}
+                {{!-- {{#if products}}
                     {{#each products}}
                         <div class="product-card">
-                            <a href="/admin/products/{{this._id}}/edit"><button class="edit-btn">Edit</button></a>
+                            <a href="/admin/products/${product._id}/edit"><button class="edit-btn">Edit</button></a>
                             <div class="product-image-container">
-                                <img src="{{this.thumbnail}}" class="product-image">
+                                <img src="${product.thumbnail}$" class="product-image">
                                 <div style="margin-left: 12px; margin-top:6px">
                                     <h3 class="product-title" style="margin-bottom: 12px;">Stocks</h3>
-                                    <p class="product-stock stock-details">Base Game - {{this.stock}} Nos</p>
-                                    {{#if products.varients}}{{#each products.varients}}<p class="product-stock stock-details">Edition - {{this.stock}} Nos</p>{{/each}}{{/if}}
+                                    <p class="product-stock stock-details">Base Game - ${product.stock} Nos</p>
+
+                                    {{#if products.varients}}{{#each products.varients}}<p class="product-stock stock-details">Edition - {{product.stock}} Nos</p>{{/each}}{{/if}}
+
                                     <h3 class="product-title" style="margin-top: 12px; margin-bottom: 12px;">Prices</h3>
                                     <p>
                                         <span class="price-old stock-details">Base Game - </span>
-                                        <span class="price-new stock-details">₹{{this.offerPrice}}</span>
+                                        <span class="price-new stock-details">₹${product.offerPrice}$</span>
                                     </p>
                                     <p>
                                         <span class="price-old stock-details">Edition - </span>
-                                        <span class="price-new stock-details">₹{{this.offerPrice}}</span>
+                                        <span class="price-new stock-details">₹${product.offerPrice}</span>
                                     </p>
                                 </div>
                                 
                             </div>
                             <div class="product-info">
-                                <span class="category">{{this.categoryId.name}}</span>
-                                <h3 class="product-title">{{this.name}}</h3>
-                                <p class="description">{{this.description}}</p>
-                                <button class="unlist-btn">Unlist</button>
+                                <span class="category">${product.categoryId.name}</span>
+                                <h3 class="product-title">${product.name}</h3>
+                                <p class="description">${product.description}</p>
+                                <div id="btn-div">
+                                    <button class="unlist-btn">Unlist</button>
+                                    <button class="updatestock-btn">Update Stock</button>
+                                </div>
                             </div>
                         </div>
                     {{/each}}
@@ -357,12 +435,221 @@
                         <p style="color: #666;">You can add a product</p>
                         <a href="/admin/products/add"><button class="add-product-btn">Add Product</button></a>
                     </div>
-                {{/if}}
+                {{/if}} --}}
                 
             </div>
 
-            <div class="pagination">
-                        <a href="" class="page-btn">Prev</a>
-                        <p class="page-btn active"> of </p>
-                        <a href="?currentPage=&limit=9" class="page-btn">Next</a>
+            <div class="pagination pagination-container">
+                
             </div>
+
+<script>
+    console.log(window.location.origin)
+    document.addEventListener('DOMContentLoaded', () => {
+        const url = `/admin/products/show?sort=createdAt:-1&currentPage=1&limit=9`
+        fetchProducts(url)
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const clearBtn = document.getElementById('clearBtn')
+        const filter = document.getElementById('filter-by')
+        const sort = document.getElementById('sort-by')
+        const sortOrder = document.getElementById('sort-order')
+
+        searchBtn.addEventListener('click', ()=>{
+            const searchValue = searchInput.value.trim()
+            if (!searchValue) {
+                const input = document.getElementById("searchInput");
+                input.style.borderColor = "#e24a4a";
+                input.style.boxShadow = "0 0 4px rgba(226, 74, 74, 0.5)";
+
+                setTimeout(() => {
+                    input.style.borderColor = "#333";
+                    input.style.boxShadow = "none";
+                }, 1500);
+
+                return;
+            }
+            fetchProducts(`/admin/products/show?search=${encodeURIComponent(searchValue)}&currentPage=1&limit=9`)
+        })
+
+
+        clearBtn.addEventListener('click', ()=>{
+            searchInput.value = ""
+            filter.selectedIndex = 0
+            sort.selectedIndex = 0
+            fetchProducts(`/admin/products/show?sort=createdAt:-1&currentPage=1&limit=9`)
+        })
+
+
+        document.getElementById('applyfilters').addEventListener('click', ()=>{
+            fetchProducts(searchUrl())
+        })
+
+
+
+    })
+
+    function searchUrl(){
+        const search = document.getElementById('searchInput').value.trim()
+        const filter = document.getElementById('filter-by').value.trim()
+        const sort = document.getElementById('sort-by').value.trim()
+        const sortOrder = document.getElementById('sort-order').value.trim()
+
+
+
+        let url = `/admin/products/show?`
+        if(search){
+            url += `search=${encodeURIComponent(search)}&`
+        }
+        if(filter){
+            url += `filter=${filter}&`
+        }
+        if(sort){
+            url += `sort=${sort}:${sortOrder}`
+        }
+        
+        const currentPage = localStorage.getItem('productsCurrentPage')
+        url += `currentPage=${currentPage}&limit=9`
+        return url
+    }
+
+
+    function fetchProducts(url){
+        fetch(url)
+            .then(res => {
+                if(!res.ok) throw new Error("Failed to fetch")
+                return res.json()
+            })
+            .then(data => {
+                const productGrid = document.querySelector(".product-grid")
+                productGrid.innerHTML = ""
+                console.log(data)
+                if(data.result.length == 0){
+                    productGrid.innerHTML = `<p style="text-align:center;color:#999;">No Products found</p>`
+                    return
+                }
+                let index = 0
+                let html = ''
+                data.result.forEach((product)=>{
+                    const variantStock = product.variants.map(variant => `<p class="product-stock stock-details">Edition - ${variant.stock} Nos</p>`).join("")
+                    html += `
+                            <div class="product-card">
+                                <a href="/admin/products/${product._id}/edit"><button class="edit-btn">Edit</button></a>
+                                <div class="product-image-container">
+                                    <img src="${product.thumbnail}" class="product-image">
+                                    <div style="margin-left: 12px; margin-top:6px">
+                                        <h3 class="product-title" style="margin-bottom: 12px;">Stocks</h3>
+                                        <p class="product-stock stock-details">Base Game - ${product.stock} Nos</p>
+                                        
+                                        ${variantStock}
+
+                                        <h3 class="product-title" style="margin-top: 12px; margin-bottom: 12px;">Prices</h3>
+                                        <p>
+                                            <span class="price-old stock-details">Base Game - </span>
+                                            <span class="price-new stock-details">₹${product.offerPrice}</span>
+                                        </p>
+                                        <p>
+                                            <span class="price-old stock-details">Edition - </span>
+                                            <span class="price-new stock-details">₹${product.offerPrice}</span>
+                                        </p>
+                                    </div>
+                                    
+                                </div>
+                                <div class="product-info">
+                                    <span class="category">${product.categoryId.name}</span>
+                                    <h3 class="product-title">${product.name}</h3>
+                                    <p class="description">${product.description}</p>
+                                    <div id="btn-div">
+                                        ${product.isActive ? `<button class="unlist-btn" onclick="active('${product._id}', this)">Unlist</button>` : `<button class="unlist-btn" onclick="">Unlist</button>`}
+                                        <button class="updatestock-btn">Update Stock</button>
+                                    </div>
+                                </div>
+                            </div>
+                `
+                })
+
+                productGrid.innerHTML = html
+                localStorage.setItem('productsCurrentPage', data.currentPage)
+
+                const pagination = document.querySelector('.pagination-container')
+                // setting url for next Page
+                let tempUrl = new URL(url, window.location.origin);
+                let currentPage = parseInt(tempUrl.searchParams.get("currentPage"), 10);
+                tempUrl.searchParams.set("currentPage", currentPage+1);
+
+                let nextUrl = tempUrl.pathname + '?' + tempUrl.searchParams.toString();
+                
+                // setting url for previous page
+                tempUrl = new URL(url, window.location.origin);
+                currentPage = parseInt(tempUrl.searchParams.get("currentPage"), 10);
+                tempUrl.searchParams.set("currentPage", currentPage-1);
+
+                let prevUrl = tempUrl.pathname + '?' + tempUrl.searchParams.toString();
+
+                
+                pagination.innerHTML = `
+                    <div class="pagination-controls">
+                        <button onclick="fetchProducts('${prevUrl}')" class="page-btn" style="${data.currentPage>1? "" : "display:none;"}">&lt;</button>
+                        <button class="page-btn active">
+                            ${data.currentPage} to ${data.totalPages} Pages
+                        </button>
+                        <button onclick="fetchProducts('${nextUrl}')" class="page-btn" style="${data.currentPage<data.totalPages? "":"display:none;"}">&gt;</button>
+                    </div>
+                `
+            }).catch(error => console.log(error))
+    }
+
+
+    function active(id, button){
+            fetch(`/admin/products/${id}/active`,{
+                method:'PATCH',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify({isActive:true})
+            })
+            .then(response => {
+                if(!response.ok){
+                    throw new Error("Failed to fetch")
+                }
+
+                
+                button.classList.remove('blocked')
+                button.classList.add('active')
+                button.textContent = 'Active'
+
+                button.setAttribute('onclick', `block('${id}', this)`)
+            })
+            .catch(error=>{
+                console.log("Error", error)
+            })
+    }
+
+    function block(id, button){
+            fetch(`/admin/products/${id}/block`,{
+                method:'PATCH',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify({isActive:false})
+            })
+            .then(response => {
+                if(!response.ok){
+                    throw new Error("Failed to fetch")
+                }
+                
+                button.classList.remove('active')
+                button.classList.add('blocked')
+                button.textContent = 'Blocked'
+
+                button.setAttribute('onclick', `active('${id}', this)`)
+            })
+            .catch(error => {
+                console.log("Error", error)
+            })
+    }
+</script>
+
+
+
+
