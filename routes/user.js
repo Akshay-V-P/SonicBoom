@@ -1,5 +1,9 @@
 const router = require('express').Router()
-const userController = require('../controller/user/userController')
+const userController = require('../controller/user/userAuthController')
+const landingController = require('../controller/user/landingController')
+const productPageController = require('../controller/user/productPageController')
+
+const shopController = require('../controller/user/shopController')
 const { validate, validateSignin } = require('../middleware/validator')
 const passport = require('passport')
 const userAuth = require('../middleware/userAuth')
@@ -18,7 +22,7 @@ router.route('/validate_otp')
     .get(userAuth.isSession, userController.resendOtp)
 router.post('/validate_login',validateSignin,userController.validateLogin)
 
-router.get('/landing_page',userAuth.isAuthenticated, userController.loadLandingPage)
+router.get('/landing_page', landingController.loadLandingPage) // userAuth.isAuthenticated,
 
 router.route('/forgot_password')
     .get(userAuth.isSession, userController.loadForgotPass)
@@ -38,5 +42,14 @@ router.get('/auth/google/callback',
     res.redirect('/user/landing_page')
   }
 )
+
+
+
+// shop router
+router.get('/shop', shopController.showShop)
+router.get('/shop/load', shopController.loadShopContents)
+
+// product details page
+router.get('/product_details', productPageController.showPage)
 
 module.exports = router

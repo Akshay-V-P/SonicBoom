@@ -1,5 +1,6 @@
 const { validationResult } = require('express-validator')
 const bcrypt = require('bcrypt')
+const userModel = require('../../model/userModel')
 
 
 const loadLogin = (req, res) => {

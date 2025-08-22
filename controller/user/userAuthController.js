@@ -15,10 +15,6 @@ const loadSignup = (req, res) => {
     res.render('user/signup')
 }
 
-const loadLandingPage = (req, res) => {
-    res.render('user/landingPage')
-}
-
 
 // Authentication functions
 const signup = async (req, res) => {
@@ -197,7 +193,6 @@ module.exports = {
     validateOtp,
     loginUser,
     validateLogin,
-    loadLandingPage,
     resendOtp,
     loadForgotPass,
     verifyEmail,

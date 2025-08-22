@@ -553,7 +553,6 @@
                             </td>
                             <td>
                                 <a href="/admin/users/{{this._id}}/edit"><button class="action-btn">Edit</button></a>
-                                <button class="action-btn delete">Delete</button>
                             </td>
                         </tr>
                         {{/each}}
@@ -634,7 +633,6 @@ function fetchUser(url){
                             </td>
                             <td>
                                 <a href="/admin/users/${user._id}/edit"><button class="action-btn">Edit</button></a>
-                                <button class="action-btn delete">Delete</button>
                             </td>
                         </tr>
             `
@@ -645,11 +643,11 @@ function fetchUser(url){
             pagination.innerHTML = `
                 <div class="pagination-info">1 of ${data.totalPages} Pages</div>
                     <div class="pagination-controls">
-                        <a href="/admin/users/search?currentPage=${data.currentPage-1}&limit=10"><button class="pagination-btn ${data.currentPage>1? "" : "disabled"}">&lt;</button></a>
+                        <a href="/admin/users/search?currentPage=${data.currentPage-1}&limit=10"><button class="pagination-btn" style="${data.currentPage>1? "" : "display:none;"}">&lt;</button></a>
                         <div class="pagination-numbers">
                             <button class="pagination-number">${data.currentPage}</button>
                         </div>
-                        <a href="/admin/users/search?currentPage=${data.currentPage+1}&limit=10"><button class="pagination-btn ${data.currentPage<data.totalPages? "":"disabled"}">&gt;</button></a>
+                        <a href="/admin/users/search?currentPage=${data.currentPage+1}&limit=10"><button class="pagination-btn" style="${data.currentPage<data.totalPages? "":"display:none;"}">&gt;</button></a>
                     </div>
             `
             
@@ -663,51 +661,92 @@ function fetchUser(url){
 
 
     function active(id, button){
-            fetch(`/admin/users/${id}/active`,{
-                method:'PATCH',
-                headers:{
-                    'Content-Type': 'application/json'
-                },
-                body:JSON.stringify({isBlocked:false})
-            })
-            .then(response => {
-                if(!response.ok){
-                    throw new Error("Failed to fetch")
-                }
+            Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to active the User",
+            icon: "info",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes",
+            background: "#242428",
+            customClass: {
+				popup: 'my-swal-border'
+			}
+            }).then((result) => {
+            if (result.isConfirmed) {
 
-                
-                button.classList.remove('blocked')
-                button.classList.add('active')
-                button.textContent = 'Active'
+                fetch(`/admin/users/${id}/active`,{
+                    method:'PATCH',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body:JSON.stringify({isBlocked:false})
+                })
+                .then(response => {
+                    if(!response.ok){
+                        throw new Error("Failed to fetch")
+                    }
 
-                button.setAttribute('onclick', `block('${id}', this)`)
-            })
-            .catch(error=>{
-                console.log("Error", error)
-            })
+                    
+                    button.classList.remove('blocked')
+                    button.classList.add('active')
+                    button.textContent = 'Active'
+
+                    button.setAttribute('onclick', `block('${id}', this)`)
+                })
+                .catch(error=>{
+                    console.log("Error", error)
+                })
+
+            }
+
+        });
+
     }
 
     function block(id, button){
-            fetch(`/admin/users/${id}/block`,{
-                method:'PATCH',
-                headers:{
-                    'Content-Type': 'application/json'
-                },
-                body:JSON.stringify({isBlocked:true})
-            })
-            .then(response => {
-                if(!response.ok){
-                    throw new Error("Failed to fetch")
-                }
-                
-                button.classList.remove('active')
-                button.classList.add('blocked')
-                button.textContent = 'Blocked'
 
-                button.setAttribute('onclick', `active('${id}', this)`)
-            })
-            .catch(error => {
-                console.log("Error", error)
-            })
+            Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to Block the User",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes",
+            background: "#242428",
+            customClass: {
+				popup: 'my-swal-border'
+			}
+            }).then((result) => {
+            if (result.isConfirmed) {
+
+                fetch(`/admin/users/${id}/block`,{
+                    method:'PATCH',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body:JSON.stringify({isBlocked:true})                                                       
+                })
+                .then(response => {
+                    if(!response.ok){
+                        throw new Error("Failed to fetch")
+                    }
+                    
+                    button.classList.remove('active')
+                    button.classList.add('blocked')
+                    button.textContent = 'Blocked'
+
+                    button.setAttribute('onclick', `active('${id}', this)`)
+                })
+                .catch(error => {
+                    console.log("Error", error)
+                })
+
+            }
+
+        });
+
     }
 </script>

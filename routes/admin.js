@@ -28,32 +28,34 @@ router.route('/dashboard')
 
 // user
 router.route('/users')
-    .get(userController.loadUsers)
-router.patch('/users/edit', userController.editUser)
+    .get(adminAuth.isAuthenticated,userController.loadUsers)
+router.patch('/users/edit',adminAuth.isAuthenticated, userController.editUser)
 router.route('/users/:id/edit')
-    .get(userController.loadUserEdit)
-router.get('/users/search', userController.searchUser)
-router.patch('/users/:id/block', userController.changeUserStatus)
-router.patch('/users/:id/active', userController.changeUserStatus)
+    .get(adminAuth.isAuthenticated,userController.loadUserEdit)
+router.get('/users/search',adminAuth.isAuthenticated, userController.searchUser)
+router.patch('/users/:id/block',adminAuth.isAuthenticated, userController.changeUserStatus)
+router.patch('/users/:id/active',adminAuth.isAuthenticated, userController.changeUserStatus)
 
 // products
 router.route('/products')
-    .get(productController.loadProducts)
-router.get('/products/show', productController.loadProductsShow)
+    .get(adminAuth.isAuthenticated,productController.loadProducts)
+router.get('/products/show',adminAuth.isAuthenticated, productController.loadProductsShow)
 
 router.route('/products/add')
-    .get(productController.loadProductsAdd)
-    .post(upload, productController.addProduct)
+    .get(adminAuth.isAuthenticated, productController.loadProductsAdd)
+    .post(adminAuth.isAuthenticated, upload, productController.addProduct)
 router.route('/products/:_id/edit')
-    .get(productController.editProduct)
-    .patch(upload, productController.updateProduct)
+    .get(adminAuth.isAuthenticated, productController.editProduct)
+    .patch(adminAuth.isAuthenticated, upload, productController.updateProduct)
+router.patch('/products/:id/active',adminAuth.isAuthenticated, productController.changeProductStatus)
+router.patch('/products/:id/block',adminAuth.isAuthenticated, productController.changeProductStatus)
 
 
 
 // orders
 router.route('/orders')
-    .get(orderController.loadOrders)
-router.get('/orders/search', orderController.showOrders)
+    .get(adminAuth.isAuthenticated, orderController.loadOrders)
+router.get('/orders/search',adminAuth.isAuthenticated, orderController.showOrders)
 
 // banners
 router.route('/banners')
@@ -70,13 +72,13 @@ router.route('/sales')
 
 // Category routes
 router.route('/category')
-    .get(categoryController.loadCategory)
-    .post(categoryController.addCategory)
-    .patch(categoryController.editCategory)
-router.get('/category/search', categoryController.showCategorys)
-router.get('/category/:id', categoryController.showDetails)
-router.patch('/category/:id/block', categoryController.changeCategoryStatus)
-router.patch('/category/:id/active', categoryController.changeCategoryStatus)
+    .get(adminAuth.isAuthenticated, categoryController.loadCategory)
+    .post(adminAuth.isAuthenticated, categoryController.addCategory)
+    .patch(adminAuth.isAuthenticated, categoryController.editCategory)
+router.get('/category/search',adminAuth.isAuthenticated, categoryController.showCategorys)
+router.get('/category/:id',adminAuth.isAuthenticated, categoryController.showDetails)
+router.patch('/category/:id/block',adminAuth.isAuthenticated, categoryController.changeCategoryStatus)
+router.patch('/category/:id/active',adminAuth.isAuthenticated, categoryController.changeCategoryStatus)
 
 // settings
 router.route('/settings')

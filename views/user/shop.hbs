@@ -1,0 +1,444 @@
+
+    <style>
+        body.no-scroll {
+            overflow: hidden;
+        }
+        .game-card {
+            background-color: #1E1E1E;
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #404044;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(70, 2, 2, 0.2), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        /* Custom checkbox */
+        .filter-checkbox {
+            appearance: none;
+            background-color: #333;
+            border: 1px solid #555;
+            border-radius: 4px;
+            width: 1.25rem;
+            height: 1.25rem;
+            cursor: pointer;
+            position: relative;
+            margin-right: 0.5rem;
+        }
+        .filter-checkbox:checked {
+            background-color: #6D28D9;
+            border-color: #8B5CF6;
+        }
+        .filter-checkbox:checked::after {
+            content: '✔';
+            position: absolute;
+            color: white;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+        }
+
+        .pagination {
+            padding-top: 20px;
+            border-top: 1px solid #333;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .pagination-info {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .pagination-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pagination-btn {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 6px;
+            min-width: 36px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination-btn:disabled {
+            background-color: #1a1a1a;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background-color: #6D28D9;
+        }
+
+        .button-wrapper{
+            position: absolute;
+        }
+        .my-swal-border {
+		border: 1px solid #404044 !important;
+		/* Change color and thickness */
+		border-radius: 15px !important;
+	}
+
+        @media (max-width:724px) {
+            .button-wrapper{
+                position: relative;
+                margin-top: 34px;
+                margin-left: 12px;
+            }
+        }
+
+    </style>
+
+<input type="text" id="message" value="{{message}}" placeholder="{{icon}}" hidden>
+        <!-- Search Bar -->
+        <section class="mb-8">
+            <div class="relative">
+                <input type="text" placeholder="Search for games..." class="w-full bg-[#1E1E1E] border border-[#404044] rounded-lg py-3 px-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500" id="search-input">
+                <div class="button-wrapper right-2 top-1/2 -translate-y-1/2">
+                    <button class=" bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-md font-semibold" id="search-btn">Search</button>
+                    <button class=" bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-md font-semibold" id="clear-btn">Clear</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Filters and Game Grid -->
+        <section>
+            <div class="flex justify-between items-center mb-6">
+                 <h2 class="text-2xl font-bold text-white">Browse Games</h2>
+                 <button id="filter-toggle" class="lg:hidden bg-[#1E1E1E] border border-[#404044] px-4 py-2 rounded-lg flex items-center space-x-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 12.414V17a1 1 0 01-1.447.894l-2-1A1 1 0 018 16v-3.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" /></svg>
+                    <span>Filters</span>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                <!-- Filters -->
+                <aside id="filter-sidebar" class="hidden lg:block lg:col-span-1 fixed lg:relative inset-0 bg-[#121212] z-50 p-6 lg:p-0 lg:bg-transparent overflow-y-auto">
+                    <div class="flex justify-between items-center mb-6 lg:hidden">
+                        <h3 class="text-xl font-bold">Filters</h3>
+                        <button id="close-filters">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-semibold mb-3">Category</h3>
+                            <div class="space-y-2">
+                                {{#each categorys}}
+                                <label class="flex items-center"><input type="checkbox" class="filter-checkbox category-check" name="categoryCheck" data-categoryId="{{this._id}}">{{this.name}}</label>
+                                {{/each}}
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold mb-3">Price</h3>
+                             <div class="space-y-2">
+                                <label class="flex items-center" ><input type="radio" data-min="0" data-max="500" name="offerPrice" class="filter-checkbox"> Under ₹500</label>
+                                <label class="flex items-center" ><input type="radio" data-min="500" data-max="1999" name="offerPrice" class="filter-checkbox"> ₹500 - ₹1999</label>
+                                <label class="flex items-center" ><input type="radio" data-min="2000" data-max="5000" name="offerPrice" class="filter-checkbox"> ₹2000 - ₹5000</label>
+                                <label class="flex items-center" ><input type="radio" data-min="5000" data-max="0" name="offerPrice" class="filter-checkbox"> Above ₹5000</label>
+                            </div>
+                        </div>
+                         <div>
+                            <h3 class="font-semibold mb-3">Sort by</h3>
+                             <div class="space-y-2">
+                                {{!-- <label class="flex items-center"><input type="radio" name="sort" class="filter-checkbox" checked> Popular</label> --}}
+                                <label class="flex items-center" ><input type="radio" data-sort="offerPrice:1" name="sort" class="filter-checkbox"> Price - Low to High</label>
+                                <label class="flex items-center" ><input type="radio" data-sort="offerPrice:-1" name="sort" class="filter-checkbox"> Price - High to Low</label>
+                                <label class="flex items-center" ><input type="radio" data-sort="ratings:-1" name="sort" class="filter-checkbox"> Top rated</label>
+                            </div>
+                        </div>
+                        <button id="apply-btn" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-md font-semibold">Apply</button>
+                        <button id="reset-btn" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-md font-semibold">Reset</button>
+                    </div>
+                </aside>
+
+                <!-- Game Grid -->
+                <div class="col-span-1 lg:col-span-3">
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-6 product-grid">
+                        <!-- Game Cards Here -->
+                        <div class="game-card p-3">
+                            <div class="aspect-[3/4] rounded-lg overflow-hidden">
+                                <img src="https://i.imgur.com/aO5wX6b.jpg" alt="Soulmask" class="w-full h-full object-cover">
+                            </div>
+                            <div class="pt-4">
+                                <p class="text-gray-400 text-sm">Base Game</p>
+                                <h3 class="font-semibold text-white truncate mt-1">Soulmask</h3>
+                                <p class="text-white font-semibold mt-1">₹2199</p>
+                                <p class="text-gray-500 text-sm line-through">₹5999</p>
+                            </div>
+                        </div>
+
+
+                         <div class="game-card p-3">
+                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/rX8sY9c.jpg" alt="Star Eversine" class="w-full h-full object-cover"></div>
+                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Star Eversine</h3><p class="text-white font-semibold mt-1">₹2199</p></div>
+                        </div>
+                         <div class="game-card p-3">
+                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/kZ6d7fL.jpg" alt="Boxville 2" class="w-full h-full object-cover"></div>
+                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Boxville 2</h3><p class="text-white font-semibold mt-1">₹1899</p></div>
+                        </div>
+                         <div class="game-card p-3">
+                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/jJ9f8vM.jpg" alt="Kingdom Come" class="w-full h-full object-cover"></div>
+                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Kingdom Come</h3><p class="text-white font-semibold mt-1">₹1199</p></div>
+                        </div>
+                        <div class="game-card p-3">
+                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/nQ0Q1oZ.jpg" alt="Nanomon" class="w-full h-full object-cover"></div>
+                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Nanomon</h3><p class="text-white font-semibold mt-1">₹2186</p></div>
+                        </div>
+                        <div class="game-card p-3">
+                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/pL2x3vV.jpg" alt="Wuchang" class="w-full h-full object-cover"></div>
+                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Wuchang: Fallen Feathers</h3><p class="text-white font-semibold mt-1">₹3199</p></div>
+                        </div>
+                        <div class="game-card p-3">
+                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/QkY6c8W.jpg" alt="Blades of Fire" class="w-full h-full object-cover"></div>
+                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Blades of Fire</h3><p class="text-white font-semibold mt-1">₹2199</p></div>
+                        </div>
+                         <div class="game-card p-3">
+                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/dZ9sN7G.jpg" alt="FNAF" class="w-full h-full object-cover"></div>
+                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Five Nights at Freddy's</h3><p class="text-white font-semibold mt-1">₹4800</p></div>
+                        </div>
+                         <div class="game-card p-3">
+                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/iR8vL6p.jpg" alt="Diesel Drive" class="w-full h-full object-cover"></div>
+                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Diesel Drive</h3><p class="text-white font-semibold mt-1">₹2199</p></div>
+                        </div>
+                    </div>
+                    
+                    <div class="pagination pagination-container">
+                        
+                    </div>
+                </div>
+            </div>
+        </section>
+    
+    <script>
+
+        let categoryCheckBoxes
+        let priceCheckBox
+        let sortCheckBox
+
+        document.addEventListener('DOMContentLoaded', ()=>{
+            const url = `/user/shop/load?sort=createdAt:-1&currentPage=1&limit=9`
+            fetchProducts(url)
+        })
+
+        document.getElementById('apply-btn').addEventListener('click', ()=>{
+            updateCheckBoxes()
+            let url = `/user/shop/load?`
+            let categorySelected = []
+            categoryCheckBoxes.forEach(check => categorySelected.push(check.dataset.categoryid))
+            let min = priceCheckBox?.dataset.min || null
+            let max = priceCheckBox?.dataset.max || null
+            let sort = sortCheckBox?.dataset.sort || null
+            console.log(categorySelected)
+            
+            if(categorySelected.length>0){
+                url += `categoryId=${JSON.stringify(categorySelected)}&`
+            }
+            if(min && max){
+                url += `min=${min}&max=${max}&`
+            }
+            if(sort){
+                url += `sort=${sort}&`
+            }else{
+                url += `sort=createdAt:-1`
+            }
+            url += `currentPage=${localStorage.getItem('shopCurrentPage')}&limit=9`
+            fetchProducts(url)
+            toggleFilterMenu()
+        })
+
+        document.getElementById('search-btn').addEventListener('click', (e)=>{
+            const searchValue = document.getElementById('search-input').value.trim()
+            let error = false
+            if(!searchValue){
+                error = true
+            }
+
+            if(error){
+                e.preventDefault()
+                return
+            }
+
+            fetchProducts(`/user/shop/load?search=${searchValue}&currentPage=1&limit=9`)
+        })
+
+        document.getElementById('clear-btn').addEventListener('click', ()=>{
+            document.getElementById('search-input').value = ""
+            const url = `/user/shop/load?sort=createdAt:-1&currentPage=1&limit=9`
+            fetchProducts(url)
+        })
+
+
+// clear button clears the filters and fetch default data
+const clearBtn = document.getElementById('reset-btn');
+clearBtn.addEventListener('click', () => {
+   
+    const categoryCheckboxes = document.querySelectorAll('input[name="categoryCheck"]');
+    categoryCheckboxes.forEach(checkbox => checkbox.checked = false);
+
+    const radioFilters = document.querySelectorAll('input[type="radio"].filter-checkbox');
+    radioFilters.forEach(radio => radio.checked = false);
+
+    for (const group in lastCheckedPerGroup) {
+        lastCheckedPerGroup[group] = null;
+    }
+
+    const defaultUrl = `/user/shop/load?sort=createdAt:-1&currentPage=1&limit=9`;
+    fetchProducts(defaultUrl);
+
+    if (!filterSidebar.classList.contains('hidden')) {
+        toggleFilterMenu();
+    }
+});
+
+
+// Updates checkBoxes 
+function updateCheckBoxes(){
+    categoryCheckBoxes = document.querySelectorAll('input[name="categoryCheck"]:checked')
+    priceCheckBox = document.querySelector('input[name="offerPrice"]:checked')
+    sortCheckBox = document.querySelector('input[name="sort"]:checked')
+}
+
+
+
+function fetchProducts(url){
+        fetch(url)
+            .then(res => {
+                if(!res.ok) throw new Error("Failed to fetch")
+                return res.json()
+            })
+            .then(data => {
+                const productGrid = document.querySelector(".product-grid")
+                productGrid.innerHTML = ""
+                if(data.result.length == 0){
+                    productGrid.innerHTML = `<p style="text-align:center;color:#999;">No Products found</p>`
+                    return
+                }
+                let index = 0
+                let html = ''
+                data.result.forEach((product)=>{
+                    html += `
+                    <a href="/user/product_details?productId=${product._id}">
+                        <div class="game-card p-3">
+                            <div class="aspect-[3/4] rounded-lg overflow-hidden">
+                                <img src="${product.thumbnail}" alt="${product.name}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="pt-4">
+                                <p class="text-gray-400 text-sm">Base Game</p>
+                                <h3 class="font-semibold text-white truncate mt-1">${product.name}</h3>
+                                <p class="text-white font-semibold mt-1">₹${product.offerPrice}</p>
+                                <p class="text-gray-500 text-sm line-through">₹${product.price}</p>
+                            </div>
+                        </div>
+                    </a>
+                `
+                })
+
+                productGrid.innerHTML = html
+                localStorage.setItem('shopCurrentPage', data.currentPage)
+
+                const pagination = document.querySelector('.pagination-container')
+                // setting url for next Page
+                let tempUrl = new URL(url, window.location.origin);
+                let currentPage = parseInt(tempUrl.searchParams.get("currentPage"), 10);
+                tempUrl.searchParams.set("currentPage", currentPage+1);
+
+                let nextUrl = tempUrl.pathname + '?' + tempUrl.searchParams.toString();
+                
+                // setting url for previous page
+                tempUrl = new URL(url, window.location.origin);
+                currentPage = parseInt(tempUrl.searchParams.get("currentPage"), 10);
+                tempUrl.searchParams.set("currentPage", currentPage-1);
+
+                let prevUrl = tempUrl.pathname + '?' + tempUrl.searchParams.toString();
+
+                
+                pagination.innerHTML = `
+                    <div class="pagination-controls">
+                            <button onclick="fetchProducts('${prevUrl}')" class="pagination-btn" style="${data.currentPage>1? "" : "display:none;"}">&lt;</button>
+                            <button class="pagination-btn active">
+                                ${data.currentPage} of ${data.totalPages}
+                            </button>
+                            <button onclick="fetchProducts('${nextUrl}')" class="pagination-btn" style="${data.currentPage<data.totalPages? "":"display:none;"}">&gt;</button>
+                    </div>
+                `
+            }).catch(error => console.log(error))
+    }
+
+
+
+
+// unchecks radio buttons
+  const lastCheckedPerGroup = {};
+
+  const uncheckableRadios = document.querySelectorAll('.filter-checkbox');
+
+  uncheckableRadios.forEach(radio => {
+    radio.addEventListener('click', function() {
+      const groupName = this.name;
+
+      if (this === lastCheckedPerGroup[groupName]) {
+        this.checked = false;
+        lastCheckedPerGroup[groupName] = null;
+      } else {
+        lastCheckedPerGroup[groupName] = this;
+      }
+    });
+  });
+
+
+
+
+
+        // JavaScript to toggle the filter sidebar on mobile
+        const filterToggle = document.getElementById('filter-toggle');
+        const closeFilters = document.getElementById('close-filters');
+        const filterSidebar = document.getElementById('filter-sidebar');
+        const body = document.body;
+
+        function toggleFilterMenu() {
+            filterSidebar.classList.toggle('hidden');
+            
+        }
+
+        filterToggle.addEventListener('click', toggleFilterMenu);
+        closeFilters.addEventListener('click', toggleFilterMenu);
+
+    let msgValue = document.getElementById('message').value
+	let icon = document.getElementById('message').getAttribute('placeholder')
+	if (msgValue) {
+		Swal.fire({
+			title: msgValue,
+            text: "You can search from here",
+			icon: icon,
+			background: "#242428",
+			color: 'white',
+			customClass: {
+				popup: 'my-swal-border'
+			}
+		});
+	}
+    </script>

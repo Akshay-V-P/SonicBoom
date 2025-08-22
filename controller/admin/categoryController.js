@@ -1,6 +1,7 @@
 const userModel = require('../../model/userModel')
 const categoryModel = require('../../model/categoryModel')
 const paginate = require('../../helper/pagination')
+const productModel = require('../../model/productModel')
 
 const loadCategory = (req, res) => {
     res.render('admin/category', {layout:'admin'})
@@ -18,7 +19,7 @@ const showCategorys = async (req, res) => {
         if (req.query.filterStatus) filters.paymentStatus = req.query.filterStatus
         if (req.query.filterAmount) sort.total = parseInt(req.query.filterAmount)
 
-        const result = await paginate(categoryModel, limit, currentPage, JSON.stringify(filters), JSON.stringify(sort))
+        const result = await paginate(categoryModel, limit, currentPage, filters, sort)
         if (result.result == []) return res.status(404).json({ message: "Categorys not found" })
         res.status(200).json(result)
     } catch (error) {
@@ -73,6 +74,7 @@ const changeCategoryStatus = async (req, res) => {
         const { id } = req.params
         const body = req.body
         const category = await categoryModel.updateOne({ _id: id }, body)
+        await productModel.updateMany({ categoryId: id }, {$set:{isListed:body.isListed}});
         res.status(200).json(category)
     } catch (error) {
         console.log(error)

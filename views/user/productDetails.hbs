@@ -1,0 +1,248 @@
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212;
+            color: #E0E0E0;
+        }
+        .rating-star {
+            color: #f59e0b; /* amber-500 */
+        }
+
+        #thumbnail-image{
+            max-height: 360px;
+        }
+
+        .carousel-container {
+            overflow: hidden;
+            position: relative;
+            max-width: 80%;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-slide {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .carousel-dots {
+            position: absolute;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+        }
+        .carousel-dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .carousel-dot.active {
+            background-color: white;
+        }
+
+        @media (max-width:724px) {
+            .carousel-container{
+                max-width: 100%;
+            }
+        }
+    </style>
+        <div class="flex flex-col lg:grid lg:grid-cols-4 lg:gap-12">
+            
+            <!-- Left Column: Game Details (Top Part) -->
+            {{#if product}}
+            <div class="lg:col-span-3 order-1">
+                <h1 class="text-3xl md:text-4xl font-bold text-white">{{product.name}}</h1>
+                <div class="flex items-center mt-2 mb-6">
+                    <div class="flex items-center text-yellow-400">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                    </div>
+                    <span class="ml-2 text-gray-400">{{product.rating}}</span>
+                </div>
+
+                <div class="carousel-container rounded-lg border border-[#404044] max-h-[500px] w-full mx-auto">
+                    <div class="carousel-track">
+                        {{#each product.coverImage}}
+                        <div class="carousel-slide"><img src="{{this}}" class="w-full h-full object-cover"></div>
+                        {{/each}}
+                    </div>
+                    <div class="carousel-dots"></div>
+                </div>
+
+                <div class="mt-8">
+                    <h2 class="text-xl font-bold text-white mb-3">Genre</h2>
+                    <span class="bg-[#2a2a2a] border border-[#404044] text-gray-300 px-3 py-1 rounded-full text-sm">{{product.categoryId.name}}</span>
+                </div>
+
+                <div class="mt-8">
+                    <h2 class="text-xl font-bold text-white mb-3">About the game</h2>
+                    <p class="text-gray-400 leading-relaxed">{{product.description}}</p>
+                </div>
+
+                <div class="mt-10">
+                    {{#if product.variants}}<h2 class="text-2xl font-bold text-white mb-6">Editions</h2>{{/if}}
+                    <div class="flex space-x-4 overflow-x-auto pb-4 -mx-4 px-4">
+                        {{#each product.variants}}
+                        <div class="bg-[#1E1E1E] border border-[#404044] rounded-lg p-3 flex-shrink-0 w-40">
+                            <img src="{{this.thumbnail}}" class="rounded-md w-full aspect-[3/4] object-cover" alt="GTA Premium Edition">
+                            <h4 class="font-semibold mt-3 truncate text-sm">{{this.name}}</h4>
+                            <p class="text-md font-bold mt-2">₹{{this.offerPrice}}</p>
+                            <div class="flex justify-between items-center">
+                                <p class="text-md font-light text-gray-500 line-through">₹{{this.price}}</p>
+                                <button class="bg-purple-600 text-xs px-3 py-1 rounded-md">Add</button>
+                            </div>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Purchase Info -->
+            <div class="lg:col-span-1 lg:row-span-2 order-2 lg:order-2">
+                <div class="lg:sticky top-24 max-w-md mx-auto lg:max-w-full lg:mx-0">
+                    <div class=" rounded-lg p-4 mt-16 pt-7">
+                        <div class="flex justify-center">
+                            <img src="{{product.thumbnail}}" alt="GTA V Cover Small" class="rounded-md aspect-[3/4] object-cover" id="thumbnail-image" onerror="this.onerror=null;this.src='https://placehold.co/300x400/1e1e1e/ffffff?text=GTA+V';">
+                        </div>
+                        <p class="text-gray-400 text-sm mt-4">Base Game</p> 
+                        <div class="flex items-baseline space-x-2 mt-1">
+                            <p class="text-3xl font-bold text-white">₹{{product.offerPrice}}</p>
+                            <p class="text-lg text-gray-500 line-through">₹{{product.price}}</p>
+                        </div>
+
+                        <div class="mt-6 space-y-3">
+                            <button class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition-colors duration-200">Buy Now</button>
+                            <button class="w-full bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white font-bold py-3 rounded-lg transition-colors duration-200">Add to Cart</button>
+                            <button class="w-full border border-[#404044] hover:bg-[#2a2a2a] text-white font-bold py-3 rounded-lg transition-colors duration-200">Add to Wishlist</button>
+                        </div>
+                    </div>
+                     <div class="text-sm text-gray-400 mt-6 space-y-3">
+                        <div class="flex justify-between"><span>Developer</span> <span class="text-white font-semibold">{{product.developer}}</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Left Column: Player Ratings (Bottom Part) -->
+            <div class="lg:col-span-3 order-3 lg:order-3">
+                 <div class="mt-10">
+                    <h2 class="text-2xl font-bold text-white mb-4">Sonic Player Ratings</h2>
+                    <p class="text-gray-400 mb-6">Rated from players in the SonicBoom ecosystem.</p>
+                    <div class="flex items-center text-2xl mb-6">
+                        <span class="font-bold mr-2">4.3</span>
+                        <div class="flex text-yellow-400">
+                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                             <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                             <svg class="w-6 h-6 text-gray-600" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="border border-[#404044] rounded-lg p-4">
+                            <div class="flex text-yellow-400 mb-2"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg></div>
+                            <h4 class="font-bold text-white">Good game!</h4>
+                            <p class="text-gray-400 text-sm mt-1">The game is so nice to play, and has good control</p>
+                            <div class="flex items-center mt-3">
+                                <img src="https://i.imgur.com/8dY2RkM.jpg" class="w-8 h-8 rounded-full object-cover" alt="User Avatar">
+                                <span class="ml-2 text-sm text-gray-300">Angel</span>
+                            </div>
+                        </div>
+                        <div class="border border-[#404044] rounded-lg p-4">
+                            <div class="flex text-yellow-400 mb-2"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg></div>
+                            <h4 class="font-bold text-white">Love this</h4>
+                            <p class="text-gray-400 text-sm mt-1">The experience of this game is next level</p>
+                            <div class="flex items-center mt-3">
+                                <img src="https://i.imgur.com/sY4tG2B.jpg" class="w-8 h-8 rounded-full object-cover" alt="User Avatar">
+                                <span class="ml-2 text-sm text-gray-300">Kevin</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{else}}
+                <div class="flex-1 flex flex-col p-6">
+                    <h2 class="text-xl font-bold text-white mb-3">About the game</h2>
+                    <p class="text-gray-400 leading-relaxed">
+                    {{product.description}}
+                    </p>
+                </div>
+            {{/if}}
+            <div class="mt-10 lg:col-span-3 order-4">
+                    {{#if relatedProducts}}<h2 class="text-2xl font-bold text-white mb-6">Related Products</h2>{{/if}}
+                    <div class="flex space-x-4 overflow-x-auto pb-4 -mx-4 px-4">
+                        {{#each relatedProducts}}
+                        <a href="/user/product_details?productId={{this._id}}">
+                        <div class="bg-[#1E1E1E] border border-[#404044] rounded-lg p-3 flex-shrink-0 w-40">
+                            <img src="{{this.thumbnail}}" class="rounded-md w-full aspect-[3/4] object-cover" alt="GTA Premium Edition">
+                            <h4 class="font-semibold mt-3 truncate text-sm">{{this.name}}</h4>
+                            <div class="flex justify-between items-center mt-2">
+                                <p class="text-md font-bold">₹{{this.offerPrice}}</p>
+                                <p class="text-gray-500 text-sm line-through">₹{{this.price}}</p>
+                            </div>
+                        </div>
+                        </a>
+                        {{/each}}
+                    </div>
+                </div>
+        </div>
+    
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const track = document.querySelector('.carousel-track');
+            const slides = Array.from(track.children);
+            const dotsContainer = document.querySelector('.carousel-dots');
+            let slideIndex = 0;
+            let intervalId;
+
+            // Create dots
+            slides.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.classList.add('carousel-dot');
+                if (i === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => {
+                    goToSlide(i);
+                    resetInterval();
+                });
+                dotsContainer.appendChild(dot);
+            });
+            
+            const dots = Array.from(dotsContainer.children);
+
+            function updateCarousel() {
+                track.style.transform = 'translateX(-' + slideIndex * 100 + '%)';
+                dots.forEach(dot => dot.classList.remove('active'));
+                dots[slideIndex].classList.add('active');
+            }
+
+            function goToSlide(index) {
+                slideIndex = index;
+                updateCarousel();
+            }
+
+            function nextSlide() {
+                slideIndex = (slideIndex + 1) % slides.length;
+                updateCarousel();
+            }
+
+            function startInterval() {
+                intervalId = setInterval(nextSlide, 3000);
+            }
+
+            function resetInterval() {
+                clearInterval(intervalId);
+                startInterval();
+            }
+
+            startInterval();
+        });
+    </script>

@@ -16,7 +16,7 @@ const showOrders = async (req, res) => {
         if (req.query.filterStatus) filters.paymentStatus = req.query.filterStatus
         if (req.query.filterAmount) sort.total = parseInt(req.query.filterAmount)
 
-        const result = await paginate(orderModel, limit, currentPage, JSON.stringify(filters), JSON.stringify(sort))
+        const result = await paginate(orderModel, limit, currentPage, filters, sort)
         if (result.result == []) return res.status(404).json({ message: "Orders not found" })
         res.status(200).json(result)
     } catch (error) {

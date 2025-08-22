@@ -197,7 +197,7 @@
 
 <div class="add-product-form">
     <h2 class="form-header">Product details</h2>
-     <input type="text" id="pageName" value="users" hidden>
+     <input type="text" id="pageName" value="products" hidden>
 
     <form action="/admin/products/add" method="POST" enctype="multipart/form-data" id="addProductForm" novalidate>
         <div class="form-grid">
@@ -226,8 +226,8 @@
                 <input type="number" name="price" placeholder="Price" required>
             </div>
             <div class="form-group">
-                <label>Offer Price</label>
-                <input type="number" name="offerPrice" placeholder="Offer Price">
+                <label>Offer %</label>
+                <input type="number" name="offer" placeholder="Offer %">
             </div>
             <div class="form-group">
                 <label>Stock</label>
@@ -239,7 +239,7 @@
             <div class="form-group">
                 <label>Add Cover Image (16:9)</label>
                 <input type="file" name="coverImage" id="coverImage" class="imageInput" 
-                    accept="image/jpeg,image/png" multiple>
+                    accept="image/jpeg,image/png,image/gif" multiple>
                 <div class="image-preview" id="coverPreview">
                     <span style="color:#777; font-size:13px;">No images selected</span>
                 </div>

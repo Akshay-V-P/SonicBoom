@@ -23,6 +23,13 @@ const productSchema = mongoose.Schema({
         type: Number,
         required:true
     },
+    offer: {
+        type: Number,
+        required: true,
+        min: 0,
+        max: 100,
+        default: 0
+    },
     offerPrice: {
         type: Number,
         required:true
@@ -37,6 +44,11 @@ const productSchema = mongoose.Schema({
         required:true
     },
     isActive: {
+        type: Boolean,
+        default:true,
+        required:true
+    },
+    isListed: {
         type: Boolean,
         default:true,
         required:true

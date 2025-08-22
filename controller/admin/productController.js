@@ -1,6 +1,7 @@
 const productModel = require('../../model/productModel')
 const categoryModel = require('../../model/categoryModel')
 const paginate = require('../../helper/pagination')
+const calculateOffer = require('../../helper/offerCalculator')
 
 
 const loadProducts = async (req, res) => {
@@ -26,7 +27,11 @@ const loadProductsShow = async (req, res) => {
         const sortQuery = {}
 
         if (search) {
-            findQuery.name = search
+            const searchRegex = { $regex: search, $options: 'i' }
+            findQuery.$or = [
+                { name: searchRegex },
+                { description: searchRegex }
+            ]
         }
 
         if (filter) {
@@ -35,13 +40,11 @@ const loadProductsShow = async (req, res) => {
 
         if (sort) {
             const parts = sort.split(":")
-            console.log(parts)
             sortQuery[parts[0]] = parseInt(parts[1])
         }
 
-        console.log(findQuery)
 
-        const result = await paginate(productModel, limit, page, JSON.stringify(findQuery), JSON.stringify(sortQuery), "categoryId")
+        const result = await paginate(productModel, limit, page, findQuery, sortQuery, "categoryId")
         res.status(200).json(result)
     } catch (error) {
         console.log(error)
@@ -52,7 +55,7 @@ const loadProductsShow = async (req, res) => {
 const loadProductsAdd = async(req, res) => {
     try {
         const categorys = await categoryModel.find()
-        res.render('admin/addProduct', {layout:'admin', categorys})
+        res.render('admin/addProduct', { layout: 'admin', categorys })
     } catch (error) {
         console.log(error)
         res.render('admin/500Error')
@@ -61,7 +64,7 @@ const loadProductsAdd = async(req, res) => {
 
 const addProduct = async (req, res) => {
     try {
-        const { name, developer, category, description, price, offerPrice, stock } = req.body
+        const { name, developer, category, description, price, offer, stock } = req.body
         const findProduct = await productModel.findOne({ name, description, price, offerPrice })
         if (findProduct) return res.redirect('/admin/products/add')
         const thumbnailFile = req.files.find(file => file.fieldname === 'thumbnail');
@@ -74,7 +77,8 @@ const addProduct = async (req, res) => {
             categoryId:category,
             description,
             price,
-            offerPrice,
+            offer,
+            offerPrice:calculateOffer(price, offer),
             stock,
             coverImage: coverImagePaths,
             thumbnail: thumbnailFile ? thumbnailFile.path : null
@@ -91,6 +95,7 @@ const editProduct = async(req, res) => {
     try {
         const { _id } = req.params
         const product = await productModel.findOne({ _id })
+        console.log(product)
         if (!product) return res.redirect('/admin/products')
         const categorys = await categoryModel.find()
         res.render('admin/editProducts', {layout:'admin', product, categorys})
@@ -111,15 +116,40 @@ const updateProduct = async (req, res) => {
         if (data.variants) {
             data.variants.forEach((variant, index) => {
                 variant.thumbnail = fileMap.get(`variants[${index}][thumbnail]`)
+                variant.offerPrice = calculateOffer(parseInt(variant.price), parseInt(data.offer))
             })
         }
+        if (fileMap.has('thumbnailImage')) data.thumbnail = fileMap.get('thumbnailImage')    
+        data.offerPrice = calculateOffer(parseInt(data.price), parseInt(data.offer))
         
-        console.log(_id)
-        console.log(req.files)
-        res.status(404).json({message: "cant find"})
+        const deepData = JSON.stringify(data)
+        const updateQuery = { $set: JSON.parse(deepData) };
+
+        req.files.forEach(file => {
+        const match = file.fieldname.match(/^coverImage\[(\d+)\]$/);
+        if (match) {
+            const index = match[1]; 
+            updateQuery.$set[`coverImage.${index}`] = file.path;
+        }
+        });
+
+        await productModel.updateOne({_id}, updateQuery)
+        res.status(200).json({message: "Updated"})
     } catch (error) {
         console.log(error)
         res.status(500).json({message: "cant find"})
+    }
+}
+
+const changeProductStatus = async (req, res) => {
+    try {
+        const { id } = req.params
+        const body = req.body
+        const product = await productModel.updateOne({ _id: id }, body)
+        res.status(200).json(product)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message:"Internal server error"})
     }
 }
 
@@ -130,5 +160,6 @@ module.exports = {
     addProduct,
     editProduct,
     updateProduct,
-    loadProductsShow
+    loadProductsShow,
+    changeProductStatus,
 }

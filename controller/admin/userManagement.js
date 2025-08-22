@@ -5,7 +5,7 @@ const loadUsers = async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 10
         const currentPage = parseInt(req.query.currentPage) || 1
-        const users = await paginate(userModel, limit, currentPage, JSON.stringify({ role: "user" }))
+        const users = await paginate(userModel, limit, currentPage, { role: "user" })
     
         res.render('admin/users', {layout:'admin', users:users.result, currentPage, totalPages:users.totalPages})
     } catch (error) {
@@ -60,9 +60,14 @@ const searchUser = async (req, res) => {
         const limit = parseInt(req.query.limit)
         const searchValue = {role:"user"}
         if (query) {
-            searchValue.email = query
+            const searchRegex = { $regex: query, $options: 'i' }
+            searchValue.$or = [
+                { name: searchRegex },
+                { email: searchRegex }
+            ]
         }
-        const data = await paginate(userModel, limit, currentPage, JSON.stringify(searchValue))
+
+        const data = await paginate(userModel, limit, currentPage, searchValue)
         if (!data.result) return res.status(404).json({ message: "User not found" })
         res.status(200).json(data)
     } catch (error) {

@@ -338,7 +338,7 @@
                     </div>
                     <div class="form-group">
                         <label for="offer">Offer</label>
-                        <input type="text" id="offer" name="offerPrice" value="{{product.offerPrice}}">
+                        <input type="text" id="offer" name="offer" value="{{product.offer}}">
                     </div>
                     <div class="form-group">
                         <label for="stock">Stock</label>
@@ -364,38 +364,32 @@
                         <p>Thumbnail</p>
                     </div>
                 </div>
-                {{#if product.varients}}
+                {{#if product.variants}}
+                {{#each product.variants}}
                 <div class="edit-edition-container">
                     <h2 class="form-section-title">Editions</h2>
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="editionName">Product Name</label>
-                            <input type="text" id="editionName" value="GTA V Premium Edition">
-                        </div>
-                        <div class="form-group">
-                            <label for="editionDeveloper">Developer</label>
-                            <input type="text" id="editionDeveloper" value="Rockstar Games">
+                            <input type="text" id="editionName" value="{{this.name}}">
                         </div>
                         <div class="form-group full-width">
                             <label for="editionDescription">Description</label>
-                            <textarea id="editionDescription">Experienced entertainment blockbusters Grand Theft Auto V and Grand Theft Auto Online — now upgraded for a new generation with stunning visuals, faster loading, 3D audio, and more, plus exclusive content for GTA Online players.</textarea>
+                            <textarea id="editionDescription">{{this.description}}</textarea>
                         </div>
                         <div class="form-group">
                             <label for="editionPrice">Price</label>
-                            <input type="text" id="editionPrice" value="1700">
-                        </div>
-                        <div class="form-group">
-                            <label for="editionOffer">Offer</label>
-                            <input type="text" id="editionOffer" value="15">
+                            <input type="text" id="editionPrice" value="{{this.price}}">
                         </div>
                     </div>
                     <div class="image-upload-container">
                         <div class="image-upload-box thumbnail">
                             <button class="remove-btn">x</button>
-                            <img src="https://via.placeholder.com/100x150.png?text=GTA+V+Premium+Thumbnail" alt="GTA V Premium Thumbnail">
+                            <img src="{{this.thumbnail}}" alt="GTA V Premium Thumbnail">
                             <p>Thumbnail</p>
                         </div>
                     </div>
+                    {{/each}}
                     {{/if}}
                     
                 </div>
@@ -433,13 +427,14 @@ window.addEventListener('DOMContentLoaded', function () {
     let cropper;
     let currentImageElement;
     let currentType;
-    let currentEditionIndex; // Keep track of edition index for cropping
+    let currentEditionIndex; 
+    let coverIndex
     const aspectRatios = { cover: 16 / 9, thumbnail: 3 / 4, edition: 3 / 4 };
 
     // Hidden file input
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
-    fileInput.accept = 'image/jpeg,image/png';
+    fileInput.accept = 'image/jpeg,image/png,image/gif';
     fileInput.style.display = 'none';
     document.body.appendChild(fileInput);
 
@@ -475,6 +470,9 @@ window.addEventListener('DOMContentLoaded', function () {
 
                 if (labelText.includes('cover')) {
                     currentType = 'cover';
+                    coverIndex = Array.from(
+                    document.querySelectorAll('.image-upload-container .image-upload-box')
+                    ).indexOf(this.parentElement);
                 } else if (this.closest('.edit-edition-container')) {
                     currentType = 'edition';
                     currentEditionIndex = currentImageElement.dataset.index; 
@@ -527,7 +525,7 @@ window.addEventListener('DOMContentLoaded', function () {
                     document.querySelector('form').appendChild(hiddenInput);
                 }
             } else {
-                const inputName = `${currentType}Image`;
+                const inputName = `${currentType}Image[${coverIndex}]`;
                 hiddenInput = document.querySelector(`input[name="${inputName}"]`);
                 if (!hiddenInput) {
                     hiddenInput = document.createElement('input');
@@ -571,17 +569,9 @@ window.addEventListener('DOMContentLoaded', function () {
                         <label for="editionName_${varIndex}">Edition Name</label>
                         <input type="text" id="editionName_${varIndex}" name="variants[${varIndex}][name]" placeholder="Enter name">
                     </div>
-                    <div class="form-group full-width">
-                        <label for="editionDescription_${varIndex}">Description</label>
-                        <textarea id="editionDescription_${varIndex}" name="variants[${varIndex}][description]" placeholder="Enter Description"></textarea>
-                    </div>
                     <div class="form-group">
                         <label for="editionPrice_${varIndex}">Price</label>
                         <input type="text" id="editionPrice_${varIndex}" name="variants[${varIndex}][price]" placeholder="Enter Price">
-                    </div>
-                    <div class="form-group">
-                        <label for="editionOffer_${varIndex}">Offer (%)</label>
-                        <input type="text" id="editionOffer_${varIndex}" name="variants[${varIndex}][offerPrice]" placeholder="Enter Offer Price">
                     </div>
                     <div class="form-group">
                         <label for="editionStock_${varIndex}">Stock</label>
@@ -635,7 +625,7 @@ function validateForm() {
     const developer = form.querySelector('#developer');
     const description = form.querySelector('#description');
     const price = form.querySelector('#price');
-    const offer = form.querySelector('input[name="offerPrice"]');
+    const offer = form.querySelector('input[name="offer"]');
     const stock = form.querySelector('input[name="stock"]');
 
     if (productName.value.trim() === '') {
@@ -693,13 +683,11 @@ form.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     
-    // 1. Clear previous errors
     clearErrors();
     
-    // 2. Validate the form
     const isFormValid = validateForm();
 
-    // 3. If not valid, stop the submission
+   
     if (!isFormValid) {
         Swal.fire({
             title: "Check Your Form",
@@ -717,7 +705,6 @@ form.addEventListener('submit', async (e) => {
     submitButton.disabled = true;
     submitButton.innerHTML = `<span class="spinner"></span>Processing...`;
 
-    // 4. If valid, proceed with sending the data
     const formData = new FormData(form);
 
     try {
