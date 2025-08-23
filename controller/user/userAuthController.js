@@ -131,21 +131,21 @@ const validateLogin = async (req, res) => {
             return res.render('user/otpValidation', {
                 message: "OTP expired, request a new one",
                 icon: "info",
-                url: "/user/validate_login", // <-- Add this
-                // Pass a timestamp from the past to ensure the timer is expired on the frontend
-                createdAt: Date.now() - 61000 // <-- Add this
+                url: "/user/validate_login", 
+                createdAt: Date.now() - 61000 
             });
         }
         if (otp !== savedOtp.otp) {
             return res.render('user/otpValidation', {
                 message: "Invalid OTP",
                 icon: "error",
-                url: "/user/validate_login", // <-- Add this
-                // Pass the original timestamp back to continue the timer
-                createdAt: savedOtp.createdAt.getTime() // <-- Add this
+                url: "/user/validate_login", 
+                createdAt: savedOtp.createdAt.getTime() 
             });
         }
-        req.session.user = email
+        const user = await userModel.findOne({ email })
+        
+        req.session.user = {_id:user._id, email}
         res.redirect('/user/landing_page')
     } catch (error) {
         console.log(error)
@@ -154,43 +154,36 @@ const validateLogin = async (req, res) => {
 
 const resendOtp = async (req, res) => {
     try {
-        // 1. Correctly retrieve email from the session for both signup and login flows
         const tempUser = req.session.tempUser;
         if (!tempUser) {
             return res.status(400).json({ success: false, message: "Session has expired. Please start over." });
         }
-        // This handles cases where tempUser is an object (signup) or a string (login)
+       
         const email = (typeof tempUser === 'string') ? tempUser : tempUser.email;
 
-        // 2. Find the last OTP sent to this email to check its timestamp
         const otpDetails = await otpModel.findOne({ email });
 
         const now = Date.now();
-        // Calculate the time difference in seconds. Default to 61 if no OTP exists.
+
         const timeDiff = otpDetails ? (now - otpDetails.createdAt.getTime()) / 1000 : 61;
 
-        // 3. Prevent spamming by enforcing a 60-second cooldown period
         if (timeDiff < 60) {
             const timeLeft = Math.ceil(60 - timeDiff);
-            // Respond with a "Too Many Requests" status and a helpful message
             return res.status(429).json({
                 success: false,
                 message: `Please wait ${timeLeft} more seconds before resending.`
             });
         }
 
-        // 4. Generate a new OTP and send it via email
         const newOtp = generateOtp();
         await mailSender(email, newOtp);
 
-        // 5. Update the database with the new OTP and the current timestamp
         await otpModel.updateOne(
             { email },
             { $set: { otp: newOtp, createdAt: now } },
             { upsert: true }
         );
 
-        // 6. Send a success response back to the client with the new timestamp
         res.status(200).json({
             success: true,
             message: "A new OTP has been sent to your email.",

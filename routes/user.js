@@ -8,6 +8,7 @@ const shopController = require('../controller/user/shopController')
 const { validate, validateSignin } = require('../middleware/validator')
 const passport = require('passport')
 const userAuth = require('../middleware/userAuth')
+const upload = require('../config/multerUpload')
 
 // User routes
 router.route('/login')
@@ -56,5 +57,12 @@ router.get('/product_details', productPageController.showPage)
 // account
 router.get('/account', accountController.showPage)
 router.get('/account/:id', accountController.showEditPage)
+router.post('/account/profilephoto', upload, accountController.updateProfilePhoto)
+
+// account details update
+router.post('/verify-password', accountController.verifyPassword)
+router.post('/send-otp', accountController.sendOtp)
+router.post('/verify-otp', accountController.verifyOtp)
+router.patch('/account/update', accountController.updateProfile)
 
 module.exports = router

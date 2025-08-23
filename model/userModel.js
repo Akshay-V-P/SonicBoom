@@ -26,6 +26,7 @@ const userSchema = mongoose.Schema({
     },
     profilePhoto: {
         type: String,
+        default:"https://res.cloudinary.com/dnmpesolv/image/upload/v1755940464/profile-placeholder_fnbhjm.png"
     },
     googleId: {
         type:String

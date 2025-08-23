@@ -53,7 +53,7 @@ const mailSender = async (email, otp)=>{
                             <!-- Instruction -->
                             <tr>
                                 <td style="padding:20px 0; text-align:center; color:#B0B0B0; font-size:14px;">
-                                This OTP is valid for the next 5 minutes. Please do not share it with anyone.
+                                This OTP is valid for the next 1 minutes. Please do not share it with anyone.
                                 </td>
                             </tr>
 

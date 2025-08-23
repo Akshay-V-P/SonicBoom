@@ -5,11 +5,12 @@
                     <!-- Account Details Card -->
                     <section class="bg-card-bg border border-border-color rounded-xl p-6 md:p-8">
                         <h2 class="text-2xl font-bold mb-6">Account Details</h2>
+                        {{#if user}}
                         <div class="flex flex-col md:flex-row gap-8">
                             <div class="w-full md:w-2/5 flex flex-col items-center gap-4">
-                                <img src="" alt="Profile Picture" class="w-32 h-32 rounded-full object-cover border-2 border-border-color" onerror="this.onerror=null;this.src='https://res.cloudinary.com/dnmpesolv/image/upload/v1755940464/profile-placeholder_fnbhjm.png';">
+                                <img src="{{user.profilePhoto}}" alt="Profile Picture" class="w-32 h-32 rounded-full object-cover border-2 border-border-color" onerror="this.onerror=null;this.src='https://res.cloudinary.com/dnmpesolv/image/upload/v1755940464/profile-placeholder_fnbhjm.png';">
                             </div>
-                            {{#if user}}
+                        
                             <input type="text" value="{{user.name}}" hidden>
                             <form class="w-full md:w-3/5 space-y-4">
                                 <div>
