@@ -2,6 +2,7 @@ const router = require('express').Router()
 const userController = require('../controller/user/userAuthController')
 const landingController = require('../controller/user/landingController')
 const productPageController = require('../controller/user/productPageController')
+const accountController = require('../controller/user/accountController')
 
 const shopController = require('../controller/user/shopController')
 const { validate, validateSignin } = require('../middleware/validator')
@@ -51,5 +52,9 @@ router.get('/shop/load', shopController.loadShopContents)
 
 // product details page
 router.get('/product_details', productPageController.showPage)
+
+// account
+router.get('/account', accountController.showPage)
+router.get('/account/:id', accountController.showEditPage)
 
 module.exports = router

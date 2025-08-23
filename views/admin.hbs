@@ -87,12 +87,12 @@
             transition: all 0.2s;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-link:hover, .nav-link.isactive {
             background-color: #333;
             color: #ffffff;
         }
 
-        .nav-link.active {
+        .nav-link.isactive {
             background-color: #4a90e2;
         }
 
@@ -131,7 +131,7 @@
                 transition: transform 0.3s ease;
             }
 
-            .sidebar.active {
+            .sidebar.isactive {
                 transform: translateX(0);
             }
 
@@ -198,7 +198,7 @@
         }
 
         @media (max-width: 1024px) {
-            .overlay.active {
+            .overlay.isactive {
                 display: block;
             }
         }
@@ -319,7 +319,7 @@
     <script>
         const pageName = document.getElementById('pageName').value 
         const element = document.getElementById(pageName)
-        element.classList.add('active')
+        element.classList.add('isactive')
 
         // Mobile menu toggle
         const menuToggle = document.getElementById('menuToggle');
@@ -327,13 +327,13 @@
         const overlay = document.getElementById('overlay');
 
         menuToggle.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
+            sidebar.classList.toggle('isactive');
+            overlay.classList.toggle('isactive');
         });
 
         overlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
+            sidebar.classList.remove('isactive');
+            overlay.classList.remove('isactive');
         });
 
         // Close sidebar when clicking nav links on mobile
@@ -341,8 +341,8 @@
         navLinks.forEach(link => {
             link.addEventListener('click', (e) => {
                 if (window.innerWidth <= 1024) {
-                    sidebar.classList.remove('active');
-                    overlay.classList.remove('active');
+                    sidebar.classList.remove('isactive');
+                    overlay.classList.remove('isactive');
                 }
             });
         });
@@ -350,8 +350,8 @@
         // Handle window resize
         window.addEventListener('resize', () => {
             if (window.innerWidth > 1024) {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
+                sidebar.classList.remove('isactive');
+                overlay.classList.remove('isactive');
             }
         });
 

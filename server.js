@@ -63,7 +63,7 @@ app.use(express.urlencoded({extended:true}))
 app.use('/user', userRoute)
 app.use('/admin', adminRoute)
 app.get('/',(req, res)=> {
-    res.redirect('/user/landing_page')
+    res.redirect('/user/login')
 })
 
 connectDB()

@@ -216,7 +216,7 @@ const verifyEmail = async (req, res) => {
         const { email } = req.body
         const user = await userModel.findOne({ email })
 
-        if (!user) return res.render('user/login', { message: "Can't find user", icon: "info" })
+        if (!user) return res.render('user/forgotPassword', { message: "Can't find user with this Email", icon: "info" })
         
         if(user.isBlocked) return res.render('user/forgotPassword', {message:"User is blocked please contact Administration"})
         req.session.resetUser = user
@@ -232,7 +232,7 @@ const resetPassword = async (req, res) => {
         const { newPassword, confirmPassword } = req.body
         console.log()
         const user = await userModel.findOne({ email: req.session.resetUser.email })
-        if (!user) return res.render('user/resetPassword', { message: "unable to find user", icon: "info" })
+        if (!user) return res.render('user/resetPassword', { message: "unable to find user", icon: "error" })
         
         const hashedPassword = await bcrypt.hash(newPassword, 12)
         user.password = hashedPassword
