@@ -32,11 +32,18 @@
             transition: 1ms ease;
             display: none;
         }
+
+        .my-swal-border {
+		border: 1px solid #404044 !important;
+		/* Change color and thickness */
+		border-radius: 15px !important;
+	}
     </style>
 
 
     <!-- Main container for the entire page content -->
     <div class="background-effect min-h-screen flex items-center justify-center p-4">
+        <input type="text" id="message" value="{{message}}" placeholder="{{icon}}" hidden>
 
         <!-- Card for the OTP verification form -->
         <div class="bg-[#242428] p-8 rounded-2xl shadow-2xl max-w-sm w-full border border-[#404044]">
@@ -73,67 +80,137 @@
         </div>
 
     </div>
+
+
 <script>
-
-document.getElementById('submitForm').addEventListener('submit', (e)=>{
-    e.preventDefault()
-    const otp = document.getElementById('otpField').value.trim()
-    if(otp === ""){
-        alert("enter otp")
-        return
+document.getElementById('submitForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const otp = document.getElementById('otpField').value.trim();
+    if (otp === "") {
+        Swal.fire({
+            title: 'Please enter the OTP',
+            icon: 'warning',
+            background: "#242428",
+            color: 'white',
+            customClass: { popup: 'my-swal-border' }
+        });
+        return;
     }
-    e.target.submit()
-})
+    e.target.submit();
+});
 
+const resendBtn = document.getElementById('resendBtn');
+let countdown = 60;
+let timerInterval; // Make the timer interval accessible to clear it
 
-const createdAt = document.getElementById('createdAt').value
-console.log(createdAt)
-    const now = Date.now();
-    let countdown = 60 - Math.floor((now - createdAt) / 1000); 
-    if (countdown < 0) countdown = 0;
-
-    const resendBtn = document.getElementById('resendBtn');
-
-    function startTimer() {
-        resendBtn.disabled = true;
-        resendBtn.classList.add('cursor-not-allowed', 'opacity-50');
-        updateButtonText();
-
-        const timerInterval = setInterval(() => {
-            countdown--;
-            updateButtonText();
-
-            if (countdown <= 0) {
-                clearInterval(timerInterval);
-                resendBtn.disabled = false;
-                resendBtn.classList.remove('cursor-not-allowed', 'opacity-50');
-                resendBtn.textContent = 'Resend';
-            }
-        }, 1000);
-    }
-
-    function updateButtonText() {
+// This function updates the button text during the countdown
+function updateButtonText() {
+    if (countdown > 0) {
         const minutes = Math.floor(countdown / 60);
         const seconds = countdown % 60;
         resendBtn.textContent = `Resend (${minutes}:${seconds.toString().padStart(2, '0')})`;
     }
+}
 
-
-    window.onload = startTimer;
-
-    
-    resendBtn.addEventListener('click', () => {
-        fetch('/user/validate_otp')
-            .then(response => {
-                if(!response.ok){
-                    throw new Error(`HTTP error! status ${response.status}`)
-                }
-            })
-    });
-
-    const resendError = document.getElementById('resend-error')
-    if(resendError.value){
-        resendError.style.display = 'block'
-        setTimeout( () => resendError.style.display = 'none' ,2000)
+// This function starts or restarts the countdown timer
+function startTimer() {
+    // Clear any existing timer to avoid multiple intervals running simultaneously
+    if (timerInterval) {
+        clearInterval(timerInterval);
     }
+
+    resendBtn.disabled = true;
+    resendBtn.classList.add('cursor-not-allowed', 'opacity-50');
+
+    // Calculate the initial countdown based on the timestamp from the server
+    const createdAt = document.getElementById('createdAt').value;
+    const now = Date.now();
+    countdown = 60 - Math.floor((now - createdAt) / 1000);
+    if (countdown < 0) countdown = 0;
+
+    if (countdown <= 0) {
+        // If time is already up, enable the button immediately
+        resendBtn.disabled = false;
+        resendBtn.classList.remove('cursor-not-allowed', 'opacity-50');
+        resendBtn.textContent = 'Resend';
+        return;
+    }
+
+    // Start the countdown process
+    updateButtonText();
+    timerInterval = setInterval(() => {
+        countdown--;
+        updateButtonText();
+
+        if (countdown <= 0) {
+            clearInterval(timerInterval);
+            resendBtn.disabled = false;
+            resendBtn.classList.remove('cursor-not-allowed', 'opacity-50');
+            resendBtn.textContent = 'Resend';
+        }
+    }, 1000);
+}
+
+// Event listener for the "Resend" button
+resendBtn.addEventListener('click', () => {
+    // Make a GET request to the resend OTP endpoint
+    fetch('/user/validate_otp')
+        .then(response => response.json()) // Expect and parse the JSON response
+        .then(data => {
+            if (data.success) {
+                // On success, show a confirmation message
+                Swal.fire({
+                    title: data.message,
+                    icon: 'success',
+                    background: "#242428",
+                    color: 'white',
+                    customClass: { popup: 'my-swal-border' }
+                });
+
+                // Update the hidden timestamp with the new value from the server
+                document.getElementById('createdAt').value = data.createdAt;
+                // Restart the timer with the new value
+                startTimer();
+            } else {
+                // If the backend returns a logical error (e.g., "wait X seconds"), show it
+                Swal.fire({
+                    title: data.message,
+                    icon: 'warning',
+                    background: "#242428",
+                    color: 'white',
+                    customClass: { popup: 'my-swal-border' }
+                });
+            }
+        })
+        .catch(error => {
+            // Handle network errors or server crashes
+            console.error('Error resending OTP:', error);
+            Swal.fire({
+                title: 'Failed to resend OTP',
+                text: 'Please check your connection and try again.',
+                icon: 'error',
+                background: "#242428",
+                color: 'white',
+                customClass: { popup: 'my-swal-border' }
+            });
+        });
+});
+
+// This block runs when the page finishes loading
+window.onload = function() {
+    startTimer(); // Start the initial timer
+
+    // Your existing logic for displaying flash messages
+    let msgValue = document.getElementById('message').value;
+    let icon = document.getElementById('message').getAttribute('placeholder');
+    if (msgValue) {
+        Swal.fire({
+            title: msgValue,
+            icon: icon,
+            background: "#242428",
+            color: 'white',
+            customClass: { popup: 'my-swal-border' }
+        });
+    }
+};
 </script>

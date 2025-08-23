@@ -331,6 +331,7 @@
 </style>
 
 <div class="header">
+    <input type="text" id="message" value="{{message}}" placeholder="{{icon}}" hidden>
     <div class="breadcrumb">
         <a href="/admin/category" style="text-decoration: none; color:white;"><h2 class="page-title">Categories</h2></a>
             <span class="material-symbols-outlined icon">
@@ -427,8 +428,11 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
     })
-    .then(res => {
-        if (!res.ok) throw new Error("Failed to update category");
+    .then(async res => {
+        if (!res.ok) {
+            const data = await res.json()
+            throw new Error(data.message || "Failed to update category");
+        }
         return res.json();
     })
     .then(() => {
@@ -444,11 +448,31 @@
     })
     .catch(err => {
         console.error(err);
-        alert("Error updating category");
-        // Re-enable button if error
+        Swal.fire({
+            background: "#242428",
+            text: err.message,
+            icon: "error",
+            customClass: { popup: 'my-swal-border' }
+        })
         saveBtn.disabled = false;
         saveBtn.innerHTML = "💾 Save Changes";
     });
 });
+
+
+
+	let msgValue = document.getElementById('message').value
+	let icon = document.getElementById('message').getAttribute('placeholder')
+	if (msgValue) {
+		Swal.fire({
+			title: msgValue,
+			icon: icon,
+			background: "#242428",
+			color: 'white',
+			customClass: {
+				popup: 'my-swal-border'
+			}
+		});
+	}
 
 </script>

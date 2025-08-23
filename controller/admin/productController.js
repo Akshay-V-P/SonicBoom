@@ -65,7 +65,7 @@ const loadProductsAdd = async(req, res) => {
 const addProduct = async (req, res) => {
     try {
         const { name, developer, category, description, price, offer, stock } = req.body
-        const findProduct = await productModel.findOne({ name, description, price, offerPrice })
+        const findProduct = await productModel.findOne({ name, description, price, offer })
         if (findProduct) return res.redirect('/admin/products/add')
         const thumbnailFile = req.files.find(file => file.fieldname === 'thumbnail');
         const coverImagePaths = req.files
@@ -95,7 +95,6 @@ const editProduct = async(req, res) => {
     try {
         const { _id } = req.params
         const product = await productModel.findOne({ _id })
-        console.log(product)
         if (!product) return res.redirect('/admin/products')
         const categorys = await categoryModel.find()
         res.render('admin/editProducts', {layout:'admin', product, categorys})
@@ -162,4 +161,8 @@ module.exports = {
     updateProduct,
     loadProductsShow,
     changeProductStatus,
+
 }
+
+
+

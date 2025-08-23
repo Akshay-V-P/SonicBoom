@@ -45,6 +45,9 @@ const addCategory = async (req, res) => {
         const body = req.body
         const category = await categoryModel.findOne({ name:body.name })
         if (category) return res.render('admin/category', { layout: 'admin', message: "Category already exists" })
+        const searchRegex = { $regex: body.name, $options: 'i' }
+        const nameExists = await categoryModel.findOne({ name: searchRegex })
+        if(nameExists) return res.render('admin/category', {layout:'admin', message:"Category name already exists", icon:"error"})
         const newCategory = new categoryModel(body)
         await newCategory.save()
         res.redirect('/admin/category')
@@ -59,7 +62,10 @@ const editCategory = async (req, res) => {
         const { _id } = req.query
         const body = req.body
         const category = await categoryModel.findOne({ _id })
-        if (!category) return res.status(404).json({ message: "Can't find User" })
+        if (!category) return res.status(404).json({ message: "Can't find Category" })
+        const searchRegex = { $regex: body.name, $options: 'i' }
+        const nameExists = await categoryModel.findOne({ name: searchRegex })
+        if(nameExists) return res.status(406).json({message:"Category Name already exists"})
         await categoryModel.updateOne({ _id }, body)
         const updated = await categoryModel.findOne({_id})
         res.status(200).json(updated)

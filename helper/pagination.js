@@ -3,7 +3,6 @@ async function paginate(model, limit, currentPage,findQuery, sort, populate) {
     let docCount = await model.countDocuments(findQuery||{})
     let totalPages = Math.ceil(docCount/limit)
     let result 
-    console.log(findQuery)
     if (sort) {
         if (populate) {
             result = await model.find(findQuery? findQuery:{}).populate(populate).sort(sort).skip(skip).limit(limit)
@@ -15,7 +14,6 @@ async function paginate(model, limit, currentPage,findQuery, sort, populate) {
     } else {
         result = await model.find(findQuery).skip(skip).limit(limit)
     } 
-    console.log(result)
     return {result, docCount, totalPages, currentPage}
 }
 
