@@ -7,7 +7,7 @@ const cartModel = mongoose.Schema({
     items: {
         type: [{
             itemId: { type: mongoose.Schema.Types.ObjectId, required: true },
-            variantId:{type:mongoose.Schema.Types.ObjectId},
+            variantId:{type:mongoose.Schema.Types.ObjectId, required:true},
             quantity: { type: Number, required: true }
         }],
         default:[]

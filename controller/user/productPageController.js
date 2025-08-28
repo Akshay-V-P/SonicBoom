@@ -15,6 +15,21 @@ const showPage = async(req, res) => {
     }
 }
 
+const getInfo = async (req, res)=>{
+    try {
+        const { index, productId } = req.query
+        const product = await productModel.findOne({ _id: productId })
+        if (!product) return res.status(404).json({ success: false })
+        const data = product.variants[index]
+        data.developer = product.developer
+        res.status(200).json(data)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({success:false})
+    }
+}
+
 module.exports = {
     showPage,
+    getInfo
 }

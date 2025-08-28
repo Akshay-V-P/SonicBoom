@@ -14,6 +14,14 @@ const adminAuth = require('../middleware/adminAuth')
 const upload = require('../config/multerUpload')
 
 
+ // ---------- dev codes -----------
+    router.use((req, res, next)=> {
+        req.session.user = { _id: "68998afac35ccc072487277a", email: "nosnoice@gmail.com" }
+        next()
+    })
+  // --------------------------
+
+
 // login
 router.route('/login')
     .get(adminAuth.isSession,adminController.loadLogin)

@@ -64,7 +64,8 @@ const cartController = require('../controller/user/cartController')
   router.get('/shop/load', shopController.loadShopContents)
 
   // product details page
-  router.get('/product_details', productPageController.showPage)
+router.get('/product_details', productPageController.showPage)
+router.get('/product-info', productPageController.getInfo)
 
   // account
   router.get('/account', accountController.showPage)

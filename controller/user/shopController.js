@@ -26,7 +26,6 @@ const loadShopContents = async (req, res) => {
         const sort = req.query.sort || null
         const min = req.query.min ? parseInt(req.query.min) : null
         const max = req.query.max ? parseInt(req.query.max) : null
-        console.log("min", min, "max", max)
         const categoryId = req.query.categoryId ? JSON.parse(req.query.categoryId) : null
     
         if (sort) {
@@ -45,11 +44,11 @@ const loadShopContents = async (req, res) => {
 
         if (min !== null && max !== null) {
             if (max === 0) {
-                filter.offerPrice = {$gt:min}
+                filter["variants.0.offerPrice"] = {$gt:min}
             } else if (min === 0) {
-                filter.offerPrice = {$lt:max}
+                filter["variants.0.offerPrice"] = {$lt:max}
             } else {
-                filter.offerPrice = {$gt:min, $lt:max}
+                filter["variants.0.offerPrice"] = {$gt:min, $lt:max}
             } 
         }
         

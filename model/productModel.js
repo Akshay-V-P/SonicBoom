@@ -19,8 +19,16 @@ const productSchema = mongoose.Schema({
         required:true
     },
     price: {
-        type: Number,
-        required:true
+        type:Number
+    },
+    offerPrice: {
+        type:Number
+    },
+    thumbnail: {
+        type:String
+    },
+    stock: {
+        type:Number,
     },
     offer: {
         type: Number,
@@ -29,17 +37,9 @@ const productSchema = mongoose.Schema({
         max: 100,
         default: 0
     },
-    offerPrice: {
-        type: Number,
-        required:true
-    },
     coverImage: {
         type: [String],
         default:[],
-        required:true
-    },
-    thumbnail: {
-        type: String,
         required:true
     },
     isActive: {
@@ -55,10 +55,6 @@ const productSchema = mongoose.Schema({
     rating: {
         type: Number,
         default:0,
-        required:true
-    },
-    stock: {
-        type: Number,
         required:true
     },
     variants: {
