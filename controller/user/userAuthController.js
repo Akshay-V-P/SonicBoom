@@ -212,18 +212,59 @@ const verifyEmail = async (req, res) => {
         if (!user) return res.render('user/forgotPassword', { message: "Can't find user with this Email", icon: "info" })
         
         if(user.isBlocked) return res.render('user/forgotPassword', {message:"User is blocked please contact Administration"})
+        
+        let otp = generateOtp()
+
+        const result = await otpModel.updateOne(
+            { email },
+            { $set: { otp, createdAt: Date.now() } },
+            { upsert: true }
+        )
+
+        if (result.upsertedCount > 0 || result.modifiedCount > 0) {
+            await mailSender(email, otp)
+        }
+
         req.session.resetUser = user
-        res.render('user/resetPassword')
+        const sendOtp = await otpModel.findOne({email})
+        res.render('user/otpValidation', { url: "/user/validate_reset", createdAt: sendOtp.createdAt.getTime()})
     } catch (error) {
         console.log(error)
         res.render('user/500Error')
     }
 }
 
+const validateResetEmail = async (req, res) => {
+    try {
+        const { otp } = req.body
+        
+        const email = req.session.resetUser.email
+        const savedOtp = await otpModel.findOne({ email })
+        if (!savedOtp) {
+            return res.render('user/otpValidation', {
+                message: "OTP expired, request a new one",
+                icon: "info",
+                url: "/user/validate_reset", 
+                createdAt: Date.now() - 61000 
+            });
+        }
+        if (otp !== savedOtp.otp) {
+            return res.render('user/otpValidation', {
+                message: "Invalid OTP",
+                icon: "error",
+                url: "/user/validate_reset", 
+                createdAt: savedOtp.createdAt.getTime() 
+            });
+        }
+        res.render('user/resetPassword')
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 const resetPassword = async (req, res) => {
     try {
         const { newPassword, confirmPassword } = req.body
-        console.log()
         const user = await userModel.findOne({ email: req.session.resetUser.email })
         if (!user) return res.render('user/resetPassword', { message: "unable to find user", icon: "error" })
         
@@ -235,6 +276,20 @@ const resetPassword = async (req, res) => {
         console.log(error)
         res.render('user/500Error')
     }
+}
+
+const logout = (req, res) => {
+    req.logout((err) =>{
+        if (err) { 
+            return next(err); 
+        }
+        req.session.destroy((err) =>{
+            if (err) {
+                return next(err);
+            }
+            res.redirect('/user/login');
+        });
+    });
 }
 
 
@@ -249,4 +304,6 @@ module.exports = {
     loadForgotPass,
     verifyEmail,
     resetPassword,
+    logout, 
+    validateResetEmail,
 }

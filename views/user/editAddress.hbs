@@ -1,0 +1,289 @@
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; 
+            color: #c9d1d9;
+        }
+        :root {
+            --primary-blue: #0A66C2;
+            --primary-blue-hover: #07498c;
+            --text-light: #c9d1d9;
+            --text-medium: #8b949e;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --input-bg: #0d1117;
+            --error-red: #ff7b72;
+        }
+        .bg-primary-blue { background-color: var(--primary-blue); }
+        .hover\:bg-primary-blue-hover:hover { background-color: var(--primary-blue-hover); }
+        .text-text-light { color: var(--text-light); }
+        .text-text-medium { color: var(--text-medium); }
+        .focus\:ring-primary-blue:focus { --tw-ring-color: var(--primary-blue); }
+        .text-error-red { color: var(--error-red); }
+        .border-error-red { border-color: var(--error-red); }
+
+        .my-swal-border {
+            border: 1px solid #404044 !important;
+            /* Change color and thickness */
+            border-radius: 15px !important;
+        }                               
+    </style>
+
+
+    <div class="w-full lg:w-4/5">
+        <h2 class="text-3xl font-bold text-text-light mb-6">Edit Address</h2>
+        <div class="bg-card-bg border border-border-color rounded-xl p-6">
+            {{#if address}}
+            <input type="text" id="_id" value="{{address._id}}" hidden>
+            <form id="add-address-form" class="space-y-6" novalidate>
+                <!-- Full Name -->
+                <div>
+                    <label for="name" class="block text-sm font-medium text-text-medium mb-2">Name</label>
+                    <input type="text" id="name" data-name="{{address.name}}" value="{{address.name}}" name="name" class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" placeholder="Enter full name" required>
+                    <div id="name-error" class="text-error-red text-sm mt-1 hidden"></div>
+                </div>
+
+                <!-- State, District, City -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div>
+                        <label for="state" class="block text-sm font-medium text-text-medium mb-2">State</label>
+                        <input type="text" id="state" data-state="{{address.state}}" value="{{address.state}}" name="state" class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" placeholder="State" required>
+                        <div id="state-error" class="text-error-red text-sm mt-1 hidden"></div>
+                    </div>
+                    <div>
+                        <label for="district" class="block text-sm font-medium text-text-medium mb-2">District</label>
+                        <input type="text" id="district" data-district="{{address.district}}" value="{{address.district}}" name="district" class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" placeholder="District" required>
+                        <div id="district-error" class="text-error-red text-sm mt-1 hidden"></div>
+                    </div>
+                    <div>
+                        <label for="city" class="block text-sm font-medium text-text-medium mb-2">City</label>
+                        <input type="text" id="city" data-city="{{address.city}}" value="{{address.city}}" name="city" class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" placeholder="City" required>
+                        <div id="city-error" class="text-error-red text-sm mt-1 hidden"></div>
+                    </div>
+                </div>
+                
+                <!-- Address -->
+                <div>
+                    <label for="address" class="block text-sm font-medium text-text-medium mb-2">Address</label>
+                    <textarea id="address" name="address" rows="4" class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" placeholder="Enter full address" data-address="{{address.address}}" required>{{address.address}}</textarea>
+                    <div id="address-error" class="text-error-red text-sm mt-1 hidden"></div>
+                </div>
+
+                <!-- Pincode, Address Type, Landmark, and Default Checkbox -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
+                    <div class="md:col-span-1">
+                        <label for="pincode" class="block text-sm font-medium text-text-medium mb-2">Pin Code</label>
+                        <input type="text" id="pincode" data-pincode="{{address.pincode}}" value="{{address.pincode}}" name="pincode" class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" placeholder="Pincode" required>
+                        <div id="pincode-error" class="text-error-red text-sm mt-1 hidden"></div>
+                    </div>
+                    <div class="md:col-span-1">
+                        <span class="block text-sm font-medium text-text-medium mb-2">Address type</span>
+                        <div class="flex items-center space-x-4 h-[46px]">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="address_type" value="Home" class="form-radio text-primary-blue focus:ring-primary-blue border-border-color bg-input-bg" {{#if (eq address.type "Home")}}checked{{/if}}>
+                                <span class="ml-2 text-text-light">Home</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="address_type" value="Work" class="form-radio text-primary-blue focus:ring-primary-blue border-border-color bg-input-bg" {{#if (eq address.type "Work")}}checked{{/if}}>
+                                <span class="ml-2 text-text-light">Work</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="md:col-span-1 lg:col-span-1">
+                        <label for="landmark" class="block text-sm font-medium text-text-medium mb-2">Landmark (Optional)</label>
+                        <input type="text" id="landmark" data-landmark="{{address.landmark}}" value="{{address.landmark}}" name="landmark" class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" placeholder="Landmark">
+                    </div>
+                </div>
+
+                <h3 class="text-xl font-semibold text-text-light pt-4 border-t border-border-color">Contact Information</h3>
+                <!-- Mobile Number & E-mail -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label for="mobile" class="block text-sm font-medium text-text-medium mb-2">Mobile Number</label>
+                        <input type="tel" id="mobile" data-mobile="{{address.mobile}}" value="{{address.mobile}}" name="mobile" class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" placeholder="Mobile Number" required>
+                        <div id="mobile-error" class="text-error-red text-sm mt-1 hidden"></div>
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-text-medium mb-2">E-mail</label>
+                        <input type="email" id="email" data-email="{{address.email}}" value="{{address.email}}" name="email" class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" placeholder="E-mail" required>
+                        <div id="email-error" class="text-error-red text-sm mt-1 hidden"></div>
+                    </div>
+                </div>
+
+                <!-- Alternate Number -->
+                <div>
+                    <label for="alternate-number" class="block text-sm font-medium text-text-medium mb-2">Alternate Number (Optional)</label>
+                    <input type="tel" id="alternate-number" data-alternateMobile="{{address.alternateMobile}}" value="{{address.alternateMobile}}" name="alternateMobile" class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" placeholder="Alternate Number">
+                    <div id="alternateMobile-error" class="text-error-red text-sm mt-1 hidden"></div>
+                </div>
+
+                <!-- Save Button -->
+                <div class="pt-6">
+                    <button type="submit" id="saveBtn" class="w-full bg-primary-blue hover:bg-primary-blue-hover text-white font-medium py-3 px-6 rounded-lg transition-colors">
+                        Save
+                    </button>
+                </div>
+            </form>
+            {{/if}}
+        </div>
+    </div>
+
+    <!-- JavaScript for Form Validation -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('add-address-form');
+            const saveBtn = document.getElementById('saveBtn')
+            
+            // Helper function to show an error message for a given field
+            const showError = (fieldId, message) => {
+                const errorDiv = document.getElementById(`${fieldId}-error`);
+                const inputElement = document.getElementById(fieldId);
+                if (errorDiv) {
+                    errorDiv.textContent = message;
+                    errorDiv.classList.remove('hidden');
+                    inputElement.classList.add('border-error-red');
+                }
+            };
+
+            // Helper function to clear an error message
+            const clearError = (fieldId) => {
+                const errorDiv = document.getElementById(`${fieldId}-error`);
+                const inputElement = document.getElementById(fieldId);
+                if (errorDiv) {
+                    errorDiv.classList.add('hidden');
+                    inputElement.classList.remove('border-error-red');
+                }
+            };
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault(); // Prevent default form submission
+                
+                let isValid = true;
+                
+                // Clear previous errors
+                const allInputs = form.querySelectorAll('input, textarea');
+                allInputs.forEach(input => clearError(input.id));
+
+                // --- Validation based on the Mongoose schema ---
+
+                // 1. Validate Required String fields
+                const requiredFields = ['name', 'state', 'district', 'city', 'address'];
+                requiredFields.forEach(field => {
+                    const value = document.getElementById(field).value.trim();
+                    if (!value) {
+                        showError(field, 'This field is required.');
+                        isValid = false;
+                    }
+                });
+
+                // 2. Validate Pincode (required and must be a number)
+                const pincodeInput = document.getElementById('pincode');
+                const pincodeValue = pincodeInput.value.trim();
+                if (!pincodeValue) {
+                    showError('pincode', 'Pincode is required.');
+                    isValid = false;
+                } else if (isNaN(pincodeValue) || pincodeValue.includes('.')) {
+                    showError('pincode', 'Pincode must be a number.');
+                    isValid = false;
+                }
+
+                // 3. Validate Mobile Number (required and must be a number)
+                const mobileInput = document.getElementById('mobile');
+                const mobileValue = mobileInput.value.trim();
+                if (!mobileValue) {
+                    showError('mobile', 'Mobile number is required.');
+                    isValid = false;
+                } else if (isNaN(mobileValue) || mobileValue.includes('.')) {
+                    showError('mobile', 'Mobile number must be a number.');
+                    isValid = false;
+                }
+                
+                // 4. Validate Alternate Mobile Number (optional but must be a number if provided)
+                const alternateMobileInput = document.getElementById('alternate-number');
+                const alternateMobileValue = alternateMobileInput.value.trim();
+                if (alternateMobileValue && (isNaN(alternateMobileValue) || alternateMobileValue.includes('.'))) {
+                    showError('alternateMobile', 'Alternate mobile must be a number.');
+                    isValid = false;
+                }
+
+                // 5. Validate Email (required and must be a valid format)
+                const emailInput = document.getElementById('email');
+                const emailValue = emailInput.value.trim();
+                // A simple regex for email validation
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailValue) {
+                    showError('email', 'Email is required.');
+                    isValid = false;
+                } else if (!emailRegex.test(emailValue)) {
+                    showError('email', 'Please enter a valid email address.');
+                    isValid = false;
+                }
+
+                // 6. Validate Address Type (enum "Home" or "Work")
+                const addressType = document.querySelector('input[name="address_type"]:checked').value;
+                if (addressType !== "Home" && addressType !== "Work") {
+                    console.error("Invalid address type detected.");
+                    isValid = false;
+                }
+
+
+                // --- If the form is valid, collect and log the data ---
+                if (isValid) {
+                    saveBtn.disabled = true
+                    const formData = {
+                        pincode: Number(pincodeValue),
+                        type: addressType,
+                        mobile: Number(mobileValue),
+                        alternateMobile: alternateMobileValue ? Number(alternateMobileValue) : null,
+                        email: emailValue,
+                    };
+                    const _id = document.getElementById('_id').value.trim()
+                    const name = document.getElementById('name')
+                    const state = document.getElementById('state')
+                    const district = document.getElementById('district')
+                    const city = document.getElementById('city')
+                    const address = document.getElementById('address')
+                    const landmark = document.getElementById('landmark')
+
+                    formData._id = _id
+                    if(name.value.trim() !== name.dataset.name) formData.name = name.value.trim()
+                    if(state.value.trim() !== state.dataset.state) formData.state = state.value.trim()
+                    if(district.value.trim() !== district.dataset.district) formData.district = district.value.trim()
+                    if(city.value.trim() !== city.dataset.city) formData.city = city.value.trim()
+                    if(address.value.trim() !== address.dataset.address) formData.address = address.value.trim()
+                    if(landmark.value.trim() !== landmark.dataset.landmark) formData.landmark = landmark.value.trim()
+
+                    
+                    
+                    console.log('Form is valid. Data to be submitted:', formData);
+
+                    fetch('/user/manage-address/edit', {
+                         method: 'PATCH',
+                         headers: { 'Content-Type': 'application/json' },
+                         body: JSON.stringify(formData)
+                    })
+                    .then(response => {
+                        if(!response.ok) throw new Error("Failed to update address")
+                        Swal.fire({
+                            title: 'Success',
+                            text: 'Address added successfully',
+                            icon: 'success',
+                            background: "#242428",
+                            showCancelButton:false,
+                            color: 'white',
+                            customClass: {
+                                popup: 'my-swal-border'
+                            }
+                        }).then((result)=>{
+                            if(result.isConfirmed){
+                                window.location.href = '/user/manage-address'
+                            }
+                        })
+                    })
+                    .catch(error => console.error('Error:', error));
+                } else {
+                    console.log('Form validation failed.');
+                }
+            });
+        });
+    </script>

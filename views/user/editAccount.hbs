@@ -74,12 +74,12 @@
                     <!-- Reset Password Card -->
                     <section class="bg-card-bg border border-border-color rounded-xl p-6 md:p-8">
                         <h2 class="text-2xl font-bold mb-6">Password</h2>
-                        <form class="space-y-4">
+                        <div class="space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <input type="password" class="bg-input-bg border border-border-color rounded-lg p-3 focus:ring-2 focus:ring-primary-blue focus:border-primary-blue outline-none " value="fakepassword@123" placeholder="Current password" readonly>
                             </div>
-                            <a href="/user/forgot_password" class="bg-primary-blue hover:bg-primary-blue-hover text-white font-semibold py-3 px-6 rounded-lg transition-colors inline-block text-center">Reset Password</a>
-                        </form>
+                            <button type="submit" id="reset-password" class="bg-primary-blue hover:bg-primary-blue-hover text-white font-semibold py-3 px-6 rounded-lg transition-colors">Reset Password</button>
+                        </div>
                     </section>
 
                 </div>
@@ -105,6 +105,28 @@
 document.getElementById('change-photo-btn').addEventListener('click', () => {
     document.getElementById('image-upload').click();
 });
+
+document.getElementById('reset-password').addEventListener("click", ()=>{
+    Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to Reset your Password",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#4B4DFF",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+            background: "#242428",
+            customClass: {
+				popup: 'my-swal-border'
+			}
+            }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/user/forgot_password'
+            }
+
+    });
+})
 
 
 const imageUpload = document.getElementById('image-upload');
@@ -319,6 +341,7 @@ otpForm.addEventListener('submit', (e) => {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
+                saveProfileChanges(null, null, updatedEmail)
                 Swal.fire({
                     title: 'Verification Successful!',
                     text: 'Your email has been updated.',
@@ -381,16 +404,22 @@ otpForm.addEventListener('submit', (e) => {
     });
 
     function saveProfileChanges(name, phone, email) {
+        let updateValue = {}
+        if(name){
+            updateValue.name = name
+        }
+        if(phone){
+            updateValue.mobile = phone
+        }
+        if(email){
+            updateValue.email = email
+        }
         fetch(`/user/account/update?_id=${userId}`, {
-            method: 'PATCH',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({
-                name: name,
-                mobile: phone,
-                email: email
-            }),
+            body: JSON.stringify(updateValue),
         })
         .then(response => {
             if (!response.ok) {

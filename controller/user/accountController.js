@@ -16,6 +16,18 @@ const showPage = async (req, res) => {
     }
 }
 
+const getInfo = async (req, res) => {
+    try {
+        const {email} = req.session.user
+        const user = await userModel.findOne({ email })
+        if (!user) return res.status(404).json({ success: false })
+        res.status(200).json(user)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({success:false})
+    }
+}
+
 const showEditPage = async (req, res) => {
     try {
         const { id } = req.params
@@ -46,10 +58,13 @@ const updateProfilePhoto = async (req, res) => {
 const verifyPassword = async (req, res) => {
     try {
         const { userId, password } = req.body
+
         const user = await userModel.findOne({ _id: userId })
         if (!user) return res.status(404).json({ success: false })
+        
         const matchPass = await bcrypt.compare(password, user.password)
         if (!matchPass) return res.status(401).json({ success: false })
+        
         console.log("password verified")
         res.status(200).json({success:true})
     } catch (error) {
@@ -106,10 +121,12 @@ const updateProfile = async (req, res) => {
         if (req.body.email) {
             body.email = req.body.email
         }
-
+        const emailExist = await userModel.find({ email: req.body.email })
+        if (emailExist) return res.status(401).json({ success: false })
+        
         const user = await userModel.findOne({ _id })
-        if (!user) return req.status(404).json({ success: false })
-        if (user.isBlocked) return req.status(401).json({ success: false })
+        if (!user) return res.status(404).json({ success: false })
+        if (user.isBlocked) return res.status(401).json({ success: false })
         
         await userModel.updateOne({ _id }, { $set: body })
         res.status(200).json({success:true})
@@ -122,6 +139,7 @@ const updateProfile = async (req, res) => {
 
 module.exports = {
     showPage,
+    getInfo,
     showEditPage,
     updateProfilePhoto,
     verifyPassword,

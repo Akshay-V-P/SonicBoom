@@ -46,6 +46,21 @@
         #brand-logo{
             width: 150px;
         }
+        .my-swal-border {
+            border: 1px solid #404044 !important;
+            /* Change color and thickness */
+            border-radius: 15px !important;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            width: 0.5em; /* You can adjust this to your liking */
+            display: none; /* This is the key line to hide the scrollbar */
+        }
+
+        /* For Firefox */
+        .hide-scrollbar {
+            scrollbar-width: none; /* This is the key line for Firefox */
+        }
 
         @media (max-width: 480px) {
             #brand-logo{
@@ -86,27 +101,27 @@
         <div class="container mx-auto mb:px-4 flex flex-col lg:flex-row gap-8">
                 <!-- Sidebar -->
                 <aside class="w-full lg:w-72 flex-shrink-0">
-                    <div class="bg-card-bg border border-border-color rounded-xl p-6 sticky top-8">
+                    <div class="bg-card-bg border border-border-color rounded-xl p-6 sticky top-8 ">
                         <div class="hidden lg:flex items-center gap-4 pb-6 border-b border-border-color" id="sidebar-profile">
-                            <img src="" id="profile" alt="Angel Johana" class="w-12 h-12 rounded-full object-cover" onerror="this.onerror=null;this.src='https://res.cloudinary.com/dnmpesolv/image/upload/v1755940464/profile-placeholder_fnbhjm.png';">
-                            <span class="font-semibold text-lg" id="userName">Angel Johana</span>
+                            <img src="https://res.cloudinary.com/dnmpesolv/image/upload/v1755940464/profile-placeholder_fnbhjm.png" id="profile" alt="Angel Johana" class="w-12 h-12 rounded-full object-cover" >
+                            <span class="font-semibold text-lg" id="userName"></span>
                         </div>
                         <nav class="mt-0 lg:mt-6">
-                            <ul class="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mb-4 lg:mb-0">
+                            <ul class="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 -mb-4 lg:mb-0 hide-scrollbar">
                                 <li>
-                                    <a href="#" class="flex items-center gap-4 p-3 rounded-lg bg-input-bg text-text-light whitespace-nowrap">
+                                    <a href="/user/account" class="flex items-center gap-4 p-3 rounded-lg bg-input-bg text-text-light whitespace-nowrap">
                                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                                         Account
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="flex items-center gap-4 p-3 rounded-lg hover:bg-input-bg text-text-medium hover:text-text-light transition-colors whitespace-nowrap">
+                                    <a href="/user/orders" class="flex items-center gap-4 p-3 rounded-lg hover:bg-input-bg text-text-medium hover:text-text-light transition-colors whitespace-nowrap">
                                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                                         My Orders
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="#" class="flex items-center gap-4 p-3 rounded-lg hover:bg-input-bg text-text-medium hover:text-text-light transition-colors whitespace-nowrap">
+                                    <a href="/user/manage-address" class="flex items-center gap-4 p-3 rounded-lg hover:bg-input-bg text-text-medium hover:text-text-light transition-colors whitespace-nowrap">
                                         <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 9v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9"></path><path d="M9 22V12h6v10M2 10.6L12 2l10 8.6"></path></svg>
                                         Manage Addresses
                                     </a>
@@ -225,7 +240,34 @@
 </html>
 
 <script>
-    const userName = document.getElementById('name').value.trim()
-    document.getElementById('userName').innerHTML = userName
+    document.addEventListener('DOMContentLoaded', ()=>{
+        const userName = document.getElementById('userName')
+        const profile = document.getElementById('profile')
+        fetch('/user/account/profile/info')
+            .then(response => {
+                if(!response.ok) throw new Error("Error fetching info")
+                return response.json()
+            })
+            .then(data => {
+
+                if (userName && data.name) {
+                    userName.innerHTML = data.name;
+                }
+
+                if (data.profilePhoto) {
+                    const tempImage = new Image();
+                    tempImage.onload = () => {
+                        profile.src = data.profilePhoto;
+                    };
+                    tempImage.onerror = () => {
+                        console.error("Failed to load the new profile photo from URL:", data.profilePhoto);
+                    };
+                    tempImage.src = data.profilePhoto;
+                }
+            })
+            .catch(error =>{
+                console.log("Can't get info from server",error)
+            })
+    })
     
 </script>

@@ -1,0 +1,122 @@
+<div class="w-full lg:w-4/5">
+    <!-- Page Header and Add Button -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <h2 class="text-3xl font-bold text-text-light">Manage Addresses</h2>
+        <a href="/user/manage-address/add"><button class="bg-primary-blue hover:bg-primary-blue-hover text-white font-medium py-2 px-6 rounded-lg transition-colors whitespace-nowrap">
+            Add new Address
+        </button></a>
+    </div>
+
+    <!-- Addresses List -->
+    <div class="space-y-6">
+        {{#each addresses}}
+        <input type="text" value="{{this._id}}" id="userId" hidden>
+        <div class="bg-card-bg border border-border-color rounded-xl p-6">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-lg sm:text-xl font-semibold text-text-light">{{this.type}}</span>
+                {{#if this.default}}
+                <span class="text-xs font-semibold text-primary-blue bg-primary-blue/20 rounded-full px-3 py-1">Default</span>
+                {{else}}
+                <button class="text-xs font-semibold text-text-medium hover:text-primary-blue transition-colors px-3 py-1 rounded-full border border-border-color hover:border-primary-blue default-btn" data-_id="{{this._id}}">
+                    Set as Default
+                </button>
+                {{/if}}
+            </div>
+            <div class="text-text-light mb-4 text-sm sm:text-base">
+                <p class="font-medium">{{this.name}}</p>
+                <p class="text-text-medium mt-1">{{this.address}}, {{this.city}}, {{this.district}}, {{this.state}}</p>
+                <p class="text-text-medium">{{this.pincode}}, {{this.email}}</p>
+                <p class="text-text-medium">{{this.mobile}}</p>
+                {{#if this.alternateMobile}}
+                <p class="text-text-medium">{{this.alternateMobile}}</p>
+                {{/if}}
+            </div>
+            <div class="flex space-x-4 text-sm font-medium">
+                <a href="/user/manage-address/edit?_id={{this._id}}"><button class="text-text-medium hover:text-primary-blue transition-colors flex items-center gap-2">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                    Edit
+                </button></a>
+                <button class="text-text-medium hover:text-red-500 transition-colors flex items-center gap-2 delete-btn" data-_id="{{this._id}}">
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                    Delete
+                </button>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.delete-btn').forEach(button =>{
+    button.addEventListener('click', (e)=>{
+    const userId = e.target.dataset._id
+    Swal.fire({
+        title: 'Are you sure',
+        text: 'Do you want to delete this Address',
+        icon: 'warning',
+        background: "#242428",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        color: 'white',
+        customClass: {
+            popup: 'my-swal-border'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/user/manage-address/edit?_id=${userId}`, {
+                method:"DELETE",
+            })
+                .then(response => {
+                    if(!response.ok) throw new Error("Failed to fetch")
+                    Swal.fire({
+                        title: 'Success',
+                        text: 'Your Address has been deleted',
+                        icon: 'success',
+                        background: "#242428",
+                        showCancelButton: false,
+                        confirmButtonText: "Ok",
+                        color: 'white',
+                        customClass: {
+                            popup: 'my-swal-border'
+                        }
+                    }).then(result =>{
+                        if(result.isConfirmed){
+                            window.location.href = '/user/manage-address'
+                        }
+                    })
+                })
+        }
+    })
+})
+})
+
+
+document.querySelectorAll('.default-btn').forEach(button =>{
+        button.addEventListener('click', (e)=>{
+        const userId = e.target.dataset._id
+        fetch(`/user/manage-address/edit?_id=${userId}`, {
+                method:"POST",
+            })
+                .then(response => {
+                    if(!response.ok) throw new Error("Failed to fetch")
+                    Swal.fire({
+                        title: 'Success',
+                        text: 'Your Address set to default',
+                        icon: 'success',
+                        background: "#242428",
+                        showCancelButton: false,
+                        confirmButtonText: "Ok",
+                        color: 'white',
+                        customClass: {
+                            popup: 'my-swal-border'
+                        }
+                    }).then(result =>{
+                        if(result.isConfirmed){
+                            window.location.href = '/user/manage-address'
+                        }
+                    })
+                })
+    })
+})
+
+</script>

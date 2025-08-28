@@ -46,6 +46,17 @@
             background-color: white;
         }
 
+        /* New styles for the "Packed for Shipping" animation */
+        .packed-animation {
+            animation: packed-effect 2s infinite;
+            transition: 1s ease-in-out;
+        }
+        @keyframes packed-effect {
+            0% { transform: scale(1); background-color: #3a3a3a; }
+            50% { transform: scale(1.05); background-color: #4CAF50; }
+            100% { transform: scale(1); background-color: #4CAF50; }
+        }
+
         @media (max-width:724px) {
             .carousel-container{
                 max-width: 100%;
@@ -56,6 +67,7 @@
             
             <!-- Left Column: Game Details (Top Part) -->
             {{#if product}}
+            <input type="text" value="{{product._id}}" id="productId" hidden>
             <div class="lg:col-span-3 order-1">
                 <h1 class="text-3xl md:text-4xl font-bold text-white">{{product.name}}</h1>
                 <div class="flex items-center mt-2 mb-6">
@@ -121,7 +133,7 @@
 
                         <div class="mt-6 space-y-3">
                             <button class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition-colors duration-200">Buy Now</button>
-                            <button class="w-full bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white font-bold py-3 rounded-lg transition-colors duration-200">Add to Cart</button>
+                            <button id="add-to-cart-btn" class="w-full bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white font-bold py-3 rounded-lg transition-colors duration-200">Add to Cart</button>
                             <button class="w-full border border-[#404044] hover:bg-[#2a2a2a] text-white font-bold py-3 rounded-lg transition-colors duration-200">Add to Wishlist</button>
                         </div>
                     </div>
@@ -245,4 +257,33 @@
 
             startInterval();
         });
+
+        // "Packed for Shipping" Animation Script
+            const addToCartBtn = document.getElementById('add-to-cart-btn');
+
+            if (addToCartBtn) {
+                addToCartBtn.addEventListener('click', () => {
+                    const productId = document.getElementById('productId').value.trim()
+                    const originalText = addToCartBtn.textContent;
+                    addToCartBtn.textContent = 'Packing for Shipping...';
+                    addToCartBtn.classList.add('bg-green-checkout', 'packed-animation');
+
+                    fetch(`/user/cart/add?_id=${productId}&variantId=68a7f3fb4eaa98edbbf488d0`,{method:"POST"})
+                        .then(response =>{
+                            if(!response.ok) throw new Error("Product cant add to cart")
+                            setTimeout(() => {
+                                addToCartBtn.textContent = originalText;
+                                addToCartBtn.classList.remove('bg-green-checkout', 'packed-animation');
+                            }, 2000); 
+                            return response.json()
+                        })
+                        .then(data =>{
+                            console.log(data)
+                            // can use to increment cart icon value
+                        })
+                        .catch(error => console.log(error))
+
+                    
+                });
+            }
     </script>
