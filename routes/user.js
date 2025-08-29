@@ -96,10 +96,14 @@ router.route('/manage-address/edit')
 
 // cart
 router.get('/cart', cartController.loadCart)
+router.get('/cart/details', cartController.cartDetails)
 router.post('/cart/add', cartController.addToCart)
+router.post('/cart/remove', cartController.removeFromCart)
+router.post('/cart/decrement', cartController.decrementQuantity)
 
 // checkout
 router.get('/checkout', checkoutController.loadCheckout)
+router.get('/checkout/details', checkoutController.loadDetails)
 
 router.get('/logout', userController.logout)
 

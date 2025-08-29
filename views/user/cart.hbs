@@ -52,6 +52,12 @@
             scrollbar-width: none;
         }
 
+        .my-swal-border {
+		border: 1px solid #404044 !important;
+		/* Change color and thickness */
+		border-radius: 15px !important;
+	}
+
         @media (max-width: 480px) {
             #brand-logo {
                 width: 120px;
@@ -64,95 +70,16 @@
                 <h1 class="text-2xl md:text-3xl font-bold mb-6">My Cart</h1>
                 <div class="flex flex-col lg:flex-row gap-8">
                     <!-- Cart Items Section -->
-                    <div class="flex-grow flex flex-col gap-6">
+                    <div class="flex-grow flex flex-col gap-6" id="products-container">
                         <!-- Item Card 1 -->
-                        {{#each products}}
-                        <div class="bg-card-bg border border-border-color rounded-xl p-4 md:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4">
-                            <div class="w-full h-auto sm:w-28 sm:h-auto">
-                                <img src="https://placehold.co/150x200/1A1A1A/fff?text=FNaF" alt="Five Nights at Freddy's: Secret Of The Mimic" class="w-16 h-auto sm:w-28 sm:h-auto rounded-lg object-cover flex-shrink-0">
-                            </div>
-                            <div class="flex-grow w-full">
-                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full">
-                                    <h3 class="text-xl font-semibold text-text-light">Five Nights at Freddy's : Secret Of The Mimic</h3>
-                                    <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹2349</span>
-                                </div>
-                                <span class="text-sm font-medium text-text-medium">Base Game</span>
-                                <p class="text-text-medium text-sm mt-2 mb-4 hidden sm:block">Enter the abandoned workshop of Murray's Costume Manor and unravel the mystery left behind by the reclusive inventor in Five Nights at Freddy's: Secret of the Mimic. Rumors say the workshop's lonely owner holds a secret and every flicker of light hints at an ever-present threat.</p>
-                                <div class="flex items-center gap-4 mt-4 text-sm font-medium">
-                                    <button class="text-text-medium hover:text-text-light transition-colors">Remove</button>
-                                    <span class="text-text-medium">|</span>
-                                    <div class="flex items-center gap-2">
-                                        <button class="quantity-btn p-1.5 rounded-full bg-input-bg hover:bg-border-color transition-colors" onclick="decrementQuantity(this)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
-                                            </svg>
-                                        </button>
-                                        <input type="number" class="w-12 text-center bg-input-bg border border-border-color rounded-lg text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" value="1" min="1" readonly>
-                                        <button class="quantity-btn p-1.5 rounded-full bg-input-bg hover:bg-border-color transition-colors" onclick="incrementQuantity(this)">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {{/each}}
+                        
 
-                        <!-- Item Card 2 -->
-                        <div class="bg-card-bg border border-border-color rounded-xl p-4 md:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4">
-                            <div class="w-full h-auto sm:w-28 sm:h-auto">
-                                <img src="https://placehold.co/150x200/1A1A1A/fff?text=FNaF" alt="Five Nights at Freddy's: Secret Of The Mimic" class="w-16 h-auto sm:w-28 sm:h-auto rounded-lg object-cover flex-shrink-0">
-                            </div>
-                            <div class="flex-grow w-full">
-                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full">
-                                    <h3 class="text-xl font-semibold text-text-light">Five Nights at Freddy's : Secret Of The Mimic</h3>
-                                    <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹2349</span>
-                                </div>
-                                <span class="text-sm font-medium text-text-medium">Base Game</span>
-                                <p class="text-text-medium text-sm mt-2 mb-4 hidden sm:block">Enter the abandoned workshop of Murray's Costume Manor and unravel the mystery left behind by the reclusive inventor in Five Nights at Freddy's: Secret of the Mimic. Rumors say the workshop's lonely owner holds a secret and every flicker of light hints at an ever-present threat.</p>
-                                <div class="flex items-center gap-4 mt-4 text-sm font-medium">
-                                    <button class="text-text-medium hover:text-text-light transition-colors">Remove</button>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Order Summary Section -->
-                    <div class="w-full lg:w-96 flex-shrink-0">
-                        <div class="bg-card-bg border border-border-color rounded-xl p-6 sticky top-8">
-                            <h2 class="text-xl font-bold mb-4">Order Summary</h2>
-                            <div class="space-y-4 text-text-light">
-                                <div class="flex justify-between items-center">
-                                    <span class="text-text-medium">2 Items</span>
-                                    <span class="font-medium">₹5957.56</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-text-medium">Delivery charges</span>
-                                    <span class="font-medium text-green-500">Free</span>
-                                </div>
-                                <div class="flex justify-between items-center">
-                                    <span class="text-text-medium">GST Amount</span>
-                                    <span class="font-medium">₹260.23</span>
-                                </div>
-                                <div class="flex justify-between items-center border-b border-border-color pb-4">
-                                    <span class="text-text-medium">Discount</span>
-                                    <span class="font-medium text-red-500">-₹2699.56</span>
-                                </div>
-                                <a href="#" onclick="showModal()" class="text-primary-blue text-sm font-semibold hover:underline">Show available coupons</a>
-                                <div class="flex gap-2 items-center mt-2">
-                                    <input type="text" placeholder="Apply Coupon" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
-                                    <button class="bg-primary-blue hover:bg-primary-blue-hover text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium">Apply</button>
-                                </div>
-                                <div class="flex justify-between items-center pt-4 border-t border-border-color">
-                                    <span class="text-lg font-bold">Total Price</span>
-                                    <span class="text-2xl font-bold">₹3258</span>
-                                </div>
-                                <button class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl transition-colors">
-                                    Check out
-                                </button>
-                            </div>
-                        </div>
+                    <div class="w-full lg:w-96 flex-shrink-0" id="checkout-container">
+
+                        
                     </div>
                 </div>
             </div>
@@ -212,6 +139,229 @@
 
     <!-- JavaScript for modal functionality -->
     <script>
+        document.addEventListener("DOMContentLoaded", ()=>{
+            fetchPage()
+        })
+
+
+        function fetchPage(){
+            fetch("/user/cart/details")
+                .then(response =>{
+                    if(!response.ok) throw new Error("Cant fetch cart details")
+                    return response.json()
+                })
+                .then(data => {
+                    const productContainer = document.getElementById("products-container")
+                    const checkoutDetails = document.getElementById("checkout-container")
+                    let productHTML = ''
+                    let checkoutHTML = ''
+                    let preventCheckout = false
+                    if(data.products.length == 0){
+                        productHTML += `
+                                <div class="h-[90dvh] p-4 md:p-6 flex flex-col sm:flex-row items-center justify-end sm:items-start gap-4 m-6">
+                                    <h2 class="text-xl font-semibold text-gray-400">Your cart is empty add something</h2>
+                                </div>
+                            `
+                        productContainer.innerHTML = productHTML
+                        return
+                    }
+                    data.products.forEach(product => {
+                        if(!product.hasStock){
+                            preventCheckout = true
+                            productHTML += `
+                            <div class="bg-card-bg border border-border-color rounded-xl p-4 md:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4 relative">
+                            <h3 class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-xl font-semibold text-red-500">Out Of Stock</h3>
+                            <div class="w-full h-auto sm:w-28 sm:h-auto opacity-[0.3]">
+                                <img src="${product.thumbnail}" alt="Five Nights at Freddy's: Secret Of The Mimic" class="w-16 h-auto sm:w-28 sm:h-auto rounded-lg object-cover flex-shrink-0">
+                            </div>
+                            <div class="flex-grow w-full">
+                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full opacity-[0.3]">
+                                    <h3 class="text-xl font-semibold text-text-light">${product.name}</h3>
+                                    <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.offerPrice}</span>
+                                </div>
+                                <span class="text-sm font-medium text-text-medium opacity-[0.3]">Base Game</span>
+                                <p class="text-text-medium text-sm mt-2 mb-4 hidden sm:block opacity-[0.3]">${product.description}</p>
+                                <div class="flex items-center gap-4 mt-4 text-sm font-medium">
+                                    <button class="text-text-medium hover:text-text-light transition-colors" id="remove-btn" data-productid="${product.productId}" data-variantid="${product._id}" onclick="removeFromCart(this)">Remove</button>
+                                    <span class="text-text-medium opacity-[0.3]">|</span>
+                                    <div class="flex items-center gap-2 opacity-[0.3]">
+                                        <button class="quantity-btn p-1.5 rounded-full bg-input-bg hover:bg-border-color transition-colors cursor-not-allowed" data-productid="${product.productId}" data-variantid="${product._id}" onclick="decrementQuantity(this)" disabled>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                            </svg>
+                                        </button>
+                                        <input type="number" class="w-12 text-center bg-input-bg border border-border-color rounded-lg text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" value="${product.quantity}" min="1" readonly>
+                                        <button class="quantity-btn p-1.5 rounded-full bg-input-bg hover:bg-border-color transition-colors cursor-not-allowed" data-productid="${product.productId}" data-variantid="${product._id}" onclick="incrementQuantity(this)" disabled>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        `
+                        }else{
+                            productHTML +=`
+                                <div class="bg-card-bg border border-border-color rounded-xl p-4 md:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4">
+                                    <div class="w-full h-auto sm:w-28 sm:h-auto">
+                                        <img src="${product.thumbnail}" alt="Five Nights at Freddy's: Secret Of The Mimic" class="w-16 h-auto sm:w-28 sm:h-auto rounded-lg object-cover flex-shrink-0">
+                                    </div>
+                                    <div class="flex-grow w-full">
+                                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full">
+                                            <h3 class="text-xl font-semibold text-text-light">${product.name}</h3>
+                                            <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.offerPrice}</span>
+                                        </div>
+                                        <span class="text-sm font-medium text-text-medium">Base Game</span>
+                                        <p class="text-text-medium text-sm mt-2 mb-4 hidden sm:block">${product.description}</p>
+                                        <div class="flex items-center gap-4 mt-4 text-sm font-medium">
+                                            <button class="text-text-medium hover:text-text-light transition-colors" data-productid="${product.productId}" data-variantid="${product._id}" onclick="removeFromCart(this)">Remove</button>
+                                            <span class="text-text-medium">|</span>
+                                            <div class="flex items-center gap-2">
+                                                <button class="quantity-btn p-1.5 rounded-full bg-input-bg hover:bg-border-color transition-colors" data-productid="${product.productId}" data-variantid="${product._id}" onclick="decrementQuantity(this)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+                                                    </svg>
+                                                </button>
+                                                <input type="number" class="w-12 text-center bg-input-bg border border-border-color rounded-lg text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" value="${product.quantity}" min="1" readonly>
+                                                <button class="quantity-btn p-1.5 rounded-full bg-input-bg hover:bg-border-color transition-colors" data-productid="${product.productId}" data-variantid="${product._id}" onclick="incrementQuantity(this)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `
+                        }
+                    })
+
+
+                    let details = data.checkoutDetails
+                    if(preventCheckout){
+                        checkoutHTML+=`
+                            <div class="bg-card-bg border border-border-color rounded-xl p-6 sticky top-8">
+                            <h2 class="text-xl font-bold mb-4">Order Summary</h2>
+                            <div class="space-y-4 text-text-light">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-text-medium">${details.items} Items</span>
+                                    <span class="font-medium">₹${details.price}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-text-medium">Delivery charges</span>
+                                    <span class="font-medium text-green-500">Free</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-text-medium">GST Amount</span>
+                                    <span class="font-medium">₹${details.gstAmount}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-text-medium">Sub Total</span>
+                                    <span class="font-medium">₹${details.subTotal}</span>
+                                </div>
+                                <div class="flex justify-between items-center border-b border-border-color pb-4">
+                                    <span class="text-text-medium">Discount</span>
+                                    <span class="font-medium text-red-500">-₹${details.discounts}</span>
+                                </div>
+                                <a href="#" onclick="showModal()" class="text-primary-blue text-sm font-semibold hover:underline">Show available coupons</a>
+                                <div class="flex gap-2 items-center mt-2">
+                                    <input type="text" placeholder="Apply Coupon" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
+                                    <button class="bg-primary-blue hover:bg-primary-blue-hover text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium">Apply</button>
+                                </div>
+                                <div class="flex justify-between items-center pt-4 border-t border-border-color">
+                                    <span class="text-lg font-bold">Total Price</span>
+                                    <span class="text-2xl font-bold">₹${details.total}</span>
+                                </div>
+                                <button class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl transition-colors cursor-not-allowed" diabled>
+                                    Check out
+                                </button>
+                            </div>
+                        </div>
+                        `     
+                    }else{
+                        checkoutHTML+=`
+                            <div class="bg-card-bg border border-border-color rounded-xl p-6 sticky top-8">
+                            <h2 class="text-xl font-bold mb-4">Order Summary</h2>
+                            <div class="space-y-4 text-text-light">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-text-medium">${details.items} Items</span>
+                                    <span class="font-medium">₹${details.price}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-text-medium">Delivery charges</span>
+                                    <span class="font-medium text-green-500">Free</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-text-medium">GST Amount</span>
+                                    <span class="font-medium">₹${details.gstAmount}</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-text-medium">Sub Total</span>
+                                    <span class="font-medium">₹${details.subTotal}</span>
+                                </div>
+                                <div class="flex justify-between items-center border-b border-border-color pb-4">
+                                    <span class="text-text-medium">Discount</span>
+                                    <span class="font-medium text-red-500">-₹${details.discounts}</span>
+                                </div>
+                                <a href="#" onclick="showModal()" class="text-primary-blue text-sm font-semibold hover:underline">Show available coupons</a>
+                                <div class="flex gap-2 items-center mt-2">
+                                    <input type="text" placeholder="Apply Coupon" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
+                                    <button class="bg-primary-blue hover:bg-primary-blue-hover text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium">Apply</button>
+                                </div>
+                                <div class="flex justify-between items-center pt-4 border-t border-border-color">
+                                    <span class="text-lg font-bold">Total Price</span>
+                                    <span class="text-2xl font-bold">₹${details.total}</span>
+                                </div>
+                                <a href="/user/checkout" class="mt-6"><button class="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl transition-colors">
+                                    Check out
+                                </button></a>
+                            </div>
+                        </div>
+                        `     
+                    }
+                                           
+
+                    productContainer.innerHTML = productHTML
+                    checkoutDetails.innerHTML = checkoutHTML
+
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+        }
+
+
+        function removeFromCart(button){
+            let productId = button.dataset.productid
+            let variantId = button.dataset.variantid 
+            fetch(`/user/cart/remove?_id=${productId}&variantId=${variantId}`, {method:"POST"})
+                .then(response =>{
+                    if(response.status == 401) return response.json()
+                    if(!response.ok) throw new Error("failed to fetch data")
+                    fetchPage()
+                    const quantityControl = button.parentElement;
+                    const quantityInput = quantityControl.querySelector('input[type="number"]');
+                    let currentValue = parseInt(quantityInput.value, 10);
+                    quantityInput.value = currentValue + 1;
+                })
+                .then(data => {
+                    Swal.fire({
+                        title: data.message,
+                        icon: "warning",
+                        background: "#242428",
+                        color: 'white',
+                        customClass: {
+                            popup: 'my-swal-border'
+                        }
+                    });
+                })
+                .catch(error =>{
+                    console.log(error)
+                })
+        }
+
+
         function showModal() {
             const modal = document.getElementById('coupon-modal');
             modal.classList.remove('hidden');
@@ -224,21 +374,63 @@
 
 
         function incrementQuantity(button) {
-        
-            const quantityControl = button.parentElement;
-            const quantityInput = quantityControl.querySelector('input[type="number"]');
-            let currentValue = parseInt(quantityInput.value, 10);
-            quantityInput.value = currentValue + 1;
+            let productId = button.dataset.productid
+            let variantId = button.dataset.variantid 
+            fetch(`/user/cart/add?_id=${productId}&variantId=${variantId}`, {method:"POST"})
+                .then(response =>{
+                    if(response.status == 401) return response.json()
+                    if(!response.ok) throw new Error("failed to fetch data")
+                    fetchPage()
+                    const quantityControl = button.parentElement;
+                    const quantityInput = quantityControl.querySelector('input[type="number"]');
+                    let currentValue = parseInt(quantityInput.value, 10);
+                    quantityInput.value = currentValue + 1;
+                })
+                .then(data => {
+                    Swal.fire({
+                        title: data.message,
+                        icon: "warning",
+                        background: "#242428",
+                        color: 'white',
+                        customClass: {
+                            popup: 'my-swal-border'
+                        }
+                    });
+                })
+                .catch(error =>{
+                    console.log(error)
+                })
         }
 
         function decrementQuantity(button) {
-            
-            const quantityControl = button.parentElement;
-            const quantityInput = quantityControl.querySelector('input[type="number"]');
-            let currentValue = parseInt(quantityInput.value, 10);
-            if (currentValue > 1) {
-                quantityInput.value = currentValue - 1;
-            }
+            let productId = button.dataset.productid
+            let variantId = button.dataset.variantid 
+            fetch(`/user/cart/decrement?_id=${productId}&variantId=${variantId}`, {method:"POST"})
+                .then(response =>{
+                    if(response.status == 401) return response.json()
+                    if(!response.ok) throw new Error("failed to fetch data")
+                    fetchPage()
+                    const quantityControl = button.parentElement;
+                    const quantityInput = quantityControl.querySelector('input[type="number"]');
+                    let currentValue = parseInt(quantityInput.value, 10);
+                    if (currentValue > 1) {
+                        quantityInput.value = currentValue - 1;
+                    }
+                })
+                .then(data => {
+                    Swal.fire({
+                        title: data.message,
+                        icon: "warning",
+                        background: "#242428",
+                        color: 'white',
+                        customClass: {
+                            popup: 'my-swal-border'
+                        }
+                    });
+                })
+                .catch(error =>{
+                    console.log(error)
+                })
         }
     </script>
     

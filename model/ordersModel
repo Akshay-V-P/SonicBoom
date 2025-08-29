@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const {v4:uuidv4} = require('uuid')
 const orderSchema = mongoose.Schema({
     couponId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -14,11 +15,6 @@ const orderSchema = mongoose.Schema({
         type: String,
         required:true
     },
-    orderDate: {
-        type: Date,
-        default: Date.now(),
-        required:true
-    },
     status: {
         type: String,
         emum:['pending', 'processing', 'deliverd', 'cancelled', 'payment failed'],
@@ -30,8 +26,9 @@ const orderSchema = mongoose.Schema({
         enum:['paid', 'unpaid', 'failed'],
         required:true
     },
-    transactionId: {
+    orderId: {
         type: String,
+        default:uuidv4,
         unique:true,
         required:true
     },

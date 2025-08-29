@@ -45,7 +45,8 @@ const addAddress = async (req, res) => {
 
         const newAddress = new addressModel(address)
         await newAddress.save()
-        res.status(200).json({success:true})
+        const addresses = await addressModel.find({userId:_id})
+        res.status(200).json({success:true, addresses})
     } catch (error) {
         console.log(error)
         res.status(500).json({success:false})
