@@ -36,11 +36,12 @@ const addAddress = async (req, res) => {
         if (user.isBlocked) return res.status(401).json({ success: false })
         
         address.userId = _id
-        
-        if (address.default) {
-            const defaultAddress = await addressModel.findOne({ default: true })
+        const defaultAddress = await addressModel.findOne({ default: true })
+        if (address.default && defaultAddress) {
             defaultAddress.default = false
             await defaultAddress.save()
+        } else if(!defaultAddress) {
+            address.default = true
         }
 
         const newAddress = new addressModel(address)

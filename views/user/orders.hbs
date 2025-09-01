@@ -1,6 +1,6 @@
 <div class="w-full lg:w-4/5">
     <h2 class="text-3xl font-bold text-text-light mb-6">My Orders</h2>
-    <div class="space-y-6"> 
+    <div class="space-y-6" id="order-container"> 
         <div class="bg-card-bg border border-border-color rounded-xl p-4 sm:p-6 flex flex-col md:flex-row items-center gap-4">
             {{!-- <div class="aspect-[3/4] rounded-lg overflow-hidden w-24">
                 <img src="https://res.cloudinary.com/dnmpesolv/image/upload/v1724584488/FNAF_TheMimic_x1_h4z1l7.png" alt="Five Nights at Freddy's: Secret Of The Mimic" class="w-full h-full rounded-lg object-cover">
@@ -94,3 +94,60 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded",()=>{
+        fetch('/user/orders/details')
+            .then(response =>{
+                if(!response.ok) throw new Error("Cant fetch")
+                return response.json()
+            })
+            .then(data => {
+                const orderContainer = document.getElementById("order-container")
+                let html = ''
+                data.forEach(product => {
+                    html = `
+                    <div class="bg-card-bg border border-border-color rounded-xl p-4 sm:p-6 flex flex-col md:flex-row items-center gap-4">
+                        <div class="aspect-[3/4] rounded-lg overflow-hidden w-24">
+                            <img src="${product.thumbnail}" alt="${product.name}" class="w-full h-full rounded-lg object-cover">
+                        </div>
+                        <div class="flex-grow w-full md:w-auto">
+                            <div class="flex justify-between items-start mb-2">
+                                <div class="flex-grow">
+                                    <span class="text-sm text-text-medium bg-input-bg rounded-full px-3 py-1 font-medium">Base Game</span>
+                                    <h3 class="text-xl sm:text-2xl font-semibold text-text-light mt-2">Five Nights at Freddy's : Secret Of The Mimic</h3>
+                                    <p class="text-sm text-text-medium mt-1">
+                                        <span class="font-medium">Seller:</span> Mimic Games
+                                        <span class="ml-4 font-medium">Order Date:</span> 18/04/2025
+                                    </p>
+                                </div>
+                                <span class="text-sm font-semibold text-yellow-500 bg-yellow-900/20 rounded-full px-3 py-1 ml-4">Processing</span>
+                            </div>
+                            <div class="flex items-center justify-between mt-4">
+                                <p class="text-2xl font-bold">
+                                    ₹2349
+                                </p>
+                                <div class="flex space-x-2 text-sm font-medium">
+                                    <button class="text-text-medium hover:text-red-500 transition-colors p-2 rounded-lg">
+                                        <span class="">Cancel</span>
+                                    </button>
+                                    <a href="#" class="text-text-medium hover:text-text-light transition-colors p-2 rounded-lg">
+                                        <span class="">Invoice</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `
+                })
+
+                orderContainer.innerHTML = html
+
+
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    })
+</script>

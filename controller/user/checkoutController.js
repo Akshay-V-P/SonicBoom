@@ -1,6 +1,7 @@
 const addressModel = require("../../model/addressModel");
 const productModel = require("../../model/productModel")
-const cartModel = require("../../model/cartModel")
+const cartModel = require("../../model/cartModel");
+const ordersModel = require("../../model/ordersModel");
 
 const loadCheckout = async(req, res) => {
     try {
@@ -63,7 +64,69 @@ const loadDetails = async (req, res) => {
 }
 
 
+const placeOrder = async (req, res) => {
+  try {
+    const paymentStatus = true
+    const { addressId, total, subTotal, discounts, paymentMethod } = req.body
+    const userId = req.session.user._id
+    let payStatus
+
+    if(!addressId) return res.status(404).json({message:"Please provide an Address"})
+
+    if (paymentMethod !== "COD") {
+      if (!paymentStatus) return res.status(401).json({ message: "payment failed" })
+      if (paymentStatus === true) {
+        payStatus = "paid"
+      } else{
+        payStatus = "failed"
+      }
+    } else {
+      payStatus = "unpaid"
+    }
+    
+    const address = await addressModel.findOne({ _id: addressId })
+    const orderItems = await cartModel.findOne({ userId })
+    
+    const newOrder = new ordersModel({
+      userId,
+      paymentMethod,
+      paymentStatus: payStatus,
+      subTotal,
+      discount:discounts,
+      total,
+      orderItems: orderItems.items,
+      address: {
+        name: address.name,
+        address:address.address,
+        district: address.district,
+        city: address.city,
+        state: address.state,
+        pincode: address.pincode,
+        mobile: address.mobile,
+        email:address.email,
+        landmark: address.landmark,
+        addressType:address.type
+      }
+    })
+
+    await newOrder.save()
+    await cartModel.deleteOne({userId})
+    res.status(200).json({message:"Order placed"})
+    
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({success:false})
+  }
+}
+
+const loadOrderSuccess = (req, res) => {
+  res.render('user/orderSuccess')
+}
+
+
 module.exports = {
     loadCheckout,
-    loadDetails,
+  loadDetails,
+  placeOrder,
+    loadOrderSuccess
 }

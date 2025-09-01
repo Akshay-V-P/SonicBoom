@@ -100,15 +100,18 @@ const loginUser = async (req, res) => {
         const matchPass = await bcrypt.compare(password, user.password)
         if (!matchPass) return res.render('user/login', { message: "Invalid Password", icon: "error" })
         
-        let otp = generateOtp()
+        const isOtp = await otpModel.findOne({ email })
+        if (!isOtp) {
+            var otp = generateOtp()
 
-        const result = await otpModel.updateOne(
+            var result = await otpModel.updateOne(
             { email },
             { $set: { otp, createdAt: Date.now() } },
             { upsert: true }
         )
+        }
 
-        if (result.upsertedCount > 0 || result.modifiedCount > 0) {
+        if (result?.upsertedCount > 0 || result?.modifiedCount > 0) {
             await mailSender(email, otp)
         }
 
@@ -213,13 +216,16 @@ const verifyEmail = async (req, res) => {
         
         if(user.isBlocked) return res.render('user/forgotPassword', {message:"User is blocked please contact Administration"})
         
-        let otp = generateOtp()
+        const isOtp = await otpModel.findOne({ email })
+        if (!isOtp) {
+            var otp = generateOtp()
 
-        const result = await otpModel.updateOne(
-            { email },
-            { $set: { otp, createdAt: Date.now() } },
-            { upsert: true }
-        )
+            var result = await otpModel.updateOne(
+                { email },
+                { $set: { otp, createdAt: Date.now() } },
+                { upsert: true }
+            )
+        }
 
         if (result.upsertedCount > 0 || result.modifiedCount > 0) {
             await mailSender(email, otp)

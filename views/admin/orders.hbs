@@ -432,16 +432,16 @@
                     return
                 }
                 let index = 0
-                data.result.forEach((user)=>{
+                data.result.forEach((order)=>{
                     tbody.innerHTML += `
                         <tr class="table-row orderDetails">
-                            <td value="${user._id}" class="userId" hidden></td>
+                            <td value="${order._id}" class="userId" hidden></td>
                             <td class="checkbox-cell" data-label="All">${++index}</td>
-                            <td data-label="Reference No">${user.transactionId}</td>
-                            <td data-label="Amount">₹${user.total}</td>
-                            <td data-label="Payment">${user.paymentMethod}</td>
-                            <td data-label="Status"><span class="status-badge ${user.paymentStatus == 'paid'? 'status-paid': 'status-unpaid'}">${user.paymentStatus}</span></td>
-                            <td data-label="Status"><span class="status-badge ${user.status.toLowerCase() == 'cancelled'? 'status-unpaid': 'status-paid'}">${user.status}</span></td>
+                            <td data-label="Reference No">${order.orderId}</td>
+                            <td data-label="Amount">₹${order.total}</td>
+                            <td data-label="Payment">${order.paymentMethod}</td>
+                            <td data-label="Status"><span class="status-badge ${order.paymentStatus == 'paid'? 'status-paid': 'status-unpaid'}">${order.paymentStatus}</span></td>
+                            <td data-label="Status"><span class="status-badge ${order.status.toLowerCase() == 'cancelled'? 'status-unpaid': 'status-paid'}">${order.status}</span></td>
                         </tr>`
                 })
 

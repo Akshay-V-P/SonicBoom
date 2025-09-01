@@ -1,5 +1,11 @@
 const mongoose = require('mongoose')
-const {v4:uuidv4} = require('uuid')
+const { v4: uuidv4 } = require('uuid')
+
+function generateOrderId() {
+    const uniquePart = uuidv4().replace(/-/g, "").slice(0, 12);
+    const uuid = `ORD${uniquePart.toUpperCase()}`
+  return uuid;
+}
 const orderSchema = mongoose.Schema({
     couponId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -17,8 +23,8 @@ const orderSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        emum:['pending', 'processing', 'deliverd', 'cancelled', 'payment failed'],
-        default: 'Pending',
+        enum:['pending', 'processing', 'deliverd', 'cancelled', 'payment failed'],
+        default: 'pending',
         required:true
     },
     paymentStatus: {
@@ -28,8 +34,21 @@ const orderSchema = mongoose.Schema({
     },
     orderId: {
         type: String,
-        default:uuidv4,
+        default:generateOrderId,
         unique:true,
+        required:true
+    },
+    subTotal: {
+        type: Number,
+        required:true
+    },
+    discount: {
+        type: Number,
+        required:true
+    },
+    deliveryCharge: {
+        type: String,
+        default:"Free",
         required:true
     },
     total: {
@@ -39,22 +58,23 @@ const orderSchema = mongoose.Schema({
     orderItems: {
         type: [{
             itemId: { type: mongoose.Schema.Types.ObjectId, ref: 'products', required: true },
-            varient:{type:Number}
-        }],
-        required:true
+            variantId: { type: mongoose.Schema.Types.ObjectId, required: true },
+            quantity:{type:Number, required:true}
+        }]
     },
     address: {
-        type: [{
+        type: {
+            name: { type: String, required: true },
             address: { type: String, required: true },
             district: { type: String, required: true },
             city: { type: String, required: true },
             state: { type: String, required: true },
-            pincode: { type: String, required: true },
+            pincode: { type: Number, required: true },
             mobile: { type: String, required: true },
-            landmark: { type: String},
-            type: { type: String, required: true, default: 'home' },            
-        }],
-        required:true
+            email: { type: String, required: true },
+            landmark: { type: String },
+            addressType: { type: String, required: true, default: 'home' },            
+        }
     }
 }, {
     timestamps:true

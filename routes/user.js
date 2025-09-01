@@ -15,11 +15,11 @@ const cartController = require('../controller/user/cartController')
   const upload = require('../config/multerUpload')
 
   // ---------- dev codes -----------
-    router.use((req, res, next)=> {
-        req.session.user = { _id: "68998afac35ccc072487277a", email: "nosnoice@gmail.com" }
-        next()
-    })
-  // --------------------------
+router.use((req, res, next) => {
+  req.session.user = { _id: '68a9ab4e5584c7d280baa625', email:"akshayvpcontact@gmail.com" }
+  next()
+})
+  // --------------------------------
 
   // User routes
   router.route('/login')
@@ -81,6 +81,7 @@ router.get('/product-info', productPageController.getInfo)
 
   // user/orders 
 router.get('/orders', orderController.loadOrders)
+router.get('/orders/details', orderController.loadDetails)
   
 // user-address
 router.get('/manage-address', addressController.loadAddress)
@@ -104,6 +105,8 @@ router.post('/cart/decrement', cartController.decrementQuantity)
 // checkout
 router.get('/checkout', checkoutController.loadCheckout)
 router.get('/checkout/details', checkoutController.loadDetails)
+router.post('/checkout/place-order', checkoutController.placeOrder)
+router.get('/order-success', checkoutController.loadOrderSuccess)
 
 router.get('/logout', userController.logout)
 

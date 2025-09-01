@@ -1,0 +1,53 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+	/* Custom CSS to apply Inter font family to all elements */
+	body {
+		font-family: 'Inter', sans-serif;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	/* Custom gradient for the sign-in button to match the reference image */
+	.gradient-button {
+		background-image: linear-gradient(to right, #8B5CF6, #6366F1);
+	}
+
+	/* Style for the background "game covers" effect. */
+	.background-effect {
+		background-image: linear-gradient(rgba(26, 26, 27, 0.612), rgba(26, 26, 26, 0.563)),
+			url('/images/login-background.png');
+		background-size: cover;
+		background-position: center;
+	}
+
+	.my-swal-border {
+		border: 1px solid #404044 !important;
+		/* Change color and thickness */
+		border-radius: 15px !important;
+	}
+
+	.error-border {
+		border: 1px solid #EF4444 !important;
+		/* Red border for errors */
+	}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<div class="background-effect min-h-screen flex items-center justify-center p-4">
+	<input type="text" id="message" value="{{message}}" placeholder="{{icon}}" hidden>
+
+	<div class="bg-[#242428] p-8 rounded-2xl shadow-2xl max-w-sm w-full border border-[#404044]">
+        <div class="flex align-center justify-center"><img class="h-40" src="/images/order-success.png" alt=""></div>
+		<div class="text-center mb-6">
+			<h1 class="text-xl font-semibold text-white">Thanks for your order!</h1>
+			<p class="text-gray-400 text-sm mt-1">Sit back we are processing your order, We will update you with your order in Email</p>
+		</div>
+        <div class="flex align-center flex-wrap gap-3 justify-center md-justify-center">
+            <a href="/user/account/orders" class="text-white bg-blue-600 hover:bg-blue-500 p-2 rounded">Go to Orders</a>
+            <a href="/user/shop" class="text-white bg-green-600 hover:bg-green-500 p-2 rounded">Continue shopping</a>
+        </div>
+	</div>
+
+</div>
+
