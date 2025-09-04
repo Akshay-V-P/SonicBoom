@@ -59,8 +59,12 @@ const orderSchema = mongoose.Schema({
         type: [{
             itemId: { type: mongoose.Schema.Types.ObjectId, ref: 'products', required: true },
             variantId: { type: mongoose.Schema.Types.ObjectId, required: true },
+            status:{type:String, enum:['pending', 'processing', 'deliverd', 'cancelled', 'payment failed'], default:"pending", required:true},
             quantity:{type:Number, required:true}
         }]
+    },
+    reason: {
+        type: String,
     },
     address: {
         type: {

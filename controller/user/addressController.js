@@ -37,11 +37,12 @@ const addAddress = async (req, res) => {
         
         address.userId = _id
         const defaultAddress = await addressModel.findOne({ default: true })
+        if (!defaultAddress) {
+            address.default = true;
+        }
         if (address.default && defaultAddress) {
-            defaultAddress.default = false
-            await defaultAddress.save()
-        } else if(!defaultAddress) {
-            address.default = true
+            defaultAddress.default = false;
+            await defaultAddress.save();
         }
 
         const newAddress = new addressModel(address)
@@ -75,7 +76,7 @@ const deleteAddress = async (req, res) => {
         const address = await addressModel.findOne({ _id })
         if (address.default) {
             const newDefault = await addressModel.find({ userId: req.session.user._id, isActive: true, _id:{$ne:_id} }).sort({ createdAt: -1 }).limit(1)
-            if (newDefault) {
+            if (newDefault.length >0) {
                 const saveDefault = newDefault[0]
                 saveDefault.default = true
                 await saveDefault.save()

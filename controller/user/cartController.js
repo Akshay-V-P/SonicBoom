@@ -16,6 +16,7 @@ const cartDetails = async (req, res) => {
         const userId = req.session.user._id
 
         const cart = await cartModel.findOne({ userId })
+        if(!cart) return res.status(200).json({products:[]})
 
         let products = []
         let checkoutDetails = { subTotal: 0, discounts: 0, price:0 }

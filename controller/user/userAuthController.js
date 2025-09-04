@@ -94,6 +94,7 @@ const loginUser = async (req, res) => {
         
         const user = await userModel.findOne({ email })
         if (!user) return res.render('user/login', { message: "User not found", icon: "error" })
+        if(user.googleId) return res.render('user/login', {message:"Please login with google"})
         
         if(user.isBlocked) return res.render('user/login', {message: "User is Blocked, Please contact Administration", icon:"error"})
         

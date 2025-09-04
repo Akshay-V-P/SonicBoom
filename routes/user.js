@@ -13,6 +13,7 @@ const cartController = require('../controller/user/cartController')
   const passport = require('passport')
   const userAuth = require('../middleware/userAuth')
   const upload = require('../config/multerUpload')
+const ordersModel = require('../model/ordersModel')
 
   // ---------- dev codes -----------
 router.use((req, res, next) => {
@@ -68,46 +69,49 @@ router.get('/product_details', productPageController.showPage)
 router.get('/product-info', productPageController.getInfo)
 
   // account
-  router.get('/account', accountController.showPage)
-  router.get('/account/:id', accountController.showEditPage)
-  router.post('/account/profilephoto', upload, accountController.updateProfilePhoto)
-  router.get('/account/profile/info', accountController.getInfo)
+  router.get('/account',userAuth.isAuthenticated, accountController.showPage)
+  router.get('/account/:id',userAuth.isAuthenticated, accountController.showEditPage)
+  router.post('/account/profilephoto',userAuth.isAuthenticated, upload, accountController.updateProfilePhoto)
+  router.get('/account/profile/info',userAuth.isAuthenticated, accountController.getInfo)
 
   // account details update
-  router.post('/verify-password', accountController.verifyPassword)
-  router.post('/send-otp', accountController.sendOtp)
-  router.post('/verify-otp', accountController.verifyOtp)
-  router.post('/account/update', accountController.updateProfile)
+  router.post('/verify-password',userAuth.isAuthenticated, accountController.verifyPassword)
+  router.post('/send-otp',userAuth.isAuthenticated, accountController.sendOtp)
+  router.post('/verify-otp',userAuth.isAuthenticated, accountController.verifyOtp)
+  router.post('/account/update',userAuth.isAuthenticated, accountController.updateProfile)
 
   // user/orders 
-router.get('/orders', orderController.loadOrders)
-router.get('/orders/details', orderController.loadDetails)
+router.get('/orders',userAuth.isAuthenticated, orderController.loadOrders)
+router.get('/orders/details', userAuth.isAuthenticated, orderController.loadDetails)
+router.get('/orders/status', userAuth.isAuthenticated, orderController.loadOrderStatus)
+router.patch('/orders/cancel', userAuth.isAuthenticated, orderController.cancelOrder)
+router.patch('/orders/cancel-item', userAuth.isAuthenticated, orderController.cancelItem)
   
 // user-address
-router.get('/manage-address', addressController.loadAddress)
+router.get('/manage-address',userAuth.isAuthenticated, addressController.loadAddress)
 router.route('/manage-address/add')
-  .get(addressController.loadAddAddress)
-  .post(addressController.addAddress)
+  .get(userAuth.isAuthenticated,addressController.loadAddAddress)
+  .post(userAuth.isAuthenticated,addressController.addAddress)
 router.route('/manage-address/edit')
-  .get(addressController.loadEditAddress)
-  .post(addressController.setDefault)
-  .patch(addressController.updateAddress)
-  .delete(addressController.deleteAddress)
+  .get(userAuth.isAuthenticated, addressController.loadEditAddress)
+  .post(userAuth.isAuthenticated, addressController.setDefault)
+  .patch(userAuth.isAuthenticated, addressController.updateAddress)
+  .delete(userAuth.isAuthenticated, addressController.deleteAddress)
 
 
 // cart
-router.get('/cart', cartController.loadCart)
-router.get('/cart/details', cartController.cartDetails)
-router.post('/cart/add', cartController.addToCart)
-router.post('/cart/remove', cartController.removeFromCart)
-router.post('/cart/decrement', cartController.decrementQuantity)
+router.get('/cart',userAuth.isAuthenticated, cartController.loadCart)
+router.get('/cart/details',userAuth.isAuthenticated, cartController.cartDetails)
+router.post('/cart/add',userAuth.isAuthenticated, cartController.addToCart)
+router.post('/cart/remove',userAuth.isAuthenticated, cartController.removeFromCart)
+router.post('/cart/decrement',userAuth.isAuthenticated, cartController.decrementQuantity)
 
 // checkout
-router.get('/checkout', checkoutController.loadCheckout)
-router.get('/checkout/details', checkoutController.loadDetails)
-router.post('/checkout/place-order', checkoutController.placeOrder)
-router.get('/order-success', checkoutController.loadOrderSuccess)
+router.get('/checkout',userAuth.isAuthenticated, checkoutController.loadCheckout)
+router.get('/checkout/details',userAuth.isAuthenticated, checkoutController.loadDetails)
+router.post('/checkout/place-order',userAuth.isAuthenticated, checkoutController.placeOrder)
+router.get('/order-success',userAuth.isAuthenticated, checkoutController.loadOrderSuccess)
 
-router.get('/logout', userController.logout)
+router.get('/logout',userAuth.isAuthenticated, userController.logout)
 
 module.exports = router

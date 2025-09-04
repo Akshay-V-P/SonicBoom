@@ -1,0 +1,313 @@
+<style>
+</style>
+
+<div class="flex-grow">
+    {{#if order}}
+    <div class="bg-card-bg border border-border-color rounded-xl p-6 lg:p-10 mb-8 relative">
+        <!-- Header with Cancel button -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl md:text-2xl font-semibold">Order Details <span
+                    class="text-sm font-normal text-text-medium">• {{order.createdAt}} • {{length order.orderItems}} Products</span></h2>
+            <button
+                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium" id="order-cancel-btn">Cancel</button>
+        </div>
+
+        <!-- Address and Order Summary -->
+        <div class="flex flex-col lg:flex-row gap-2 mb-8">
+            <!-- Address Block -->
+            <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-2">
+                <!-- Billing Address -->
+                <div class="bg-input-bg border border-border-color rounded-lg p-6 flex flex-col justify-between">
+                    <h3 class="text-lg font-semibold mb-4">BILLING ADDRESS</h3>
+                    <div>
+                        <p class="font-bold text-lg mb-2">{{order.address.name}}</p>
+                        <p class="text-sm text-text-medium mb-1">{{order.address.address}}, {{order.address.city}}, {{order.address.district}}, {{order.address.state}}, {{order.address.pincode}}</p>
+                        <p class="text-sm text-text-medium mb-1">EMAIL</p>
+                        <p class="text-sm text-text-light font-medium mb-4">{{order.address.email}}</p>
+                        <p class="text-sm text-text-medium mb-1">PHONE</p>
+                        <p class="text-sm text-text-light font-medium">{{order.address.mobile}}</p>
+                    </div>
+                </div>
+                <!-- Shipping Address -->
+                <div class="bg-input-bg border border-border-color rounded-lg p-6 flex flex-col justify-between">
+                    <h3 class="text-lg font-semibold mb-4">SHIPPING ADDRESS</h3>
+                    <div>
+                        <p class="font-bold text-lg mb-2">{{order.address.name}}</p>
+                        <p class="text-sm text-text-medium mb-1">{{order.address.address}}, {{order.address.city}}, {{order.address.district}},
+                            {{order.address.state}}, {{order.address.pincode}}</p>
+                        <p class="text-sm text-text-medium mb-1">EMAIL</p>
+                        <p class="text-sm text-text-light font-medium mb-4">{{order.address.email}}</p>
+                        <p class="text-sm text-text-medium mb-1">PHONE</p>
+                        <p class="text-sm text-text-light font-medium">{{order.address.mobile}}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="bg-input-bg border border-border-color rounded-lg p-6 flex-shrink-0 w-full lg:w-80">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">ORDER ID:</h3>
+                    <p class="text-text-light font-medium text-lg" id="orderId">{{order.orderId}}</p>
+                </div>
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-semibold">PAYMENT METHOD:</h3>
+                    <p class="text-text-light font-medium text-lg">{{order.paymentMethod}}</p>
+                </div>
+                <div class="border-t border-border-color py-4 space-y-2">
+                    <div class="flex justify-between text-sm">
+                        <p class="text-text-medium">Subtotal</p>
+                        <p class="font-semibold text-text-light">₹{{order.subTotal}}</p>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <p class="text-text-medium">Discount</p>
+                        <p class="font-semibold text-text-light">-{{order.discount}}</p>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <p class="text-text-medium">Shipping</p>
+                        <p class="font-semibold text-text-light">{{order.deliveryCharge}}</p>
+                    </div>
+                </div>
+                <div class="flex justify-between text-lg font-bold border-t border-border-color pt-4">
+                    <p class="text-text-light">Total</p>
+                    <p class="text-primary-blue">₹{{order.total}}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Tracker -->
+        <div class="flex justify-between items-center relative my-10 md:px-8">
+            <div class="absolute inset-x-0 top-1/2 h-1 bg-border-color rounded-full" style="transform: translateY(-50%);">
+            </div>
+            <div class="absolute inset-x-0 top-1/2 h-1 bg-green-500 rounded-full"
+                style="transform: translateY(-50%); width: {{order.statusPercentage}};"></div>
+            <div class="relative z-10 flex flex-col items-center overflow-hidden">
+                <div
+                    class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-500 flex items-center justify-center border-2 border-white">
+                    <svg class="w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <span class="mt-2 text-[0.55rem] md:text-sm text-green-500 font-semibold text-center whitespace-nowrap">Order
+                    received</span>
+            </div>
+            <div class="relative z-10 flex flex-col items-center overflow-hidden">
+                <div
+                    class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-500 flex items-center justify-center border-2 border-white">
+                    <span class="font-bold text-white">02</span>
+                </div>
+                <span class="mt-2 text-[0.55rem] md:text-sm text-green-500 font-semibold text-center whitespace-nowrap">Processing</span>
+            </div>
+            <div class="relative z-10 flex flex-col items-center overflow-hidden">
+                <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-border-color flex items-center justify-center">
+                    <span class="font-bold text-text-medium">03</span>
+                </div>
+                <span class="mt-2 text-[0.55rem] md:text-sm text-text-medium text-center whitespace-nowrap">On the way</span>
+            </div>
+            <div class="relative z-10 flex flex-col items-center overflow-hidden">
+                <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-border-color flex items-center justify-center">
+                    <span class="font-bold text-text-medium">04</span>
+                </div>
+                <span class="mt-2 text-[0.55rem] md:text-sm text-text-medium text-center whitespace-nowrap">Delivered</span>
+            </div>
+        </div>
+
+        <!-- Order Items Section -->
+        <h3 class="text-xl md:text-2xl font-semibold mb-6 mt-12">Order Items</h3>
+        <div class="space-y-4">
+            {{#each order.orderItems}}
+            <div class="flex items-center gap-4 bg-dark rounded-lg p-4 order-item-container" data-productid="{{this.productId}}" data-variantid="{{this._id}}">
+                <img src="{{this.thumbnail}}"
+                    alt="Five Nights at Freddy's: Secret of The Mimic"
+                    class="w-16 h-20 md:w-20 md:h-24 object-cover rounded-md item-thumbnail"   
+                    onerror="this.onerror=null; this.src='https://placehold.co/100x120/1A1A1A/F5F5F5?text=Game+Cover'">
+                <div class="flex flex-grow justify-between items-center">
+                    <p class="text-lg font-semibold item-name">{{this.name}}</p>
+                </div>
+                <div class="flex flex-col justify-between gap-6 h-[100%]">
+                    <span class="font-bold text-xl text-primary-blue item-price">₹{{this.offerPrice}}</span>
+                    <button class="text-red-500 cancel-item-btn">Cancel</button>
+                </div>
+                
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
+
+
+    {{! The following is the cancellation modal. It is hidden by default. }}
+    <div id="order-cancellation-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-card-bg text-text-light p-8 rounded-xl shadow-lg w-full max-w-lg mx-4 border border-border-color">
+            <h3 class="text-2xl font-semibold mb-4 text-center">Cancel Order</h3>
+    
+            <p class="text-center text-text-medium mb-6">Are you sure you want to cancel this order? This action cannot be
+                undone.</p>
+    
+            <div class="mb-6">
+                <label for="cancellation-reason" class="block text-sm font-medium text-text-medium mb-2">Reason for
+                    cancellation (optional)</label>
+                <textarea id="order-cancellation-reason" name="order-cancellation-reason" rows="4"
+                    class="w-full p-3 rounded-md bg-input-bg border border-border-color focus:outline-none focus:ring-2 focus:ring-primary-blue transition-colors duration-200"
+                    placeholder="e.g., I ordered the wrong item, or I no longer need this order."></textarea>
+            </div>
+    
+            <div class="flex justify-center space-x-4">
+                <button id="close-order-modal"
+                    class="px-6 py-3 border border-border-color rounded-md text-text-medium hover:bg-input-bg transition-colors duration-200">Close</button>
+                <button id="confirm-order-cancel"
+                    class="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200">Confirm
+                    Cancellation</button>
+            </div>
+        </div>
+    </div>
+
+
+    {{! The following is the cancellation modal for a single item. It is hidden by default. }}
+    <div id="item-cancellation-modal"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-card-bg text-text-light p-8 rounded-xl shadow-lg w-full max-w-lg mx-4 border border-border-color">
+            <h3 class="text-2xl font-semibold mb-4 text-center">Cancel Product</h3>
+    
+            <div class="flex items-center gap-4 mb-4">
+                <img id="modal-item-thumbnail" src="" alt="Product Image"
+                    class="w-16 h-20 md:w-20 md:h-24 object-cover rounded-md">
+                <div>
+                    <p id="modal-item-name" class="text-lg font-semibold"></p>
+                    <p id="modal-item-price" class="font-bold text-xl text-primary-blue"></p>
+                </div>
+            </div>
+    
+            <p class="text-center text-text-medium mb-6">Are you sure you want to cancel this item? This action cannot be
+                undone.</p>
+    
+            <div class="mb-6">
+                <label for="item-cancellation-reason" class="block text-sm font-medium text-text-medium mb-2">Reason for
+                    cancellation (optional)</label>
+                <textarea id="item-cancellation-reason" name="item-cancellation-reason" rows="4"
+                    class="w-full p-3 rounded-md bg-input-bg border border-border-color focus:outline-none focus:ring-2 focus:ring-primary-blue transition-colors duration-200"
+                    placeholder="e.g., I ordered the wrong size/color, or I no longer need this item."></textarea>
+            </div>
+    
+            <div class="flex justify-center space-x-4">
+                <button id="close-item-modal"
+                    class="px-6 py-3 border border-border-color rounded-md text-text-medium hover:bg-input-bg transition-colors duration-200">Close</button>
+                <button id="confirm-item-cancel"
+                    class="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200">Confirm
+                    Cancellation</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- Order Cancellation Modal Logic ---
+        const orderCancelButton = document.getElementById('order-cancel-btn'); // New ID
+        const orderModal = document.getElementById('order-cancellation-modal');
+        const closeOrderModalButton = document.getElementById('close-order-modal');
+        const confirmOrderCancelButton = document.getElementById('confirm-order-cancel');
+
+        if (orderCancelButton) {
+            orderCancelButton.addEventListener('click', () => {
+                orderModal.classList.remove('hidden');
+            });
+        }
+        closeOrderModalButton.addEventListener('click', () => {
+            orderModal.classList.add('hidden');
+        });
+        orderModal.addEventListener('click', (event) => {
+            if (event.target === orderModal) {
+                orderModal.classList.add('hidden');
+            }
+        });
+        confirmOrderCancelButton.addEventListener('click', () => {
+            const reason = document.getElementById('order-cancellation-reason').value;
+            const orderId = document.getElementById('orderId').innerText.trim();
+            console.log(orderId)
+            console.log(`Cancelling order ${orderId} with reason: "${reason}"`);
+            fetch(`/user/orders/cancel?orderId=${orderId}`, {
+                method:"PATCH",
+                headers:{'Content-Type' : 'application/json'},
+                body:JSON.stringify({reason:reason || null})
+            })
+            .then(response =>{
+                if(!response.ok) throw new Error("Can't cancel order at this moment")
+                window.location.href = '/user/orders'
+            })
+            .catch(error =>{
+                console.log(error)
+            })
+            .finally(()=>{
+                orderModal.classList.add('hidden');
+            })
+            
+        });
+
+
+        // --- Item Cancellation Modal Logic ---
+        const itemCancelButtons = document.querySelectorAll('.cancel-item-btn');
+        const itemModal = document.getElementById('item-cancellation-modal');
+        const closeItemModalButton = document.getElementById('close-item-modal');
+        const confirmItemCancelButton = document.getElementById('confirm-item-cancel');
+        const modalItemThumbnail = document.getElementById('modal-item-thumbnail');
+        const modalItemName = document.getElementById('modal-item-name');
+        const modalItemPrice = document.getElementById('modal-item-price');
+        const modalItemReason = document.getElementById('item-cancellation-reason');
+
+        itemCancelButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const itemContainer = event.target.closest('.order-item-container');
+                const itemName = itemContainer.querySelector('.item-name').textContent;
+                const itemPrice = itemContainer.querySelector('.item-price').textContent;
+                const itemThumbnail = itemContainer.querySelector('.item-thumbnail').src;
+
+                const productId = itemContainer.dataset.productid;
+                const variantId = itemContainer.dataset.variantid;
+                console.log(productId)
+                console.log(variantId)
+
+                modalItemThumbnail.src = itemThumbnail;
+                modalItemName.textContent = itemName;
+                modalItemPrice.textContent = itemPrice;
+                confirmItemCancelButton.dataset.productId = productId;
+                confirmItemCancelButton.dataset.variantId = variantId;
+
+                itemModal.classList.remove('hidden');
+            });
+        });
+
+        closeItemModalButton.addEventListener('click', () => {
+            itemModal.classList.add('hidden');
+        });
+        itemModal.addEventListener('click', (event) => {
+            if (event.target === itemModal) {
+                itemModal.classList.add('hidden');
+            }
+        });
+        confirmItemCancelButton.addEventListener('click', () => {
+            const reason = modalItemReason.value;
+            const orderId = document.getElementById("orderId").innerText.trim();
+            const productId = confirmItemCancelButton.dataset.productId;
+            const variantId = confirmItemCancelButton.dataset.variantId;
+
+            console.log(`Cancelling item ${productId} (variant ${variantId}) from order ${orderId} with reason: "${reason}"`);
+            
+            fetch(`/user/orders/cancel-item?productId=${productId}&variantId=${variantId}&orderId=${orderId}`, {method:"PATCH"})
+                .then(response =>{
+                    if(!response.ok) throw new Error("Can't cancel this product right now")
+                    console.log("cancelled")
+                })
+                .catch(error =>{
+                    console.log(error)
+                })
+
+            itemModal.classList.add('hidden');
+        });
+    });
+</script>

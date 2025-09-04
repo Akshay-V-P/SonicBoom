@@ -46,9 +46,15 @@ hbs.registerHelper('or', function(a, b) {
     return a || b;
 });
 
+hbs.registerHelper('length', (array) => {
+    return array.length
+})
+
 hbs.registerHelper("ls", (a, b) => a < b);
 hbs.registerHelper("gt", (a, b) => a > b);
 hbs.registerHelper("eq", (a, b) => a.toString() === b.toString());
+hbs.registerHelper("ne", (a, b) => a.toString() !== b.toString());
+
 
 // view engine
 app.set('view engine', 'hbs')

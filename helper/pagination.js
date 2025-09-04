@@ -1,4 +1,4 @@
-async function paginate(model, limit, currentPage,findQuery, sort, populate) {
+async function paginate(model, limit, currentPage,findQuery, sort, populate) { 
     let skip = (limit * currentPage) - limit
     let docCount = await model.countDocuments(findQuery||{})
     let totalPages = Math.ceil(docCount/limit)
