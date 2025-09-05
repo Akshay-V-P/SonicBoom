@@ -16,10 +16,10 @@ const cartController = require('../controller/user/cartController')
 const ordersModel = require('../model/ordersModel')
 
   // ---------- dev codes -----------
-router.use((req, res, next) => {
-  req.session.user = { _id: '68a9ab4e5584c7d280baa625', email:"akshayvpcontact@gmail.com" }
-  next()
-})
+// router.use((req, res, next) => {
+//   req.session.user = { _id: '68a9ab4e5584c7d280baa625', email:"akshayvpcontact@gmail.com" }
+//   next()
+// })
   // --------------------------------
 
   // User routes
@@ -86,6 +86,10 @@ router.get('/orders/details', userAuth.isAuthenticated, orderController.loadDeta
 router.get('/orders/status', userAuth.isAuthenticated, orderController.loadOrderStatus)
 router.patch('/orders/cancel', userAuth.isAuthenticated, orderController.cancelOrder)
 router.patch('/orders/cancel-item', userAuth.isAuthenticated, orderController.cancelItem)
+router.patch('/orders/return-item', userAuth.isAuthenticated, orderController.returnItem)
+
+// invoice download
+router.get('/orders/download-invoice/:orderId', userAuth.isAuthenticated, orderController.downloadInvoice)
   
 // user-address
 router.get('/manage-address',userAuth.isAuthenticated, addressController.loadAddress)

@@ -1,6 +1,6 @@
 <style>
 </style>
-
+<input type="text" id="focusIndicator" value="myorders" hidden>
 <div class="flex-grow">
     {{#if order}}
     <div class="bg-card-bg border border-border-color rounded-xl p-6 lg:p-10 mb-8 relative">
@@ -8,8 +8,20 @@
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl md:text-2xl font-semibold">Order Details <span
                     class="text-sm font-normal text-text-medium">• {{order.createdAt}} • {{length order.orderItems}} Products</span></h2>
-            <button
-                class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium" id="order-cancel-btn">Cancel</button>
+            {{#if (eq order.status "cancelled")}}
+                <p class="text-red-500">Cancelled</p>
+            {{else}}
+                {{#if (eq order.status "delivered")}}
+                    <a href="/user/orders/download-invoice/{{order.orderId}}" class="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-md text-sm font-medium">Download Invoice</a>
+                {{else}}
+                    {{#if (eq order.status "returned")}}
+                        <p class="text-blue-500">Returned</p>
+                    {{else}}
+                    <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                        id="order-cancel-btn">Cancel</button>
+                    {{/if}}
+                {{/if}}
+            {{/if}}
         </div>
 
         <!-- Address and Order Summary -->
@@ -60,7 +72,7 @@
                     </div>
                     <div class="flex justify-between text-sm">
                         <p class="text-text-medium">Discount</p>
-                        <p class="font-semibold text-text-light">-{{order.discount}}</p>
+                        <p class="font-semibold text-red-500">-₹{{order.discount}}</p>
                     </div>
                     <div class="flex justify-between text-sm">
                         <p class="text-text-medium">Shipping</p>
@@ -117,20 +129,55 @@
         <h3 class="text-xl md:text-2xl font-semibold mb-6 mt-12">Order Items</h3>
         <div class="space-y-4">
             {{#each order.orderItems}}
-            <div class="flex items-center gap-4 bg-dark rounded-lg p-4 order-item-container" data-productid="{{this.productId}}" data-variantid="{{this._id}}">
-                <img src="{{this.thumbnail}}"
-                    alt="Five Nights at Freddy's: Secret of The Mimic"
-                    class="w-16 h-20 md:w-20 md:h-24 object-cover rounded-md item-thumbnail"   
-                    onerror="this.onerror=null; this.src='https://placehold.co/100x120/1A1A1A/F5F5F5?text=Game+Cover'">
-                <div class="flex flex-grow justify-between items-center">
-                    <p class="text-lg font-semibold item-name">{{this.name}}</p>
-                </div>
-                <div class="flex flex-col justify-between gap-6 h-[100%]">
-                    <span class="font-bold text-xl text-primary-blue item-price">₹{{this.offerPrice}}</span>
-                    <button class="text-red-500 cancel-item-btn">Cancel</button>
-                </div>
-                
-            </div>
+                {{#if (eq this.status "cancelled")}}
+                    <div class="flex items-center gap-4 bg-dark rounded-lg p-4 order-item-container relative opacity-[0.4]" data-productid="{{this.productId}}" data-variantid="{{this._id}}">
+                        <img src="{{this.thumbnail}}"
+                            alt="Five Nights at Freddy's: Secret of The Mimic"
+                            class="w-16 h-20 md:w-20 md:h-24 object-cover rounded-md item-thumbnail"   
+                            onerror="this.onerror=null; this.src='https://placehold.co/100x120/1A1A1A/F5F5F5?text=Game+Cover'">
+                        <div class="flex flex-grow justify-between items-center">
+                            <p class="text-lg font-semibold item-name">{{this.name}}</p>
+                        </div>
+                        <div class="flex flex-col justify-between gap-6 h-[100%]">
+                            <span class="font-bold text-xl text-primary-blue item-price">₹{{this.offerPrice}}</span>
+                            {{#if (eq this.status "cancelled")}}
+                                <p class="text-red-500">Cancelled</p>
+                            {{else}}
+                                {{#if (eq this.status "delivered")}}
+                                    <button class="text-red-500 return-item-btn">Return</button>
+                                {{else}}
+                                    <button class="text-red-500 cancel-item-btn">Cancel</button>
+                                {{/if}}
+                            {{/if}}
+                        </div>
+                    </div>
+                {{else}}
+                    <div class="flex items-center gap-4 bg-dark rounded-lg p-4 order-item-container" data-productid="{{this.productId}}"
+                        data-variantid="{{this._id}}">
+                        <img src="{{this.thumbnail}}" alt="Five Nights at Freddy's: Secret of The Mimic"
+                            class="w-16 h-20 md:w-20 md:h-24 object-cover rounded-md item-thumbnail"
+                            onerror="this.onerror=null; this.src='https://placehold.co/100x120/1A1A1A/F5F5F5?text=Game+Cover'">
+                        <div class="flex flex-grow justify-between items-center">
+                            <p class="text-lg font-semibold item-name">{{this.name}}</p>
+                        </div>
+                        <div class="flex flex-col justify-between gap-6 h-[100%]">
+                            <span class="font-bold text-xl text-primary-blue item-price">₹{{this.offerPrice}}</span>
+                            {{#if (eq this.status "cancelled")}}
+                                <p class="text-red-500">Cancelled</p>
+                            {{else}}
+                                {{#if (eq this.status "delivered")}}
+                                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium return-item-btn">Return</button>
+                                {{else}}
+                                    {{#if (eq this.status "returned")}}
+
+                                    {{else}}
+                                        <button class="text-red-500 cancel-item-btn">Cancel</button>
+                                    {{/if}}
+                                {{/if}}
+                            {{/if}}
+                        </div>
+                    </div>
+                {{/if}}
             {{/each}}
         </div>
     </div>
@@ -196,6 +243,41 @@
                 <button id="confirm-item-cancel"
                     class="px-6 py-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200">Confirm
                     Cancellation</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="item-return-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden">
+        <div class="bg-card-bg text-text-light p-8 rounded-xl shadow-lg w-full max-w-lg mx-4 border border-border-color">
+            <h3 class="text-2xl font-semibold mb-4 text-center">Return Product</h3>
+    
+            <div class="flex items-center gap-4 mb-4">
+                <img id="return-modal-item-thumbnail" src="" alt="Product Image"
+                    class="w-16 h-20 md:w-20 md:h-24 object-cover rounded-md">
+                <div>
+                    <p id="return-modal-item-name" class="text-lg font-semibold"></p>
+                    <p id="return-modal-item-price" class="font-bold text-xl text-primary-blue"></p>
+                </div>
+            </div>
+    
+            <p class="text-center text-text-medium mb-6">Are you sure you want to return this item? This action cannot be
+                undone.</p>
+    
+            <div class="mb-6">
+                <label for="item-return-reason" class="block text-sm font-medium text-text-medium mb-2">Reason for
+                    return</label>
+                <textarea id="item-return-reason" name="item-return-reason" rows="4"
+                    class="w-full p-3 rounded-md bg-input-bg border border-border-color focus:outline-none focus:ring-2 focus:ring-primary-blue transition-colors duration-200"
+                    placeholder="e.g., Damaged item, wrong item received, or changed my mind." required></textarea>
+            </div>
+    
+            <div class="flex justify-center space-x-4">
+                <button id="close-return-modal"
+                    class="px-6 py-3 border border-border-color rounded-md text-text-medium hover:bg-input-bg transition-colors duration-200">Close</button>
+                <button id="confirm-item-return"
+                    class="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200">Confirm
+                    Return</button>
             </div>
         </div>
     </div>
@@ -302,6 +384,7 @@
                 .then(response =>{
                     if(!response.ok) throw new Error("Can't cancel this product right now")
                     console.log("cancelled")
+                    window.location.href = '/user/orders'
                 })
                 .catch(error =>{
                     console.log(error)
@@ -309,5 +392,95 @@
 
             itemModal.classList.add('hidden');
         });
+
+
+
+
+        // --- Item Return Modal Logic ---
+        const itemReturnButtons = document.querySelectorAll('.return-item-btn');
+        const returnModal = document.getElementById('item-return-modal');
+        const closeReturnModalButton = document.getElementById('close-return-modal');
+        const confirmItemReturnButton = document.getElementById('confirm-item-return');
+        const returnModalItemThumbnail = document.getElementById('return-modal-item-thumbnail');
+        const returnModalItemName = document.getElementById('return-modal-item-name');
+        const returnModalItemPrice = document.getElementById('return-modal-item-price');
+        const returnModalReason = document.getElementById('item-return-reason');
+
+        itemReturnButtons.forEach(button => {
+            button.addEventListener('click', (event) => {
+                const itemContainer = event.target.closest('.order-item-container');
+                const itemName = itemContainer.querySelector('.item-name').textContent;
+                const itemPrice = itemContainer.querySelector('.item-price').textContent;
+                const itemThumbnail = itemContainer.querySelector('.item-thumbnail').src;
+
+                const productId = itemContainer.dataset.productid;
+                const variantId = itemContainer.dataset.variantid;
+
+                returnModalItemThumbnail.src = itemThumbnail;
+                returnModalItemName.textContent = itemName;
+                returnModalItemPrice.textContent = itemPrice;
+                confirmItemReturnButton.dataset.productId = productId;
+                confirmItemReturnButton.dataset.variantId = variantId;
+
+                returnModal.classList.remove('hidden');
+            });
+        });
+
+        closeReturnModalButton.addEventListener('click', () => {
+            returnModal.classList.add('hidden');
+            returnModalReason.value = ''; // Clear the textarea
+        });
+
+        returnModal.addEventListener('click', (event) => {
+            if (event.target === returnModal) {
+                returnModal.classList.add('hidden');
+                returnModalReason.value = ''; // Clear the textarea
+            }
+        });
+
+        confirmItemReturnButton.addEventListener('click', () => {
+            const reason = returnModalReason.value.trim();
+
+            if (!reason) {
+                Swal.fire({
+                    title: 'Warning',
+                    text: 'Please provide a reason for return',
+                    icon: 'warning',
+                    background: "#242428",
+                    showCancelButton: false,
+                    confirmButtonText: "Ok",
+                    color: 'white',
+                    customClass: {
+                        popup: 'my-swal-border'
+                    }
+                })
+                return;
+            }
+
+            const orderId = document.getElementById("orderId").innerText.trim();
+            const productId = confirmItemReturnButton.dataset.productId;
+            const variantId = confirmItemReturnButton.dataset.variantId;
+
+            console.log(`Returning item ${productId} (variant ${variantId}) from order ${orderId} with reason: "${reason}"`);
+
+            fetch(`/user/orders/return-item?productId=${productId}&variantId=${variantId}&orderId=${orderId}`, {
+                method: "PATCH",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ reason: reason })
+            })
+                .then(async function(response){
+                    const res = await response.json()
+                    if (!response.ok) throw new Error("Can't return this product right now");
+                    console.log("Returned");
+                    window.location.href = '/user/orders';
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+
+            returnModal.classList.add('hidden');
+            returnModalReason.value = '';
+        });
+
     });
 </script>

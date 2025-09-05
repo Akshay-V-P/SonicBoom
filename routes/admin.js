@@ -15,10 +15,10 @@ const upload = require('../config/multerUpload')
 
 
  // ---------- dev codes -----------
-    router.use((req, res, next)=> {
-        req.session.user = { _id: "68998afac35ccc072487277a", email: "nosnoice@gmail.com" }
-        next()
-    })
+    // router.use((req, res, next)=> {
+    //     req.session.user = { _id: "68998afac35ccc072487277a", email: "nosnoice@gmail.com" }
+    //     next()
+    // })
   // --------------------------
 
 
@@ -63,7 +63,9 @@ router.patch('/products/:id/block',adminAuth.isAuthenticated, productController.
 // orders
 router.route('/orders')
     .get(adminAuth.isAuthenticated, orderController.loadOrders)
-router.get('/orders/search',adminAuth.isAuthenticated, orderController.showOrders)
+router.get('/orders/search', adminAuth.isAuthenticated, orderController.showOrders)
+router.get('/orders/details', adminAuth.isAuthenticated, orderController.showOrderDetails)
+router.patch('/orders/update-status', adminAuth.isAuthenticated, orderController.updateStatus)
 
 // banners
 router.route('/banners')

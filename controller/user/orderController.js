@@ -1,6 +1,8 @@
 const paginate = require("../../helper/pagination")
 const ordersModel = require("../../model/ordersModel")
 const productModel = require("../../model/productModel")
+const PDFDocument = require("pdfkit");
+const path = require('path')
 
 const loadOrders = async (req, res) => {
     try {
@@ -47,6 +49,7 @@ const loadDetails = async (req, res) => {
                 variant.productId = product._id
                 variant.offer = product.offer
                 variant.quantity = item.quantity
+                variant.status = item.status
                 order = JSON.parse(JSON.stringify(order))
                 delete order.orderItems
                 delete variant.stock
@@ -82,20 +85,22 @@ const loadOrderStatus = async (req, res) => {
             variant.productId = product._id;
             variant.offer = product.offer;
             variant.quantity = item.quantity;
+            variant.status = item.status
             delete variant.stock;
             orders.orderItems.push(variant);
         }
         let date = new Date(orders.createdAt).toLocaleDateString()
         orders.createdAt = date
-        if (orders.status === "pending") {
+        if (orders.status === "processing") {
             orders.statusPercentage = '10%'
-        } else if(orders.status === "processing") {
+        } else if(orders.status === "shipped") {
             orders.statusPercentage = '40%'
-        } else if (orders.status === "deliverd") {
+        } else if (orders.status === "out-for-delivery") {
+            orders.statusPercentage = "65%";
+        } else if (orders.status === "delivered") {
             orders.statusPercentage = '100%'
         }
 
-        console.log(orders)
 
         res.render("user/orderStatus", { layout: "userAccount", order:orders });
     } catch (error) {
@@ -110,7 +115,7 @@ const cancelOrder = async (req, res) => {
         const reason = req.body.reason || null
         const order = await ordersModel.findOne({ orderId })
         if (!order) return res.status(404).json({ message: "Unable to find the order" })
-        if (order.status === "deliverd") return res.status(401).json({ message: "Can't cancel, order is already deliverd" })
+        if (order.status === "delivered") return res.status(401).json({ message: "Can't cancel, order is already deliverd" })
         
         order.status = 'cancelled'
         order.reason = reason
@@ -125,6 +130,9 @@ const cancelOrder = async (req, res) => {
             await product.save()
 
         }
+        order.orderItems.forEach(orders => {
+            orders.status = "cancelled"
+        } )
         await order.save()
         res.status(200).json({message:"Order cancelled"})
     } catch (error) {
@@ -140,7 +148,7 @@ const cancelItem = async (req, res) => {
         const order = await ordersModel.findOne({orderId})
 
         if (!order) return res.status(404).json({ message: "Unable to find the order" });
-        if (order.status === "deliverd") return res.status(401).json({ message: "Can't cancel, order is already deliverd" });
+        if (order.status === "delivered") return res.status(401).json({ message: "Can't cancel, order is already deliverd" });
 
         let indexOfItem = order.orderItems.findIndex((v) => v.variantId.toString() == variantId.toString());
         order.orderItems[indexOfItem].status = "cancelled"
@@ -151,6 +159,10 @@ const cancelItem = async (req, res) => {
         let indexOfVariant = product.variants.findIndex((v) => v._id.toString() == variantId.toString());
 
         product.variants[indexOfVariant].stock += parseInt(order.orderItems[indexOfItem].quantity)
+        const NotAllCancelled = order.orderItems.filter(item => item.status !== "cancelled")
+        if (NotAllCancelled.length === 0) {
+            order.status = "cancelled"
+        }
 
         await order.save()
         await product.save();
@@ -162,10 +174,167 @@ const cancelItem = async (req, res) => {
     }
 }
 
+
+const returnItem = async (req, res) => {
+  try {
+    const { productId, orderId, variantId } = req.query;
+    const reason = req.body.reason;
+
+    const order = await ordersModel.findOne({ orderId });
+
+    if (!order) {
+      return res.status(404).json({ message: "Unable to find the order" });
+    }
+
+    if (order.status === "cancelled") {
+      return res
+        .status(401)
+        .json({ message: "Can't return, order is cancelled" });
+    }
+
+    if (order.status !== "delivered") {
+      return res
+        .status(401)
+        .json({ message: "Can't return, order is not delivered" });
+    }
+
+    let indexOfItem = order.orderItems.findIndex(
+      (v) => v.variantId.toString() === variantId.toString()
+    );
+
+    if (indexOfItem === -1) {
+      return res.status(404).json({ message: "Item not found in order" });
+    }
+
+    order.orderItems[indexOfItem].status = "returned";
+    order.reason = reason;
+
+    const allItemsReturned = order.orderItems.every(
+      (item) => item.status === "returned"
+    );
+
+    if (allItemsReturned) {
+      order.status = "returned";
+    }
+
+    const product = await productModel.findOne({ _id: productId });
+    if (!product) {
+      return res.render("user/404Error");
+    }
+
+    let indexOfVariant = product.variants.findIndex(
+      (v) => v._id.toString() === variantId.toString()
+    );
+    if (indexOfVariant === -1) {
+      return res.status(404).json({ message: "Variant not found" });
+    }
+
+    product.variants[indexOfVariant].stock += parseInt(
+      order.orderItems[indexOfItem].quantity
+    );
+
+    await order.save();
+    await product.save();
+
+    res.status(200).json({ message: "Return successful" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+const downloadInvoice = async (req, res) => {
+    try {
+    const { orderId } = req.params;
+
+    // Fetch order from DB
+    const order = await ordersModel.findOne({ orderId });
+    if (!order) return res.status(404).send("Order not found");
+
+    // Populate product details for each item
+    const items = [];
+    for (let item of order.orderItems) {
+      const product = await productModel.findById(item.itemId);
+      const variantIndex = product.variants.findIndex((v) => v._id.toString() == item.variantId.toString());
+      items.push({
+        name: product.variants[variantIndex]?.name || "Unknown Product",
+        qty: item.quantity,
+        price: product.variants[variantIndex]?.price || 0,
+        total: (product.variants[variantIndex]?.price || 0) * item.quantity,
+      });
+    }
+
+    // Create PDF
+    const doc = new PDFDocument({ margin: 50 });
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename=${order.orderId}.pdf`);
+    doc.pipe(res);
+
+    // --- Header ---
+    doc.fontSize(20).text("Invoice", { align: "center" });
+    doc.moveDown();
+
+    // --- Order Info ---
+    doc.fontSize(12).text(`Order ID: ${order.orderId}`);
+    doc.text(`Date: ${order.createdAt.toDateString()}`);
+    doc.text(`Payment Method: ${order.paymentMethod}`);
+    doc.text(`Status: ${order.status}`);
+    doc.moveDown();
+
+    // --- Address ---
+    doc.fontSize(14).text("Billing Address", { underline: true });
+    doc.fontSize(12).text(order.address.name);
+    doc.text(`${order.address.address}, ${order.address.city}, ${order.address.district}`);
+    doc.text(`${order.address.state} - ${order.address.pincode}`);
+    doc.text(`Phone: ${order.address.mobile}`);
+    doc.text(`Email: ${order.address.email}`);
+    doc.moveDown();
+
+    // --- Items Table ---
+    doc.fontSize(14).text("Order Items", { underline: true });
+    doc.moveDown(0.5);
+
+    doc.fontSize(12).text("Item".padEnd(25) + "Qty".padEnd(10) + "Price".padEnd(10) + "Total");
+    doc.moveDown(0.5);
+
+    items.forEach((i) => {
+      doc.text(`${i.name.padEnd(25)} ${String(i.qty).padEnd(10)} ${String(i.price).padEnd(10)} ${i.total}`);
+    });
+
+    doc.moveDown(1);
+
+    // --- Summary ---
+    doc.fontSize(14).text("Summary", { underline: true });
+    doc.fontSize(12).text(`Subtotal: ${order.subTotal}rs`);
+    doc.text(`Discount: -${order.discount}`);
+    doc.text(`Shipping: ${order.deliveryCharge}`);
+      
+    let yPos = doc.y;
+    doc.fontSize(12).text(`Total: INR ${order.total}`, 50, yPos, { align: "right" });
+    const logoPath = path.join(__dirname, "../../public/images/brand-logo.png");
+    doc.image(logoPath, 300, yPos - 5, { width: 80, align:"right" });
+    doc.moveDown(3);
+    
+
+    // --- Footer ---
+    doc.fontSize(10).text("Thank you for shopping with us!", { align: "center" });
+    doc.fontSize(10).text("SonicBoom", { align: "center" });
+
+    doc.end();
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error generating invoice");
+  }
+}
+
 module.exports = {
-    loadOrders,
-    loadDetails,
-    loadOrderStatus,
-    cancelOrder,
-    cancelItem
+  loadOrders,
+  loadDetails,
+  loadOrderStatus,
+  cancelOrder,
+  cancelItem,
+  returnItem,
+  downloadInvoice,
 }

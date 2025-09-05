@@ -23,8 +23,8 @@ const orderSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        enum:['pending', 'processing', 'deliverd', 'cancelled', 'payment failed'],
-        default: 'pending',
+        enum:['processing', 'shipped','out-for-delivery', 'delivered', 'returned', 'cancelled', 'payment failed'],
+        default: 'processing',
         required:true
     },
     paymentStatus: {
@@ -59,7 +59,7 @@ const orderSchema = mongoose.Schema({
         type: [{
             itemId: { type: mongoose.Schema.Types.ObjectId, ref: 'products', required: true },
             variantId: { type: mongoose.Schema.Types.ObjectId, required: true },
-            status:{type:String, enum:['pending', 'processing', 'deliverd', 'cancelled', 'payment failed'], default:"pending", required:true},
+            status:{type:String, enum:['processing','shipped', 'out-for-delivery', 'delivered', 'cancelled', 'returned', 'payment failed'], default:"processing", required:true},
             quantity:{type:Number, required:true}
         }]
     },

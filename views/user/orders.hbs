@@ -33,7 +33,7 @@
             }
         }
     </style>
-
+<input type="text" id="focusIndicator" value="myorders" hidden>
     <div class="w-full lg:w-4/5 max-w-4xl">
         <h2 class="text-3xl font-bold text-text-light mb-6">My Orders</h2>
         <div class="relative mb-5">
@@ -114,51 +114,97 @@
                 orders.forEach(product => {
                     let items = '';
                     product.orderedItems.forEach(item => {
-                        items += `
-                    <div class="rounded-md p-2 flex items-center gap-4 mt-2">
-                        <div class="aspect-square rounded-md overflow-hidden w-10 h-10 flex-shrink-0">
-                            <img src="${item.thumbnail}" alt="${item.name}" class="w-full h-full object-cover">
-                        </div>
-                        <div class="flex-grow">
-                            <h3 class="text-sm font-semibold text-text-light">${item.name}</h3>
-                        </div>
-                    </div>
-                `;
+                        console.log(item)
+                        if(item.status == "cancelled"){
+                            items += `
+                                <div class="rounded-md p-2 flex items-center gap-4 mt-2 opacity-[0.4] relative">
+                                    <h3 class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-sm font-semibold text-red-500">Cancelled</h3>
+                                    <div class="aspect-square rounded-md overflow-hidden w-10 h-10 flex-shrink-0">
+                                        <img src="${item.thumbnail}" alt="${item.name}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h3 class="text-sm font-semibold text-text-light">${item.name}</h3>
+                                    </div>
+                                </div>
+                            `;
+                        }else{
+
+                            items += `
+                                <div class="rounded-md p-2 flex items-center gap-4 mt-2">
+                                    <div class="aspect-square rounded-md overflow-hidden w-10 h-10 flex-shrink-0">
+                                        <img src="${item.thumbnail}" alt="${item.name}" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="flex-grow">
+                                        <h3 class="text-sm font-semibold text-text-light">${item.name}</h3>
+                                    </div>
+                                </div>
+                            `;
+                        }
                     });
 
                     // Determine status color
                     let statusStyles = {
-                        "pending": "bg-gray-800 text-gray-400",
-                        "proccessing": "bg-yellow-900/50 text-yellow-400",
+                        "proccessing": "bg-gray-800 text-gray-400",
+                        "shipped": "bg-orange-900/50 text-orange-400",
+                        "out for delivery": "bg-yellow-900/50 text-yellow-400",
                         "delivered": "bg-green-900/50 text-green-400",
                         "cancelled": "bg-red-900/50 text-red-400",
-                        "payment failed": "bg-red-900/50 text-red-400"
+                        "payment failed": "bg-red-900/50 text-red-400",
+                        "returned" : "bg-blue-900/50 text-blue-400"
                     };
-                    let style = statusStyles[product.status.toLowerCase()] || statusStyles["pending"];
+                    let style = statusStyles[product.status.toLowerCase()] || statusStyles["proccessing"];
 
-                    html += `
-                <div class="bg-card-bg border border-border-color rounded-xl p-4 sm:p-6 flex flex-col" id="order-data" data-orderid="${product.orderId}">
-                    <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
-                        <div>
-                            <h3 class="text-lg md:text-xl font-semibold text-text-light">Order ID: ${product.orderId}</h3>
-                            <p class="text-sm text-text-medium mt-1"><span class="font-medium">Order Date:</span> ${new Date(product.createdAt).toLocaleDateString()}</p>
-                        </div>
-                        <span class="text-xs sm:text-sm font-semibold ${style} rounded-full px-3 py-1 capitalize">${product.status}</span>
-                    </div>
-                    
-                    <div class="border-t border-border-color pt-4">
-                        <p class="text-base text-text-light mb-2 font-semibold">Items</p>
-                        <div class="space-y-2">${items}</div>
-                    </div>
-                    
-                    <div class="border-t border-border-color mt-4 pt-4 space-y-2 text-sm">
-                        <p class="text-text-medium flex justify-between">Sub Total: <span>₹${product.subTotal}</span></p>
-                        <p class="text-text-medium flex justify-between">Delivery Charge: <span>₹${product.deliveryCharge}</span></p>
-                        <p class="text-red-500 flex justify-between">Discount: <span>-₹${product.discount}</span></p>
-                        <p class="text-text-light text-base font-semibold flex justify-between mt-2">Total: <span>₹${product.total}</span></p>
-                    </div>
-                </div>
-            `;
+                    if(product.status == "cancelled"){
+                        html += `
+                            <div class="opacity-[0.4] bg-card-bg border border-border-color rounded-xl p-4 sm:p-6 flex flex-col relative" id="order-data" data-orderid="${product.orderId}">
+                                <h3 class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-lg md:text-xl font-semibold text-red-500">Cancelled</h3>
+                                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                                    <div>
+                                        <h3 class="text-lg md:text-xl font-semibold text-text-light">Order ID: ${product.orderId}</h3>
+                                        <p class="text-sm text-text-medium mt-1"><span class="font-medium">Order Date:</span> ${new Date(product.createdAt).toLocaleDateString()}</p>
+                                    </div>
+                                    <span class="text-xs sm:text-sm font-semibold ${style} rounded-full px-3 py-1 capitalize">${product.status}</span>
+                                </div>
+                                
+                                <div class="border-t border-border-color pt-4">
+                                    <p class="text-base text-text-light mb-2 font-semibold">Items</p>
+                                    <div class="space-y-2">${items}</div>
+                                </div>
+                                
+                                <div class="border-t border-border-color mt-4 pt-4 space-y-2 text-sm">
+                                    <p class="text-text-medium flex justify-between">Sub Total: <span>₹${product.subTotal}</span></p>
+                                    <p class="text-text-medium flex justify-between">Delivery Charge: <span>₹${product.deliveryCharge}</span></p>
+                                    <p class="text-red-500 flex justify-between">Discount: <span>-₹${product.discount}</span></p>
+                                    <p class="text-text-light text-base font-semibold flex justify-between mt-2">Total: <span>₹${product.total}</span></p>
+                                </div>
+                            </div>
+                        `;
+
+                    }else{
+                        html += `
+                            <div class="bg-card-bg border border-border-color rounded-xl p-4 sm:p-6 flex flex-col" id="order-data" data-orderid="${product.orderId}">
+                                <div class="flex flex-wrap justify-between items-start gap-2 mb-4">
+                                    <div>
+                                        <h3 class="text-lg md:text-xl font-semibold text-text-light">Order ID: ${product.orderId}</h3>
+                                        <p class="text-sm text-text-medium mt-1"><span class="font-medium">Order Date:</span> ${new Date(product.createdAt).toLocaleDateString()}</p>
+                                    </div>
+                                    <span class="text-xs sm:text-sm font-semibold ${style} rounded-full px-3 py-1 capitalize">${product.status}</span>
+                                </div>
+                                
+                                <div class="border-t border-border-color pt-4">
+                                    <p class="text-base text-text-light mb-2 font-semibold">Items</p>
+                                    <div class="space-y-2">${items}</div>
+                                </div>
+                                
+                                <div class="border-t border-border-color mt-4 pt-4 space-y-2 text-sm">
+                                    <p class="text-text-medium flex justify-between">Sub Total: <span>₹${product.subTotal}</span></p>
+                                    <p class="text-text-medium flex justify-between">Delivery Charge: <span>₹${product.deliveryCharge}</span></p>
+                                    <p class="text-red-500 flex justify-between">Discount: <span>-₹${product.discount}</span></p>
+                                    <p class="text-text-light text-base font-semibold flex justify-between mt-2">Total: <span>₹${product.total}</span></p>
+                                </div>
+                            </div>
+                        `;
+                    }
                 });
                 orderContainer.innerHTML = html;
                 document.querySelectorAll('#order-data').forEach(element =>{

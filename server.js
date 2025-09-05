@@ -52,8 +52,32 @@ hbs.registerHelper('length', (array) => {
 
 hbs.registerHelper("ls", (a, b) => a < b);
 hbs.registerHelper("gt", (a, b) => a > b);
-hbs.registerHelper("eq", (a, b) => a.toString() === b.toString());
+hbs.registerHelper("eq", (a, b) => {
+    if (a == null || b == null) return false; 
+  return String(a) === String(b);
+});
 hbs.registerHelper("ne", (a, b) => a.toString() !== b.toString());
+
+hbs.registerHelper("ifCond", function (v1, operator, v2, options) {
+  switch (operator) {
+    case "==":
+      return v1 == v2 ? options.fn(this) : options.inverse(this);
+    case "===":
+      return v1 === v2 ? options.fn(this) : options.inverse(this);
+    case "!=":
+      return v1 != v2 ? options.fn(this) : options.inverse(this);
+    case "<":
+      return v1 < v2 ? options.fn(this) : options.inverse(this);
+    case "<=":
+      return v1 <= v2 ? options.fn(this) : options.inverse(this);
+    case ">":
+      return v1 > v2 ? options.fn(this) : options.inverse(this);
+    case ">=":
+      return v1 >= v2 ? options.fn(this) : options.inverse(this);
+    default:
+      return options.inverse(this);
+  }
+});
 
 
 // view engine

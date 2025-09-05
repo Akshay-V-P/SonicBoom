@@ -292,14 +292,22 @@
                         <select name="payment" id="payment" class="filter-select">
                             <option value="">Payment</option>
                             <option value="UPI">UPI</option>
-                            <option value="cod">COD</option>
+                            <option value="COD">COD</option>
                             <option value="bank">BANK</option>
                         </select>
                         <select name="status" id="status" class="filter-select">
-                            <option value="">Status</option>
+                            <option value="">Payment Status</option>
                             <option value="paid">Paid</option>
                             <option value="unpaid">Unpaid</option>
                             <option value="failed">Cancelled</option>
+                        </select>
+                        <select name="status" id="order-status" class="filter-select">
+                            <option value="">Status</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="out-for-delivery">Out for delivery</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
                         </select>
                         <button class="search-btn" id="search">Search</button>
                         <button id="clearBtn">Clear</button>
@@ -379,6 +387,7 @@
         const filterAmount = document.getElementById('amount').value.trim()
         const filterPayment = document.getElementById('payment').value.trim()
         const filterStatus = document.getElementById('status').value.trim()
+        const filterOrderStatus = document.getElementById('order-status').value.trim()
         if(search){
             url += `&limit=1&search=${search}`
         }else{
@@ -392,6 +401,9 @@
         }
         if(filterStatus){
             url += `&filterStatus=${filterStatus}`
+        }
+        if(filterOrderStatus){
+            url += `&filterOrderStatus=${filterOrderStatus}`
         }
         fetchOrders(url)
         
@@ -409,14 +421,15 @@
         fetchOrders('/admin/orders/search?currentPage=1&limit=10')
     })
 
-    document.querySelectorAll('.orderDetails').forEach((e)=>{
-        console.log(e)
-        e.addEventListener('click', ()=>{
+    {{!-- document.querySelectorAll('.orderDetails').forEach((element)=>{
+        console.log(element)
+        element.addEventListener('click', ()=>{
             console.log('Get in')
-            const value = e.querySelector('.userId').value
-            window.location.href = '/admin/orders/:id'
+            const value = element.querySelector('.userId').value
+            console.log(value)
+            window.location.href = `/admin/orders/details?orderId=${value}`
         })
-    })
+    }) --}}
 
     function fetchOrders(url){
         fetch(url)
@@ -434,8 +447,7 @@
                 let index = 0
                 data.result.forEach((order)=>{
                     tbody.innerHTML += `
-                        <tr class="table-row orderDetails">
-                            <td value="${order._id}" class="userId" hidden></td>
+                        <tr class="table-row orderDetails" data-orderid="${order.orderId}">
                             <td class="checkbox-cell" data-label="All">${++index}</td>
                             <td data-label="Reference No">${order.orderId}</td>
                             <td data-label="Amount">₹${order.total}</td>
@@ -448,8 +460,8 @@
                 document.querySelectorAll('.orderDetails').forEach((e)=>{
                     e.addEventListener('click', ()=>{
                         console.log('Get in')
-                        const value = e.querySelector('.userId').value
-                        window.location.href = '/admin/orders/:id'
+                        const value = e.dataset.orderid
+                        window.location.href = `/admin/orders/details?orderId=${value}`
                     })
                 })
 
