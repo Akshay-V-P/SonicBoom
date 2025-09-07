@@ -1,5 +1,6 @@
 const orderModel = require('../../model/ordersModel')
 const paginate = require('../../helper/pagination')
+const productModel = require('../../model/productModel')
 
 const loadOrders = (req, res) => {
     res.render('admin/orders', {layout:'admin'})
@@ -40,9 +41,17 @@ const showOrderDetails = async (req, res) => {
         if (!order) return res.render('admin/orderDetails', { layout: 'admin' })
         console.log(order)
         let items = []
-        order.orderItems.forEach(item => {
-            items.push(item.name)
-        })
+
+        for (let item of order.orderItems) {
+            const product = await productModel.findOne({ _id: item.itemId });
+            if (!product) return res.render("user/404Error");
+
+            let indexOfVariant = product.variants.findIndex((v) => v._id.toString() == item.variantId.toString());
+            
+            items.push(product.variants[indexOfVariant].name)
+
+        }
+
         let orderDetails = {
             orderId,
             name: order.address.name,
@@ -56,6 +65,7 @@ const showOrderDetails = async (req, res) => {
             items,
             status:order.status
         }
+        console.log(orderDetails)
         res.render('admin/orderDetails', {layout:'admin', orderDetails})
     } catch (error) {
         console.log(error)
@@ -69,9 +79,14 @@ const updateStatus = async (req, res) => {
         
         const order = await orderModel.findOne({ orderId })
         if (!order) return res.status(404).json({ messsage: "can't find order" })
-        order.status = status
+        if (order.status != "cancelled") {
+            order.status = status
+        }
+        
         order.orderItems.forEach(item => {
-            item.status = status
+            if (item.status != "cancelled") {
+                item.status = status
+            }
         })
 
         await order.save()

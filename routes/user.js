@@ -6,7 +6,8 @@
 const orderController = require('../controller/user/orderController')
 const addressController = require('../controller/user/addressController')
 const cartController = require('../controller/user/cartController')
-  const checkoutController = require('../controller/user/checkoutController')
+const checkoutController = require('../controller/user/checkoutController')
+  const wishlistController = require('../controller/user/wishlistController')
 
   const shopController = require('../controller/user/shopController')
   const { validate, validateSignin } = require('../middleware/validator')
@@ -16,10 +17,10 @@ const cartController = require('../controller/user/cartController')
 const ordersModel = require('../model/ordersModel')
 
   // ---------- dev codes -----------
-// router.use((req, res, next) => {
-//   req.session.user = { _id: '68a9ab4e5584c7d280baa625', email:"akshayvpcontact@gmail.com" }
-//   next()
-// })
+router.use((req, res, next) => {
+  req.session.user = { _id: '68a9ab4e5584c7d280baa625', email:"akshayvpcontact@gmail.com" }
+  next()
+})
   // --------------------------------
 
   // User routes
@@ -108,7 +109,10 @@ router.get('/cart',userAuth.isAuthenticated, cartController.loadCart)
 router.get('/cart/details',userAuth.isAuthenticated, cartController.cartDetails)
 router.post('/cart/add',userAuth.isAuthenticated, cartController.addToCart)
 router.post('/cart/remove',userAuth.isAuthenticated, cartController.removeFromCart)
-router.post('/cart/decrement',userAuth.isAuthenticated, cartController.decrementQuantity)
+router.post('/cart/decrement', userAuth.isAuthenticated, cartController.decrementQuantity)
+
+// wishlist 
+router.get('/wishlist', userAuth.isAuthenticated, wishlistController.loadWishlist)
 
 // checkout
 router.get('/checkout',userAuth.isAuthenticated, checkoutController.loadCheckout)

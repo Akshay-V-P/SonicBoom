@@ -190,40 +190,6 @@
                                 <p class="text-gray-500 text-sm line-through">₹5999</p>
                             </div>
                         </div>
-
-
-                         <div class="game-card p-3">
-                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/rX8sY9c.jpg" alt="Star Eversine" class="w-full h-full object-cover"></div>
-                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Star Eversine</h3><p class="text-white font-semibold mt-1">₹2199</p></div>
-                        </div>
-                         <div class="game-card p-3">
-                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/kZ6d7fL.jpg" alt="Boxville 2" class="w-full h-full object-cover"></div>
-                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Boxville 2</h3><p class="text-white font-semibold mt-1">₹1899</p></div>
-                        </div>
-                         <div class="game-card p-3">
-                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/jJ9f8vM.jpg" alt="Kingdom Come" class="w-full h-full object-cover"></div>
-                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Kingdom Come</h3><p class="text-white font-semibold mt-1">₹1199</p></div>
-                        </div>
-                        <div class="game-card p-3">
-                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/nQ0Q1oZ.jpg" alt="Nanomon" class="w-full h-full object-cover"></div>
-                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Nanomon</h3><p class="text-white font-semibold mt-1">₹2186</p></div>
-                        </div>
-                        <div class="game-card p-3">
-                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/pL2x3vV.jpg" alt="Wuchang" class="w-full h-full object-cover"></div>
-                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Wuchang: Fallen Feathers</h3><p class="text-white font-semibold mt-1">₹3199</p></div>
-                        </div>
-                        <div class="game-card p-3">
-                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/QkY6c8W.jpg" alt="Blades of Fire" class="w-full h-full object-cover"></div>
-                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Blades of Fire</h3><p class="text-white font-semibold mt-1">₹2199</p></div>
-                        </div>
-                         <div class="game-card p-3">
-                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/dZ9sN7G.jpg" alt="FNAF" class="w-full h-full object-cover"></div>
-                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Five Nights at Freddy's</h3><p class="text-white font-semibold mt-1">₹4800</p></div>
-                        </div>
-                         <div class="game-card p-3">
-                            <div class="aspect-[3/4] rounded-lg overflow-hidden"><img src="https://i.imgur.com/iR8vL6p.jpg" alt="Diesel Drive" class="w-full h-full object-cover"></div>
-                            <div class="pt-4"><p class="text-gray-400 text-sm">Base Game</p><h3 class="font-semibold text-white truncate mt-1">Diesel Drive</h3><p class="text-white font-semibold mt-1">₹2199</p></div>
-                        </div>
                     </div>
                     
                     <div class="pagination pagination-container">
@@ -242,6 +208,8 @@
         document.addEventListener('DOMContentLoaded', ()=>{
             const url = `/user/shop/load?sort=createdAt:-1&currentPage=1&limit=9`
             fetchProducts(url)
+
+                
         })
 
         document.getElementById('apply-btn').addEventListener('click', ()=>{
@@ -342,9 +310,21 @@ function fetchProducts(url){
                 data.result.forEach((product)=>{
                     html += `
                     <a href="/user/product_details?productId=${product._id}">
-                        <div class="game-card p-3">
-                            <div class="aspect-[3/4] rounded-lg overflow-hidden">
+                        <div class="game-card relative p-3 group">
+                            <div class="aspect-[3/4] rounded-lg overflow-hidden relative">
                                 <img src="${product.variants[0].thumbnail}" alt="${product.name}" class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <button class="add-to-cart-btn bg-purple-600 text-white p-3 rounded-full hover:bg-purple-700 transition-colors duration-300" data-product-id="${product._id}" data-variant-id="${product.variants[0]._id}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.153 1.704.707 1.704H17.5a1 1 0 00.999-.894l2-8a1 1 0 00-1-1H7a1 1 0 00-1 1v2z" />
+                                        </svg>
+                                    </button>
+                                    <button class="add-to-wishlist-btn bg-gray-600 text-white p-3 rounded-full hover:bg-gray-700 transition-colors duration-300" data-product-id="${product._id}" data-variant-id="${product.variants[0]._id}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 0l.288.288A4.5 4.5 0 0122 10.5c0 2.227-1.314 4.093-3.082 5.093L12 21.618l-6.918-6.027C3.314 14.593 2 12.727 2 10.5a4.5 4.5 0 012.318-4.182z" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                             <div class="pt-4">
                                 <p class="text-gray-400 text-sm">Base Game</p>
@@ -355,10 +335,74 @@ function fetchProducts(url){
                         </div>
                     </a>
                 `
+
+                
                 })
 
                 productGrid.innerHTML = html
                 localStorage.setItem('shopCurrentPage', data.currentPage)
+
+                const cartButtons = document.querySelectorAll('.add-to-cart-btn');
+                const wishlistButtons = document.querySelectorAll('.add-to-wishlist-btn');
+
+                cartButtons.forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        // Stop the event from bubbling up to the parent <a> tag.
+                        event.preventDefault()
+                        event.stopPropagation();
+                        
+                        const productId = button.dataset.productId;
+                        const variantId = button.dataset.variantId;
+                        fetch(`/user/cart/add?_id=${encodeURIComponent(productId)}&variantId=${encodeURIComponent(variantId)}`,{method:"POST"})
+                            .then(response =>{
+                                if(!response.ok) throw new Error("Product cant add to cart")
+                                console.log("fetched to cart")
+                                setTimeout(() => {
+                                    addToCartBtn.textContent = originalText;
+                                    addToCartBtn.classList.remove('bg-green-checkout', 'packed-animation');
+                                }, 2000); 
+                                return response.json()
+                            })
+                            .then(data =>{
+                                console.log(data)
+                                Swal.fire({
+                                    title: 'Added to Cart!',
+                                    text: `Product with ID ${productId} has been added to your cart.`,
+                                    icon: 'success',
+                                    background: "#242428",
+                                    color: 'white',
+                                    customClass: {
+                                        popup: 'my-swal-border'
+                                    }
+                                });
+                            })
+                            .catch(error => console.log(error))
+                        
+                        
+                    });
+                });
+
+                wishlistButtons.forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        // Stop the event from bubbling up to the parent <a> tag.
+                        event.preventDefault()
+                        event.stopPropagation()
+                        
+                        const productId = button.dataset.productId;
+                        console.log(`Adding product ${productId} to wishlist...`);
+                        
+                        Swal.fire({
+                            title: 'Added to Wishlist!',
+                            text: `Product with ID ${productId} has been added to your wishlist.`,
+                            icon: 'info',
+                            background: "#242428",
+                            color: 'white',
+                            customClass: {
+                                popup: 'my-swal-border'
+                            }
+                        });
+                    });
+                });
 
                 const pagination = document.querySelector('.pagination-container')
                 // setting url for next Page
@@ -387,6 +431,9 @@ function fetchProducts(url){
                 `
             }).catch(error => console.log(error))
     }
+
+
+
 
 
 

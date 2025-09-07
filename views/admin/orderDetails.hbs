@@ -28,6 +28,7 @@
         display: flex;
         align-items: center;
         margin-bottom: 8px;
+        position: relative;
     }
 
     .detail-label {
@@ -50,6 +51,11 @@
         align-items: center;
         margin-top: 20px;
         gap: 10px;
+    }
+
+    #items-header{
+        position: absolute;
+        top: 0;
     }
 
     .status-dropdown {
@@ -78,6 +84,13 @@
         font-weight: 500;
         cursor: pointer;
         transition: background-color 0.2s ease;
+    }
+
+    .items-container{
+        display: flex;
+        flex-direction: column;
+        margin-top: 18px;
+        margin-left: 8px;
     }
 
     .update-btn:hover {
@@ -151,15 +164,17 @@
                     <span class="detail-value">{{orderDetails.orderDate}}</span>
                 </div>
                 <div class="detail-item">
-                    {{#each orderDetails.items}}
-                    <span class="detail-label">Items :</span>
-                    <span class="detail-value">{{this}}</span>
-                    {{/each}}
+                    <span class="detail-label" id="items-header">Items :</span>
+                    <div class="items-container">
+                        {{#each orderDetails.items}}
+                           <span class="detail-value">{{inc @index}}. {{this}}</span>
+                        {{/each}}
+                    </div>
                 </div>
                 <div class="detail-item">
                     <span class="detail-label">Status :</span>
                     <select class="status-dropdown" id="status-select">
-                        <option value="processing" {{#if (eq orderDetails.status 'processing')}}selected{{/if}}>Pending</option>
+                        <option value="processing" {{#if (eq orderDetails.status 'processing')}}selected{{/if}}>Processing</option>
                         <option value="shipped" {{#if (eq orderDetails.status 'shipped')}}selected{{/if}}>Shipped</option>
                         <option value="out-for-delivery" {{#if (eq orderDetails.status 'out-for-delivery')}}selected{{/if}}>Out for delivery</option>
                         <option value="delivered" {{#if (eq orderDetails.status 'delivered')}}selected{{/if}}>Delivered</option>

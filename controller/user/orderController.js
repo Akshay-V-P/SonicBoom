@@ -149,19 +149,24 @@ const cancelItem = async (req, res) => {
 
         if (!order) return res.status(404).json({ message: "Unable to find the order" });
         if (order.status === "delivered") return res.status(401).json({ message: "Can't cancel, order is already deliverd" });
+        const product = await productModel.findOne({ _id: productId });
+        if (!product) return res.render("user/404Error");
+        let indexOfVariant = product.variants.findIndex((v) => v._id.toString() == variantId.toString());
 
         let indexOfItem = order.orderItems.findIndex((v) => v.variantId.toString() == variantId.toString());
         order.orderItems[indexOfItem].status = "cancelled"
+      order.total = (order.total - product.variants[indexOfVariant].offerPrice).toFixed(2)
+      order.subTotal = (order.subTotal - product.variants[indexOfVariant].price).toFixed(2)
+      order.discount = (order.discount - (order.discount / order.orderItems.length)).toFixed(2)
 
-        const product = await productModel.findOne({ _id: productId });
-        if (!product) return res.render("user/404Error");
+        console.log(order.total)
 
-        let indexOfVariant = product.variants.findIndex((v) => v._id.toString() == variantId.toString());
+        
 
         product.variants[indexOfVariant].stock += parseInt(order.orderItems[indexOfItem].quantity)
         const NotAllCancelled = order.orderItems.filter(item => item.status !== "cancelled")
         if (NotAllCancelled.length === 0) {
-            order.status = "cancelled"
+          order.status = "cancelled"
         }
 
         await order.save()
