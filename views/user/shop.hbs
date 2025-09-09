@@ -308,33 +308,68 @@ function fetchProducts(url){
                 let index = 0
                 let html = ''
                 data.result.forEach((product)=>{
-                    html += `
-                    <a href="/user/product_details?productId=${product._id}">
-                        <div class="game-card relative p-3 group">
-                            <div class="aspect-[3/4] rounded-lg overflow-hidden relative">
-                                <img src="${product.variants[0].thumbnail}" alt="${product.name}" class="w-full h-full object-cover">
-                                <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <button class="add-to-cart-btn bg-purple-600 text-white p-3 rounded-full hover:bg-purple-700 transition-colors duration-300" data-product-id="${product._id}" data-variant-id="${product.variants[0]._id}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.153 1.704.707 1.704H17.5a1 1 0 00.999-.894l2-8a1 1 0 00-1-1H7a1 1 0 00-1 1v2z" />
-                                        </svg>
-                                    </button>
-                                    <button class="add-to-wishlist-btn bg-gray-600 text-white p-3 rounded-full hover:bg-gray-700 transition-colors duration-300" data-product-id="${product._id}" data-variant-id="${product.variants[0]._id}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 0l.288.288A4.5 4.5 0 0122 10.5c0 2.227-1.314 4.093-3.082 5.093L12 21.618l-6.918-6.027C3.314 14.593 2 12.727 2 10.5a4.5 4.5 0 012.318-4.182z" />
-                                        </svg>
-                                    </button>
+
+                    if(product.variants[0].stock < 1){
+                        html += `
+                            <a href="/user/product_details?productId=${product._id}">
+                                <div class="game-card relative p-3 group">
+                                    <div class="aspect-[3/4] rounded-lg overflow-hidden relative">
+                                    <div class="absolute top-12 left-[-40px] bg-red-600 text-white text-xs font-bold px-14 py-1 rotate-[-45deg] shadow-lg">
+                                        OUT OF STOCK
+                                    </div>
+                                        <img src="${product.variants[0].thumbnail}" alt="${product.name}" class="w-full h-full object-cover ">
+                                        <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 opacity-[1]">
+                                            <button class="add-to-cart-btn bg-purple-600 text-white p-3 rounded-full hover:bg-purple-700 transition-colors duration-300" data-product-id="${product._id}" data-variant-id="${product.variants[0]._id}" hidden>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.153 1.704.707 1.704H17.5a1 1 0 00.999-.894l2-8a1 1 0 00-1-1H7a1 1 0 00-1 1v2z" />
+                                                </svg>
+                                            </button>
+                                            <button class="add-to-wishlist-btn bg-gray-600 text-white p-3 rounded-full hover:bg-gray-700 transition-colors duration-300" data-product-id="${product._id}" data-variant-id="${product.variants[0]._id}" hidden>
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 0l.288.288A4.5 4.5 0 0122 10.5c0 2.227-1.314 4.093-3.082 5.093L12 21.618l-6.918-6.027C3.314 14.593 2 12.727 2 10.5a4.5 4.5 0 012.318-4.182z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="pt-4">
+                                        <p class="text-gray-400 text-sm opacity-[0.2]">Base Game</p>
+                                        <h3 class="font-semibold text-white truncate mt-1 opacity-[0.2]">${product.name}</h3>
+                                        <p class="text-white font-semibold mt-1 opacity-[0.2]">₹${product.variants[0].offerPrice}</p>
+                                        <p class="text-gray-500 text-sm line-through opacity-[0.2]">₹${product.variants[0].price}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        `
+                    }else{
+
+                        html += `
+                        <a href="/user/product_details?productId=${product._id}">
+                            <div class="game-card relative p-3 group">
+                                <div class="aspect-[3/4] rounded-lg overflow-hidden relative">
+                                    <img src="${product.variants[0].thumbnail}" alt="${product.name}" class="w-full h-full object-cover">
+                                    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center space-x-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <button class="add-to-cart-btn bg-purple-600 text-white p-3 rounded-full hover:bg-purple-700 transition-colors duration-300" data-product-id="${product._id}" data-variant-id="${product.variants[0]._id}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.153 1.704.707 1.704H17.5a1 1 0 00.999-.894l2-8a1 1 0 00-1-1H7a1 1 0 00-1 1v2z" />
+                                            </svg>
+                                        </button>
+                                        <button class="add-to-wishlist-btn bg-gray-600 text-white p-3 rounded-full hover:bg-gray-700 transition-colors duration-300" data-product-id="${product._id}" data-variant-id="${product.variants[0]._id}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 016.364 0l.288.288A4.5 4.5 0 0122 10.5c0 2.227-1.314 4.093-3.082 5.093L12 21.618l-6.918-6.027C3.314 14.593 2 12.727 2 10.5a4.5 4.5 0 012.318-4.182z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="pt-4">
+                                    <p class="text-gray-400 text-sm">Base Game</p>
+                                    <h3 class="font-semibold text-white truncate mt-1">${product.name}</h3>
+                                    <p class="text-white font-semibold mt-1">₹${product.variants[0].offerPrice}</p>
+                                    <p class="text-gray-500 text-sm line-through">₹${product.variants[0].price}</p>
                                 </div>
                             </div>
-                            <div class="pt-4">
-                                <p class="text-gray-400 text-sm">Base Game</p>
-                                <h3 class="font-semibold text-white truncate mt-1">${product.name}</h3>
-                                <p class="text-white font-semibold mt-1">₹${product.variants[0].offerPrice}</p>
-                                <p class="text-gray-500 text-sm line-through">₹${product.variants[0].price}</p>
-                            </div>
-                        </div>
-                    </a>
-                `
+                        </a>
+                    `
+                    }
 
                 
                 })

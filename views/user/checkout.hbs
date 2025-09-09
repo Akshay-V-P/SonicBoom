@@ -225,12 +225,14 @@
 
 
     <!-- Simple Snackbar for alerts -->
-    <div id="snackbar" class="fixed bottom-4 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50"></div>
+    <div id="snackbar" class="fixed bottom-4 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50" style="z-index: 9999;"></div>
 
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 
     let addressData
+    let userData
 
 
 
@@ -375,6 +377,7 @@
                 .then(data => {
                     console.log(data)
                     addressData = data.addresses
+                    userData = data.user
                     const productContainer = document.getElementById("products-container")
                     const checkoutDetails = document.getElementById("checkout-container")
                     const addressContainer = document.getElementById("address-container")
@@ -473,7 +476,7 @@
                                 <div class="space-y-4">
                                     <!-- Payment method 1: Debit/Credit Card -->
                                     <label class="flex items-center gap-3 cursor-pointer">
-                                        <input type="radio" name="paymentMethod" value="Card" class="form-radio text-primary-blue h-4 w-4" checked>
+                                        <input type="radio" name="paymentMethod" value="CARD" class="form-radio text-primary-blue h-4 w-4" checked>
                                         <span class="text-sm text-text-light">Debit Card / Credit card</span>
                                         <img src="https://res.cloudinary.com/dnmpesolv/image/upload/v1755940464/visa-logo_s8y2d2.png" alt="Visa" class="h-4">
                                         <img src="https://res.cloudinary.com/dnmpesolv/image/upload/v1755940464/mastercard-logo_p9i6p1.png" alt="Mastercard" class="h-4">
@@ -490,7 +493,7 @@
                                     </label>
                                     <!-- Payment method 4: Wallet -->
                                     <label class="flex items-center gap-3 cursor-pointer">
-                                        <input type="radio" name="paymentMethod" value="wallet" class="form-radio text-primary-blue h-4 w-4">
+                                        <input type="radio" name="paymentMethod" value="WALLET" class="form-radio text-primary-blue h-4 w-4">
                                         <span class="text-sm text-text-light">Wallet</span>
                                     </label>
                                 </div>
@@ -531,7 +534,7 @@
         }
 
 
-        function placeOrder(){
+        async function placeOrder(){
             const placeBtn = document.getElementById("place-order")
             placeBtn.innerText = "Packing your package.."
             placeBtn.disabled = true
@@ -545,25 +548,130 @@
             const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value
             let bodyData = {addressId, total, subTotal, discounts, paymentMethod}
 
-            fetch(`/user/checkout/place-order`,{
-                method:"POST",
-                headers:{'Content-Type': 'application/json'},
-                body:JSON.stringify(bodyData)
-            })
-            .then(async function(response){
-                let res = await response.json()
-                if(!response.ok) throw new Error( res.message || "Failed to fetch" )
-                window.location.href = '/user/order-success'
-            })
-            .catch((error) => {
-                showSnackbar(error, "bg-red-500")
-            })
-            .finally(()=>{
-                placeBtn.innerText = "Place Order"
-                placeBtn.disabled = false
-                placeBtn.style.cursor = "pointer";
-            })
+            if(paymentMethod == "CARD" || paymentMethod == "UPI"){
+                // 1. Create order from backend
+                fetch("/payment/create-order", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount: parseInt(total) }) // ₹500
+                })
+                .then(response =>{
+                    if(!response.ok) throw new Error("Failed to create order")
+                    return response.json()
+                })
+                .then(order =>{
+                        
+                    var options = {
+                        key: "rzp_test_RFOWbloxiCxKNB", 
+                        amount: order.amount,
+                        currency: order.currency,
+                        name: "SonicBoom",
+                        description: "Test Transaction",
+                        order_id: order.id,
+                        handler: async function (response) {
+                        
+                        const verifyRes = await fetch("/payment/verify-payment", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(response)
+                            });
+                            const verifyData = await verifyRes.json();
+                            let bgColor = "bg-green-500"
+                            console.log("is success : ",verifyData.success)
 
+                            if(!verifyData.success){
+                                bodyData.paymentStatus = false
+                                bgColor = "bg-red-500"
+                                fetch(`/user/checkout/place-order`,{
+                                    method:"POST",
+                                    headers:{'Content-Type': 'application/json'},
+                                    body:JSON.stringify(bodyData)
+                                })
+                                .then(async function(response){
+                                    let res = await response.json()
+                                    if(!response.ok) throw new Error( res.message || "Failed to fetch" )
+                                    window.location.href = '/user/order-failed'
+                                })
+                                .catch((error) => {
+                                    showSnackbar(error, "bg-red-500")
+                                })
+
+                            }else{
+
+                                bodyData.paymentStatus = true
+                                fetch(`/user/checkout/place-order`,{
+                                        method:"POST",
+                                        headers:{'Content-Type': 'application/json'},
+                                        body:JSON.stringify(bodyData)
+                                    })
+                                    .then(async function(response){
+                                        let res = await response.json()
+                                        if(!response.ok) throw new Error( res.message || "Failed to fetch" )
+                                        window.location.href = '/user/order-success'
+                                    })
+                                    .catch((error) => {
+                                        showSnackbar(error, "bg-red-500")
+                                    })
+
+                            }
+                            showSnackbar(verifyData.message, bgColor)
+                            
+                        },
+                        prefill: {
+                            name: userData.name,
+                            email: userData.email,
+                            contact: userData.mobile
+                        },
+                        theme: { color: "#3399cc" }
+                    };
+
+                    var rzp1 = new Razorpay(options);
+
+                    rzp1.on("payment.failed", async function (response) {
+                        console.error("Payment Failed:", response.error);
+
+                        bodyData.paymentStatus = false;
+                        await fetch(`/user/checkout/place-order`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(bodyData)
+                        });
+
+                        window.location.href = "/payment/failed";
+                    });
+
+                    rzp1.open();
+                })
+                .catch(error =>{
+                    console.log(error)
+                    showSnackbar("Please check your internet", "bg-red-500")
+                })
+
+                
+
+            }else if(paymentMethod == "WALLET"){
+
+            }else{
+                fetch(`/user/checkout/place-order`,{
+                    method:"POST",
+                    headers:{'Content-Type': 'application/json'},
+                    body:JSON.stringify(bodyData)
+                })
+                .then(async function(response){
+                    let res = await response.json()
+                    if(!response.ok) throw new Error( res.message || "Failed to fetch" )
+                    window.location.href = '/user/order-success'
+                })
+                .catch((error) => {
+                    showSnackbar(error, "bg-red-500")
+                })
+            }
+
+            placeBtn.innerText = "Place Order"
+            placeBtn.disabled = false
+            placeBtn.style.cursor = "pointer";
+
+            
 
             
         }

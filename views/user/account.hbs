@@ -1,5 +1,14 @@
-<input type="text" id="focusIndicator" value="account" hidden>
+<style>
+    .my-swal-border {
+		border: 1px solid #404044 !important;
+		/* Change color and thickness */
+		border-radius: 15px !important;
+	}
+</style>
 
+
+<input type="text" id="focusIndicator" value="account" hidden>
+<input type="text" id="message" value="{{message}}" placeholder="{{icon}}" hidden>
                 <!-- Content Area -->
                 <div class="flex-1 flex flex-col gap-8">
                     
@@ -20,7 +29,7 @@
                                 </div>
                                 <div>
                                     <label for="phone" class="block text-sm font-medium text-text-medium mb-2">Phone</label>
-                                    <input type="tel" id="phone" class="w-full bg-input-bg border border-border-color rounded-lg p-3 outline-none" value="{{user.mobile}}" readonly>
+                                    <input type="tel" id="phone" placeholder="Mobile" class="w-full bg-input-bg border border-border-color rounded-lg p-3 outline-none" value="{{user.mobile}}" readonly>
                                 </div>
                                 <div>
                                     <label for="email" class="block text-sm font-medium text-text-medium mb-2">Email</label>
@@ -49,26 +58,42 @@
                 </div>
 
 <script>
-    document.getElementById('logout').addEventListener('click', ()=>{
-        Swal.fire({
-            title: "Are you sure?",
-            text: "Do you want to logout from SonicBoom",
-            icon: "info",
-            showCancelButton: true,
-            confirmButtonColor: "#d33",
-            cancelButtonColor: "#4B4DFF",
-            confirmButtonText: "Yes",
-            cancelButtonText: "No",
-            background: "#242428",
-            customClass: {
-				popup: 'my-swal-border'
-			}
-            }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '/user/logout'
-            }
+    document.addEventListener("DOMContentLoaded", ()=>{
+        document.getElementById('logout').addEventListener('click', ()=>{
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Do you want to logout from SonicBoom",
+                icon: "info",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#4B4DFF",
+                confirmButtonText: "Yes",
+                cancelButtonText: "No",
+                background: "#242428",
+                customClass: {
+                    popup: 'my-swal-border'
+                }
+                }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/user/logout'
+                }
 
-        });
+            });
+        })
+
+        let msgValue = document.getElementById('message').value
+        let icon = document.getElementById('message').getAttribute('placeholder')
+        if (msgValue) {
+            Swal.fire({
+                title: msgValue,
+                icon: icon,
+                background: "#242428",
+                color: 'white',
+                customClass: {
+                    popup: 'my-swal-border'
+                }
+            });
+        }
     })
 
 </script>

@@ -157,6 +157,8 @@
                     let productHTML = ''
                     let checkoutHTML = ''
                     let preventCheckout = false
+                    let details = data.checkoutDetails
+                
                     if(data.products.length == 0){
                         productHTML += `
                                 <div class="h-[90dvh] p-4 md:p-6 flex flex-col sm:flex-row items-center justify-end sm:items-start gap-4 m-6">
@@ -178,21 +180,21 @@
                             <div class="flex-grow w-full">
                                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full opacity-[0.3]">
                                     <h3 class="text-xl font-semibold text-text-light">${product.name}</h3>
-                                    <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.offerPrice}</span>
+                                    <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.offerPrice * product.quantity}</span>
                                 </div>
                                 <span class="text-sm font-medium text-text-medium opacity-[0.3]">Base Game</span>
                                 <p class="text-text-medium text-sm mt-2 mb-4 hidden sm:block opacity-[0.3]">${product.description}</p>
                                 <div class="flex items-center gap-4 mt-4 text-sm font-medium">
                                     <button class="text-text-medium hover:text-text-light transition-colors" id="remove-btn" data-productid="${product.productId}" data-variantid="${product._id}" onclick="removeFromCart(this)">Remove</button>
                                     <span class="text-text-medium opacity-[0.3]">|</span>
-                                    <div class="flex items-center gap-2 opacity-[0.3]">
-                                        <button class="quantity-btn p-1.5 rounded-full bg-input-bg hover:bg-border-color transition-colors cursor-not-allowed" data-productid="${product.productId}" data-variantid="${product._id}" onclick="decrementQuantity(this)" disabled>
+                                    <div class="flex items-center gap-2">
+                                        <button class="quantity-btn p-1.5 rounded-full bg-input-bg hover:bg-border-color transition-colors " data-productid="${product.productId}" data-variantid="${product._id}" onclick="decrementQuantity(this)">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
                                             </svg>
                                         </button>
                                         <input type="number" class="w-12 text-center bg-input-bg border border-border-color rounded-lg text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue" value="${product.quantity}" min="1" readonly>
-                                        <button class="quantity-btn p-1.5 rounded-full bg-input-bg hover:bg-border-color transition-colors cursor-not-allowed" data-productid="${product.productId}" data-variantid="${product._id}" onclick="incrementQuantity(this)" disabled>
+                                        <button class="opacity-[0.3] quantity-btn p-1.5 rounded-full bg-input-bg hover:bg-border-color transition-colors cursor-not-allowed" data-productid="${product.productId}" data-variantid="${product._id}" onclick="incrementQuantity(this)" disabled>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-light" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                             </svg>
@@ -211,7 +213,7 @@
                                     <div class="flex-grow w-full">
                                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full">
                                             <h3 class="text-xl font-semibold text-text-light">${product.name}</h3>
-                                            <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.offerPrice}</span>
+                                            <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.offerPrice * product.quantity}</span>
                                         </div>
                                         <span class="text-sm font-medium text-text-medium">Base Game</span>
                                         <p class="text-text-medium text-sm mt-2 mb-4 hidden sm:block">${product.description}</p>
@@ -239,7 +241,7 @@
                     })
 
 
-                    let details = data.checkoutDetails
+                    
                     if(preventCheckout){
                         checkoutHTML+=`
                             <div class="bg-card-bg border border-border-color rounded-xl p-6 sticky top-8">

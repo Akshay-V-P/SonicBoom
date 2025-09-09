@@ -2,6 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const userRoute = require('./routes/user')
 const adminRoute = require('./routes/admin')
+const payment = require('./routes/payment')
 const path = require('path')
 const app = express()
 const session = require('express-session')
@@ -78,6 +79,8 @@ app.use(express.urlencoded({ extended: true }))
 // Routes
 app.use('/user', userRoute)
 app.use('/admin', adminRoute)
+app.use('/payment', payment)
+
 app.get('/',(req, res)=> {
     res.redirect('/user/login')
 })

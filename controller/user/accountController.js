@@ -6,11 +6,12 @@ const mailSender = require('../../utils/mailSender')
 
 const showPage = async (req, res) => {
     try {
-        const email = req.session.user.email
-        if(!email) return res.redirect('/user/login')
-        const user = await userModel.findOne({ email })
+        const { message } = req.query
+        const _id = req.session.user._id
+        if(!_id) return res.redirect('/user/login')
+        const user = await userModel.findOne({ _id })
         if(!user) return res.redirect('/user/login')
-        res.render('user/account', {layout:'userAccount', user})
+        res.render('user/account', {layout:'userAccount', user, message})
     } catch (error) {
         console.log(error)
     }
@@ -18,8 +19,8 @@ const showPage = async (req, res) => {
 
 const getInfo = async (req, res) => {
     try {
-        const {email} = req.session.user
-        const user = await userModel.findOne({ email })
+        const {_id} = req.session.user
+        const user = await userModel.findOne({ _id })
         if (!user) return res.status(404).json({ success: false })
         res.status(200).json(user)
     } catch (error) {
@@ -122,7 +123,10 @@ const updateProfile = async (req, res) => {
             body.email = req.body.email
         }
         const emailExist = await userModel.find({ email: req.body.email })
-        if (emailExist) return res.status(401).json({ success: false })
+        if (emailExist.length == 0) return res.status(401).json({ success: false })
+        
+        const mobileExist = await userModel.findOne({ mobile: req.body.mobile })
+        if(mobileExist && (mobileExist._id !== emailExist._id)) return res.status(401).json({success:false})
         
         const user = await userModel.findOne({ _id })
         if (!user) return res.status(404).json({ success: false })

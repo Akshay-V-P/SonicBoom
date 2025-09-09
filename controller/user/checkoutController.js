@@ -2,9 +2,14 @@ const addressModel = require("../../model/addressModel");
 const productModel = require("../../model/productModel")
 const cartModel = require("../../model/cartModel");
 const ordersModel = require("../../model/ordersModel");
+const userModel = require("../../model/userModel");
 
 const loadCheckout = async(req, res) => {
-    try {
+  try {
+    const { _id } = req.session.user
+    const user = await userModel.findOne({ _id })
+    console.log(user)
+    if(!user?.mobile) return res.redirect("/user/account?message='Please Update Mobile to continue checkout'")
         res.render('user/checkout', {layout:"user"})
     } catch (error) {
         console.log(error)
@@ -48,7 +53,8 @@ const loadDetails = async (req, res) => {
         products.push(variant);
         }
         
-        const addresses = await addressModel.find({ userId})
+      const addresses = await addressModel.find({ userId })
+      const user = await userModel.findOne({ _id:userId })
         
 
       checkoutDetails.gstAmount = ((parseInt(checkoutDetails.subTotal) / 100) * gst).toFixed(2);
@@ -56,7 +62,7 @@ const loadDetails = async (req, res) => {
         checkoutDetails.subTotal = parseInt(checkoutDetails.subTotal) + parseInt(checkoutDetails.gstAmount)
     checkoutDetails.total = parseInt(checkoutDetails.subTotal) - parseInt(checkoutDetails.discounts)
 
-      res.status(200).json({ products, checkoutDetails, addresses });
+      res.status(200).json({ products, checkoutDetails, addresses , user});
     } catch (error) {
       console.log(error);
       res.status(500).json({ success: false });
@@ -66,26 +72,39 @@ const loadDetails = async (req, res) => {
 
 const placeOrder = async (req, res) => {
   try {
-    const paymentStatus = true
+    const paymentStatus = req.body.paymentStatus
     const { addressId, total, subTotal, discounts, paymentMethod } = req.body
     const userId = req.session.user._id
     let payStatus
+    let decStock = paymentStatus
+    let status = "processing"
 
     if(!addressId) return res.status(404).json({message:"Please provide an Address"})
 
     if (paymentMethod !== "COD") {
-      if (!paymentStatus) return res.status(401).json({ message: "payment failed" })
-      if (paymentStatus === true) {
+      if (paymentStatus) {
         payStatus = "paid"
       } else{
         payStatus = "failed"
+        status = "payment failed"
       }
     } else {
       payStatus = "unpaid"
+      decStock = true
     }
     
     const address = await addressModel.findOne({ _id: addressId })
     const orderItems = await cartModel.findOne({ userId })
+
+    if (decStock) {
+      for (let item of orderItems.items) {
+        let product = await productModel.findOne({ _id: item.itemId })
+        const variantIndex = product.variants.findIndex(v => v._id.toString() === item.variantId.toString())
+        product.variants[variantIndex].stock = parseInt(product.variants[variantIndex].stock) - parseInt(item.quantity)
+        await product.save()
+      }
+    }
+    
     
     const newOrder = new ordersModel({
       userId,
@@ -94,6 +113,7 @@ const placeOrder = async (req, res) => {
       subTotal,
       discount:discounts,
       total,
+      status,
       orderItems: orderItems.items,
       address: {
         name: address.name,

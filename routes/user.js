@@ -18,7 +18,7 @@ const ordersModel = require('../model/ordersModel')
 
   // ---------- dev codes -----------
 router.use((req, res, next) => {
-  req.session.user = { _id: '68a9ab4e5584c7d280baa625', email:"akshayvpcontact@gmail.com" }
+  req.session.user = { _id: '68a9ab4e5584c7d280baa625', email:"akshayvp002@gmail.com" }
   next()
 })
   // --------------------------------

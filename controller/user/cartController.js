@@ -111,10 +111,10 @@ const addToCart = async (req, res) => {
             }
         }
 
-        const variantInProduct = product.variants.find(v => v._id.toString() === variantId.toString());
-        if (variantInProduct) {
-            variantInProduct.stock -= 1;
-        }
+        // const variantInProduct = product.variants.find(v => v._id.toString() === variantId.toString());
+        // if (variantInProduct) {
+        //     variantInProduct.stock -= 1;
+        // }
 
         // Optional: Remove from wishlist
         // await wishlistModel.updateOne({ userId }, { $pull: { items: { variantId: variantId } } });
@@ -161,10 +161,10 @@ const decrementQuantity = async (req, res)=>{
             cart.items[itemIndex].quantity -= 1;
         }
 
-        const variantInProduct = product.variants.find(v => v._id.toString() === variantId.toString());
-        if (variantInProduct && cart.items[itemIndex].quantity>1) {
-            variantInProduct.stock += 1;
-        }
+        // const variantInProduct = product.variants.find(v => v._id.toString() === variantId.toString());
+        // if (variantInProduct && cart.items[itemIndex].quantity>1) {
+        //     variantInProduct.stock += 1;
+        // }
 
         // Optional: Remove from wishlist
         // await wishlistModel.updateOne({ userId }, { $pull: { items: { variantId: variantId } } });
@@ -210,10 +210,10 @@ const removeFromCart = async (req, res) => {
         if (itemIndex > -1) {
             cart.items.splice(itemIndex, 1)
         }
-        const variantInProduct = product.variants.find(v => v._id.toString() === variantId.toString());
-        if (variantInProduct) {
-            variantInProduct.stock += quantity;
-        }
+        // const variantInProduct = product.variants.find(v => v._id.toString() === variantId.toString());
+        // if (variantInProduct) {
+        //     variantInProduct.stock += quantity;
+        // }
 
         await product.save();
         await cart.save();
