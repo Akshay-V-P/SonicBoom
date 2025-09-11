@@ -113,6 +113,9 @@ router.post('/cart/decrement', userAuth.isAuthenticated, cartController.decremen
 
 // wishlist 
 router.get('/wishlist', userAuth.isAuthenticated, wishlistController.loadWishlist)
+router.get('/api/wishlist/details', wishlistController.getDetails)
+router.post('/api/wishlist/add', wishlistController.addToWishlist)
+router.post('/api/wishlist/remove', wishlistController.removeFromWishlist)
 
 // checkout
 router.get('/checkout',userAuth.isAuthenticated, checkoutController.loadCheckout)

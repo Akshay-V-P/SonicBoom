@@ -117,7 +117,7 @@ const addToCart = async (req, res) => {
         // }
 
         // Optional: Remove from wishlist
-        // await wishlistModel.updateOne({ userId }, { $pull: { items: { variantId: variantId } } });
+        await wishlistModel.updateOne({ userId }, { $pull: { items: { variantId: variantId } } });
 
         await product.save();
         await cart.save();

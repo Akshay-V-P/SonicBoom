@@ -74,6 +74,10 @@ router.route('/banners')
 // coupon
 router.route('/coupons')
     .get(couponController.loadCoupons)
+router.get('/api/coupons', couponController.getCoupons)
+router.put('/coupons/add', couponController.addCoupon)
+router.patch('/api/coupons/:_id/active', couponController.changeCouponStatus)
+router.patch('/api/coupons/:_id/block', couponController.changeCouponStatus)
 
 //sales
 router.route('/sales')

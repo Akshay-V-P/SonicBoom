@@ -402,9 +402,11 @@ function fetchProducts(url){
                                 console.log(data)
                                 Swal.fire({
                                     title: 'Added to Cart!',
-                                    text: `Product with ID ${productId} has been added to your cart.`,
+                                    text: `Product has been added to your cart.`,
                                     icon: 'success',
                                     background: "#242428",
+                                    showConfirmButton:false,
+                                    timer:1000,
                                     color: 'white',
                                     customClass: {
                                         popup: 'my-swal-border'
@@ -424,18 +426,24 @@ function fetchProducts(url){
                         event.stopPropagation()
                         
                         const productId = button.dataset.productId;
-                        console.log(`Adding product ${productId} to wishlist...`);
-                        
-                        Swal.fire({
-                            title: 'Added to Wishlist!',
-                            text: `Product with ID ${productId} has been added to your wishlist.`,
-                            icon: 'info',
-                            background: "#242428",
-                            color: 'white',
-                            customClass: {
-                                popup: 'my-swal-border'
-                            }
-                        });
+                        const variantId = button.dataset.variantId
+                        fetch(`/user/api/wishlist/add?_id=${productId}&variantId=${variantId}`, {method:"POST"})
+                            .then(async response =>{
+                                const res = await response.json()
+                                if(!response.ok) throw new Error("Can't add to wishlist")
+                                Swal.fire({
+                                    title: res.message,
+                                    text: "Check out the wishlit",
+                                    icon: 'info',
+                                    background: "#242428",
+                                    showConfirmButton:false,
+                                    timer:1000,
+                                    color: 'white',
+                                    customClass: {
+                                        popup: 'my-swal-border'
+                                    }
+                                });
+                            })
                     });
                 });
 
