@@ -226,6 +226,7 @@
     .thumbnail{
         aspect-ratio: 3/4;
         min-width: 150px;
+        max-width: 240px;
         border: 2px dashed #4a90e2;
         border-radius: 8px;
         padding: 10px;
@@ -334,7 +335,7 @@
                     </div>
                     <div class="form-group">
                         <label for="price">Price</label>
-                        <input type="text" id="price" name="price" value="{{product.price}}">
+                        <input type="text" id="price" name="price" value="{{product.variants.0.price}}">
                     </div>
                     <div class="form-group">
                         <label for="offer">Offer</label>
@@ -342,7 +343,7 @@
                     </div>
                     <div class="form-group">
                         <label for="stock">Stock</label>
-                        <input type="text" id="offer" name="stock" value="{{product.stock}}">
+                        <input type="text" id="offer" name="stock" value="{{product.variants.0.stock}}">
                     </div>
                     
                 </div>
@@ -360,22 +361,19 @@
                     {{/each}}
                     <div class="image-upload-box">
                         <button class="remove-btn">Change</button>
-                        <img src="{{product.thumbnail}}" >
+                        <img src="{{product.variants.0.thumbnail}}" >
                         <p>Thumbnail</p>
                     </div>
                 </div>
                 {{#if product.variants}}
                 {{#each product.variants}}
+                {{#unless @first}}
                 <div class="edit-edition-container">
                     <h2 class="form-section-title">Editions</h2>
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="editionName">Product Name</label>
                             <input type="text" id="editionName" value="{{this.name}}">
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="editionDescription">Description</label>
-                            <textarea id="editionDescription">{{this.description}}</textarea>
                         </div>
                         <div class="form-group">
                             <label for="editionPrice">Price</label>
@@ -389,9 +387,14 @@
                             <p>Thumbnail</p>
                         </div>
                     </div>
+                    {{/unless}}
                     {{/each}}
                     {{/if}}
                     
+                </div>
+
+                <div id="edition-wrapper">
+
                 </div>
                 <button type="button" class="add-edition-btn">Add Edition</button>
                 <div class="form-actions">
@@ -560,7 +563,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
     document.querySelector('.add-edition-btn').addEventListener('click', () => {
         varIndex++;
-        const editionContainer = document.querySelector('.edit-product-form');
+        const editionContainer = document.querySelector('#edition-wrapper');
         const newEditionHTML = `
             <div class="edit-edition-container" style="border-top:1px solid #333; padding-top:30px; margin-top:20px;">
                 <h2 class="form-section-title">New Edition</h2>

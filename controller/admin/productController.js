@@ -66,6 +66,7 @@ const addProduct = async (req, res) => {
     try {
         const { name, developer, category, description, price, offer, stock } = req.body
         const findProduct = await productModel.findOne({ name, description, price, offer })
+        const categoryForOffer = await categoryModel.findOne({_id:category})
         if (findProduct) return res.redirect('/admin/products/add')
         const thumbnailFile = req.files.find(file => file.fieldname === 'thumbnail');
         console.log(thumbnailFile)
@@ -82,7 +83,7 @@ const addProduct = async (req, res) => {
             variants: [{
                 name: name,
                 price: price,
-                offerPrice: calculateOffer(price, offer),
+                offerPrice: calculateOffer(price, offer, categoryForOffer.offer),
                 stock:stock,
                 thumbnail: thumbnailFile ? thumbnailFile.path : null,
             }]
@@ -117,22 +118,23 @@ const updateProduct = async (req, res) => {
         req.files.forEach(file => fileMap.set(file.fieldname, file.path))
 
         const product = await productModel.findOne({ _id })
+        const category = await categoryModel.findOne({_id:product.categoryId})
 
         if (data) {
             const keys = Object.keys(data)
-            keys.forEach(key => {
+            keys.forEach(async key => {
                 if (key !== "variants" && key !== "price" && key !== "stock") {
                     product[key] = data[key]
                 } else if(key == "variants"){
-                    data.variants.forEach((variant, index) => {
+                    data.variants.forEach(async (variant, index) => {
                         variant.thumbnail = fileMap.get(`variants[${index}][thumbnail]`)
-                        variant.offerPrice = calculateOffer(parseInt(variant.price), parseInt(data.offer))
+                        variant.offerPrice = calculateOffer(parseInt(variant.price), parseInt(data.offer), category.offer)
                         product.variants.push(variant)
                     })
                 } else {
                     product.variants[0].price = data.price
                     product.variants[0].stock = data.stock
-                    product.variants[0].offerPrice = calculateOffer(parseInt(data.price), parseInt(data.offer))
+                    product.variants[0].offerPrice = calculateOffer(parseInt(data.price), parseInt(data.offer), category.offer)
                     if (fileMap.has('thumbnailImage')) product.variants[0].thumbnail = fileMap.get('thumbnailImage')  
                 }
             })

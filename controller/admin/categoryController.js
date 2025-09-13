@@ -2,6 +2,7 @@ const userModel = require('../../model/userModel')
 const categoryModel = require('../../model/categoryModel')
 const paginate = require('../../helper/pagination')
 const productModel = require('../../model/productModel')
+const calculateOffer = require('../../helper/offerCalculator')
 
 const loadCategory = (req, res) => {
     res.render('admin/category', {layout:'admin'})
@@ -61,13 +62,32 @@ const editCategory = async (req, res) => {
     try {
         const { _id } = req.query
         const body = req.body
+        let offerChanged = false
+        console.log(body)
+
         const category = await categoryModel.findOne({ _id })
         if (!category) return res.status(404).json({ message: "Can't find Category" })
+        
         const searchRegex = { $regex: body.name, $options: 'i' }
-        const nameExists = await categoryModel.findOne({ name: searchRegex })
-        if(nameExists) return res.status(406).json({message:"Category Name already exists"})
+        const nameExists = await categoryModel.findOne({ name: searchRegex, _id:{$ne:_id} })
+        if (nameExists) return res.status(406).json({ message: "Category Name already exists" })
+        
+        if (parseInt(category.offer) !== parseInt(body.offer)) {
+            offerChanged = true
+        }
+        
         await categoryModel.updateOne({ _id }, body)
-        const updated = await categoryModel.findOne({_id})
+        const updated = await categoryModel.findOne({ _id })
+        
+        if (offerChanged) {
+            const products = await productModel.find({ categoryId:_id })
+
+            for (const product of products) {
+                product.variants = product.variants.map( v => ({...v.toObject(), offerPrice: calculateOffer(v.price, product.offer, updated.offer)}))
+                await product.save()
+            }
+        }
+
         res.status(200).json(updated)
     } catch (error) {
         console.log(error)

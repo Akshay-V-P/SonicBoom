@@ -1,282 +1,262 @@
-    <script>
-        // Custom Tailwind CSS configuration
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        'dark': '#121212',
-                        'card-bg': '#1A1A1A',
-                        'input-bg': '#2C2C2C',
-                        'border-color': '#333333',
-                        'text-light': '#F5F5F5',
-                        'text-medium': '#A9A9A9',
-                        'primary-blue': '#4B4DFF',
-                        'primary-blue-hover': '#6A6BFF',
-                        'green-checkout': '#4caf50'
-                    }
+<script>
+    // Custom Tailwind CSS configuration
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                },
+                colors: {
+                    'dark': '#121212',
+                    'card-bg': '#1A1A1A',
+                    'input-bg': '#2C2C2C',
+                    'border-color': '#333333',
+                    'text-light': '#F5F5F5',
+                    'text-medium': '#A9A9A9',
+                    'primary-blue': '#4B4DFF',
+                    'primary-blue-hover': '#6A6BFF',
+                    'green-checkout': '#4caf50'
                 }
             }
         }
-    </script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #121212;
-            color: #E0E0E0;
-            box-sizing: border-box;
-        }
+    }
+</script>
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #121212;
+        color: #E0E0E0;
+        box-sizing: border-box;
+    }
 
-        #main-container {
-            box-sizing: border-box;
-        }
+    #main-container {
+        box-sizing: border-box;
+    }
 
+    #brand-logo {
+        width: 150px;
+    }
+
+    .my-swal-border {
+        border: 1px solid #404044 !important;
+        border-radius: 15px !important;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+        width: 0.5em;
+        display: none;
+    }
+
+    /* For Firefox */
+    .hide-scrollbar {
+        scrollbar-width: none;
+    }
+
+    @media (max-width: 480px) {
         #brand-logo {
-            width: 150px;
+            width: 120px;
         }
+    }
+</style>
 
-        .my-swal-border {
-            border: 1px solid #404044 !important;
-            border-radius: 15px !important;
-        }
-
-        .hide-scrollbar::-webkit-scrollbar {
-            width: 0.5em;
-            display: none;
-        }
-
-        /* For Firefox */
-        .hide-scrollbar {
-            scrollbar-width: none;
-        }
-
-        @media (max-width: 480px) {
-            #brand-logo {
-                width: 120px;
-            }
-        }
-    </style>
-
-            <!-- Main section content for Order Page -->
-            <div class="w-full">
-                <h1 class="text-2xl md:text-3xl font-bold mb-6">Order</h1>
-                <div class="flex flex-col lg:flex-row gap-8">
-                    <!-- Order Items Section -->
-                    <div class="flex-grow flex flex-col gap-6" id="products-container">
-                        <div class="flex justify-between items-center mb-4">
-                            <span class="text-sm font-semibold text-green-500">Arriving By Wed, Nov 2025</span>
-                        </div>
-                        <!-- Item Card -->
-                        
-                    </div>
-
-                    <!-- Order Summary Section -->
-                    <div class="w-full lg:w-96 flex-shrink-0" id="checkout-container">
-                        
-                    </div>
-                </div>
+<!-- Main section content for Order Page -->
+<div class="w-full">
+    <h1 class="text-2xl md:text-3xl font-bold mb-6">Order</h1>
+    <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Order Items Section -->
+        <div class="flex-grow flex flex-col gap-6" id="products-container">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-sm font-semibold text-green-500">Arriving By Wed, Nov 2025</span>
             </div>
+            <!-- Item Card -->
+
         </div>
 
+        <!-- Order Summary Section -->
+        <div class="w-full lg:w-96 flex-shrink-0" id="checkout-container">
 
-    <div id="coupon-modal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-[1000] hidden">
-        <div class="bg-card-bg border border-border-color rounded-xl p-6 w-full max-w-lg mx-4 relative">
-            <!-- Close button -->
-            <button onclick="hideModal('coupon-modal')" class="absolute top-4 right-4 text-text-medium hover:text-text-light transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
-                    <path d="M18 6L6 18M6 6l12 12"></path>
-                </svg>
-            </button>
-            <h2 class="text-xl font-bold text-text-light mb-6">Address</h2>
-            <div class="space-y-4" id="address-container">
-                <!-- Coupon Card 1 -->
-                
-            </div>
         </div>
     </div>
-    
+</div>
+</div>
 
-    <div id="add-address-container" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-[1000] hidden top-24 ">
-        <div class="bg-card-bg border border-border-color rounded-xl p-6 w-full max-w-lg mx-4 relative max-h-[90vh] overflow-y-auto hide-scrollbar hide-scrollbar::-webkit-scrollbar">
-            <button onclick="hideModal('add-address-container')" class="absolute top-4 right-4 text-text-medium hover:text-text-light transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
-                    <path d="M18 6L6 18M6 6l12 12"></path>
-                </svg>
-            </button>
-            <h2 class="text-xl font-bold mb-4">Add a New Address</h2>
-            <form id="add-address-form" class="space-y-6" novalidate>
+
+<div id="coupon-modal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-[1000] hidden">
+    <div class="bg-card-bg border border-border-color rounded-xl p-6 w-full max-w-lg mx-4 relative">
+        <!-- Close button -->
+        <button onclick="hideModal('coupon-modal')"
+            class="absolute top-4 right-4 text-text-medium hover:text-text-light transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+                <path d="M18 6L6 18M6 6l12 12"></path>
+            </svg>
+        </button>
+        <h2 class="text-xl font-bold text-text-light mb-6">Address</h2>
+        <div class="space-y-4" id="address-container">
+            <!-- Coupon Card 1 -->
+
+        </div>
+    </div>
+</div>
+
+
+<div id="add-address-container"
+    class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-[1000] hidden top-24 ">
+    <div
+        class="bg-card-bg border border-border-color rounded-xl p-6 w-full max-w-lg mx-4 relative max-h-[90vh] overflow-y-auto hide-scrollbar hide-scrollbar::-webkit-scrollbar">
+        <button onclick="hideModal('add-address-container')"
+            class="absolute top-4 right-4 text-text-medium hover:text-text-light transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+                <path d="M18 6L6 18M6 6l12 12"></path>
+            </svg>
+        </button>
+        <h2 class="text-xl font-bold mb-4">Add a New Address</h2>
+        <form id="add-address-form" class="space-y-6" novalidate>
+            <div>
+                <label for="name" class="block text-sm font-medium text-text-medium mb-2">Name</label>
+                <input type="text" id="name" name="name"
+                    class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                    placeholder="Enter full name" required>
+                <div id="name-error" class="text-error-red text-sm mt-1 hidden"></div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div>
-                    <label for="name" class="block text-sm font-medium text-text-medium mb-2">Name</label>
-                    <input type="text" id="name" name="name"
+                    <label for="state" class="block text-sm font-medium text-text-medium mb-2">State</label>
+                    <input type="text" id="state" name="state"
                         class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
-                        placeholder="Enter full name" required>
-                    <div id="name-error" class="text-error-red text-sm mt-1 hidden"></div>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div>
-                        <label for="state" class="block text-sm font-medium text-text-medium mb-2">State</label>
-                        <input type="text" id="state" name="state"
-                            class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
-                            placeholder="State" required>
-                        <div id="state-error" class="text-error-red text-sm mt-1 hidden"></div>
-                    </div>
-                    <div>
-                        <label for="district" class="block text-sm font-medium text-text-medium mb-2">District</label>
-                        <input type="text" id="district" name="district"
-                            class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
-                            placeholder="District" required>
-                        <div id="district-error" class="text-error-red text-sm mt-1 hidden"></div>
-                    </div>
-                    <div>
-                        <label for="city" class="block text-sm font-medium text-text-medium mb-2">City</label>
-                        <input type="text" id="city" name="city"
-                            class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
-                            placeholder="City" required>
-                        <div id="city-error" class="text-error-red text-sm mt-1 hidden"></div>
-                    </div>
+                        placeholder="State" required>
+                    <div id="state-error" class="text-error-red text-sm mt-1 hidden"></div>
                 </div>
                 <div>
-                    <label for="address" class="block text-sm font-medium text-text-medium mb-2">Address</label>
-                    <textarea id="address" name="address" rows="4"
+                    <label for="district" class="block text-sm font-medium text-text-medium mb-2">District</label>
+                    <input type="text" id="district" name="district"
                         class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
-                        placeholder="Enter full address" required></textarea>
-                    <div id="address-error" class="text-error-red text-sm mt-1 hidden"></div>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
-                    <div class="md:col-span-1">
-                        <label for="pincode" class="block text-sm font-medium text-text-medium mb-2">Pin Code</label>
-                        <input type="text" id="pincode" name="pincode"
-                            class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
-                            placeholder="Pincode" required>
-                        <div id="pincode-error" class="text-error-red text-sm mt-1 hidden"></div>
-                    </div>
-                    <div class="md:col-span-1">
-                        <span class="block text-sm font-medium text-text-medium mb-2">Address type</span>
-                        <div class="flex items-center space-x-4 h-[46px]">
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="type" value="Home"
-                                    class="form-radio text-primary-blue focus:ring-primary-blue border-border-color bg-input-bg"
-                                    checked>
-                                <span class="ml-2 text-text-light">Home</span>
-                            </label>
-                            <label class="inline-flex items-center">
-                                <input type="radio" name="type" value="Work"
-                                    class="form-radio text-primary-blue focus:ring-primary-blue border-border-color bg-input-bg">
-                                <span class="ml-2 text-text-light">Work</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="md:col-span-1 lg:col-span-1">
-                        <label for="landmark" class="block text-sm font-medium text-text-medium mb-2">Landmark
-                            (Optional)</label>
-                        <input type="text" id="landmark" name="landmark"
-                            class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
-                            placeholder="Landmark">
-                    </div>
-                    <div class="flex items-center md:col-span-2 lg:col-span-3">
-                        <input type="checkbox" id="default-address" name="default"
-                            class="form-checkbox text-primary-blue focus:ring-primary-blue border-border-color bg-input-bg rounded-lg">
-                        <label for="default-address" class="ml-2 text-sm font-medium text-text-light">Set as Default
-                            Address</label>
-                    </div>
-                </div>
-            
-                <h3 class="text-xl font-semibold text-text-light pt-4 border-t border-border-color">Contact Information</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <div>
-                        <label for="mobile" class="block text-sm font-medium text-text-medium mb-2">Mobile Number</label>
-                        <input type="tel" id="mobile" name="mobile"
-                            class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
-                            placeholder="Mobile Number" required>
-                        <div id="mobile-error" class="text-error-red text-sm mt-1 hidden"></div>
-                    </div>
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-text-medium mb-2">E-mail</label>
-                        <input type="email" id="email" name="email"
-                            class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
-                            placeholder="E-mail" required>
-                        <div id="email-error" class="text-error-red text-sm mt-1 hidden"></div>
-                    </div>
+                        placeholder="District" required>
+                    <div id="district-error" class="text-error-red text-sm mt-1 hidden"></div>
                 </div>
                 <div>
-                    <label for="alternate-number" class="block text-sm font-medium text-text-medium mb-2">Alternate Number
+                    <label for="city" class="block text-sm font-medium text-text-medium mb-2">City</label>
+                    <input type="text" id="city" name="city"
+                        class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                        placeholder="City" required>
+                    <div id="city-error" class="text-error-red text-sm mt-1 hidden"></div>
+                </div>
+            </div>
+            <div>
+                <label for="address" class="block text-sm font-medium text-text-medium mb-2">Address</label>
+                <textarea id="address" name="address" rows="4"
+                    class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                    placeholder="Enter full address" required></textarea>
+                <div id="address-error" class="text-error-red text-sm mt-1 hidden"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
+                <div class="md:col-span-1">
+                    <label for="pincode" class="block text-sm font-medium text-text-medium mb-2">Pin Code</label>
+                    <input type="text" id="pincode" name="pincode"
+                        class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                        placeholder="Pincode" required>
+                    <div id="pincode-error" class="text-error-red text-sm mt-1 hidden"></div>
+                </div>
+                <div class="md:col-span-1">
+                    <span class="block text-sm font-medium text-text-medium mb-2">Address type</span>
+                    <div class="flex items-center space-x-4 h-[46px]">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="type" value="Home"
+                                class="form-radio text-primary-blue focus:ring-primary-blue border-border-color bg-input-bg"
+                                checked>
+                            <span class="ml-2 text-text-light">Home</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="type" value="Work"
+                                class="form-radio text-primary-blue focus:ring-primary-blue border-border-color bg-input-bg">
+                            <span class="ml-2 text-text-light">Work</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="md:col-span-1 lg:col-span-1">
+                    <label for="landmark" class="block text-sm font-medium text-text-medium mb-2">Landmark
                         (Optional)</label>
-                    <input type="tel" id="alternate-number" name="alternateMobile"
+                    <input type="text" id="landmark" name="landmark"
                         class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
-                        placeholder="Alternate Number">
-                    <div id="alternateMobile-error" class="text-error-red text-sm mt-1 hidden"></div>
+                        placeholder="Landmark">
                 </div>
-            
-                <div class="pt-6 flex gap-4">
-                    <button type="submit" id="saveBtn"
-                        class="w-full bg-primary-blue hover:bg-primary-blue-hover text-white font-medium py-3 px-6 rounded-lg transition-colors">
-                        Save
-                    </button>
-                    <button type="button" id="cancelBtn" onclick="hideModal('add-address-container')"
-                        class="w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-6 rounded-lg transition-colors">
-                        Cancel
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Coupon Modal -->
-    <div id="coupon-popup" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-[1000] hidden">
-        <div class="bg-card-bg border border-border-color rounded-xl p-6 w-full max-w-lg mx-4 relative">
-            <!-- Close button -->
-            <button onclick="hidePopup('coupon-popup')" class="absolute top-4 right-4 text-text-medium hover:text-text-light transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
-                    <path d="M18 6L6 18M6 6l12 12"></path>
-                </svg>
-            </button>
-            <h2 class="text-xl font-bold text-text-light mb-6">Available Coupons</h2>
-            <div class="space-y-4">
-                <!-- Coupon Card 1 -->
-                <div class="bg-input-bg rounded-lg border border-dashed border-border-color p-4 flex items-center justify-between">
-                    <div>
-                        <span class="text-lg font-bold text-text-light block">₹499 Off</span>
-                        <span class="text-sm font-medium text-text-medium block">GETSONIC499</span>
-                        <span class="text-xs text-text-medium mt-1 block">Valid until 01 February 2026</span>
-                    </div>
-                    <button class="text-sm text-primary-blue hover:underline">Apply</button>
-                </div>
-                <!-- Coupon Card 2 -->
-                <div class="bg-input-bg rounded-lg border border-dashed border-border-color p-4 flex items-center justify-between">
-                    <div>
-                        <span class="text-lg font-bold text-text-light block">20% Off</span>
-                        <span class="text-sm font-medium text-text-medium block">GETSONIC20</span>
-                        <span class="text-xs text-text-medium mt-1 block">Valid until 01 February 2026</span>
-                    </div>
-                    <button class="text-sm text-primary-blue hover:underline">Apply</button>
-                </div>
-                <!-- Coupon Card 3 -->
-                <div class="bg-input-bg rounded-lg border border-dashed border-border-color p-4 flex items-center justify-between">
-                    <div>
-                        <span class="text-lg font-bold text-text-light block">30% Off</span>
-                        <span class="text-sm font-medium text-text-medium block">GETSONIC30</span>
-                        <span class="text-xs text-text-medium mt-1 block">Valid until 01 February 2026</span>
-                    </div>
-                    <button class="text-sm text-primary-blue hover:underline">Apply</button>
-                </div>
-                <!-- Coupon Card 4 -->
-                <div class="bg-input-bg rounded-lg border border-dashed border-border-color p-4 flex items-center justify-between">
-                    <div>
-                        <span class="text-lg font-bold text-text-light block">50% Off</span>
-                        <span class="text-sm font-medium text-text-medium block">GETSONIC50</span>
-                        <span class="text-xs text-text-medium mt-1 block">Valid until 01 February 2026</span>
-                    </div>
-                    <button class="text-sm text-primary-blue hover:underline">Apply</button>
+                <div class="flex items-center md:col-span-2 lg:col-span-3">
+                    <input type="checkbox" id="default-address" name="default"
+                        class="form-checkbox text-primary-blue focus:ring-primary-blue border-border-color bg-input-bg rounded-lg">
+                    <label for="default-address" class="ml-2 text-sm font-medium text-text-light">Set as Default
+                        Address</label>
                 </div>
             </div>
+
+            <h3 class="text-xl font-semibold text-text-light pt-4 border-t border-border-color">Contact Information</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label for="mobile" class="block text-sm font-medium text-text-medium mb-2">Mobile Number</label>
+                    <input type="tel" id="mobile" name="mobile"
+                        class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                        placeholder="Mobile Number" required>
+                    <div id="mobile-error" class="text-error-red text-sm mt-1 hidden"></div>
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-text-medium mb-2">E-mail</label>
+                    <input type="email" id="email" name="email"
+                        class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                        placeholder="E-mail" required>
+                    <div id="email-error" class="text-error-red text-sm mt-1 hidden"></div>
+                </div>
+            </div>
+            <div>
+                <label for="alternate-number" class="block text-sm font-medium text-text-medium mb-2">Alternate Number
+                    (Optional)</label>
+                <input type="tel" id="alternate-number" name="alternateMobile"
+                    class="w-full px-4 py-3 rounded-lg bg-input-bg border border-border-color text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue"
+                    placeholder="Alternate Number">
+                <div id="alternateMobile-error" class="text-error-red text-sm mt-1 hidden"></div>
+            </div>
+
+            <div class="pt-6 flex gap-4">
+                <button type="submit" id="saveBtn"
+                    class="w-full bg-primary-blue hover:bg-primary-blue-hover text-white font-medium py-3 px-6 rounded-lg transition-colors">
+                    Save
+                </button>
+                <button type="button" id="cancelBtn" onclick="hideModal('add-address-container')"
+                    class="w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-6 rounded-lg transition-colors">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Coupon Modal -->
+<div id="coupon-popup" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-[1000] hidden">
+    <div class="bg-card-bg border border-border-color rounded-xl p-6 w-full max-w-lg mx-4 relative max-h-[80vh]">
+        <!-- Close button -->
+        <button onclick="hidePopup('coupon-popup')"
+            class="absolute top-4 right-4 text-text-medium hover:text-text-light transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6">
+                <path d="M18 6L6 18M6 6l12 12"></path>
+            </svg>
+        </button>
+
+        <h2 class="text-xl font-bold text-text-light mb-6">Available Coupons</h2>
+
+        <!-- Scrollable container -->
+        <div id="coupon-card-container" class="space-y-4 overflow-y-auto pr-2 max-h-[60vh] hide-scrollbar">
+            <!-- Coupon Card 1 -->
+
         </div>
     </div>
+</div>
 
 
-    <!-- Simple Snackbar for alerts -->
-    <div id="snackbar" class="fixed bottom-4 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50" style="z-index: 9999;"></div>
+
+<!-- Simple Snackbar for alerts -->
+<div id="snackbar"
+    class="fixed bottom-4 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50"
+    style="z-index: 9999;"></div>
 
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
@@ -287,165 +267,167 @@
 
 
 
-    function showAddress(){
+    function showAddress() {
         const addAddressLink = document.getElementById('add-address-link');
-            const addAddressContainer = document.getElementById('add-address-container');
-            const addAddressForm = document.getElementById('add-address-form');
-            const cancelBtn = document.getElementById('cancelBtn');
-
-            
-            addAddressContainer.classList.remove('hidden');
-
-            // Handle form submission and validation
-            addAddressForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const isValid = validateForm();
-                if (isValid) {
-                    const pincodeValue = document.getElementById('pincode').value.trim()
-                    const mobileValue = document.getElementById('mobile').value.trim()
-                    const emailValue = document.getElementById('email').value.trim()
-                    const alternateMobileValue = document.getElementById('alternate-number').value.trim()
-                    const defaultAddress = document.getElementById("default-address").checked
-                    const addressType = document.querySelector('input[name="type"]:checked').value;
+        const addAddressContainer = document.getElementById('add-address-container');
+        const addAddressForm = document.getElementById('add-address-form');
+        const cancelBtn = document.getElementById('cancelBtn');
 
 
-                    const formData = {
-                        name: document.getElementById('name').value.trim(),
-                        state: document.getElementById('state').value.trim(),
-                        district: document.getElementById('district').value.trim(),
-                        city: document.getElementById('city').value.trim(),
-                        address: document.getElementById('address').value.trim(),
-                        pincode: Number(pincodeValue),
-                        type: addressType,
-                        landmark: document.getElementById('landmark').value.trim() || null,
-                        mobile: Number(mobileValue),
-                        alternateMobile: alternateMobileValue ? Number(alternateMobileValue) : null,
-                        email: emailValue,
-                        default: defaultAddress,
-                    };
-                    fetch('/user/manage-address/add', {
-                         method: 'POST',
-                         headers: { 'Content-Type': 'application/json' },
-                         body: JSON.stringify(formData)
-                    })
+        addAddressContainer.classList.remove('hidden');
+
+        // Handle form submission and validation
+        addAddressForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const isValid = validateForm();
+            if (isValid) {
+                const pincodeValue = document.getElementById('pincode').value.trim()
+                const mobileValue = document.getElementById('mobile').value.trim()
+                const emailValue = document.getElementById('email').value.trim()
+                const alternateMobileValue = document.getElementById('alternate-number').value.trim()
+                const defaultAddress = document.getElementById("default-address").checked
+                const addressType = document.querySelector('input[name="type"]:checked').value;
+
+
+                const formData = {
+                    name: document.getElementById('name').value.trim(),
+                    state: document.getElementById('state').value.trim(),
+                    district: document.getElementById('district').value.trim(),
+                    city: document.getElementById('city').value.trim(),
+                    address: document.getElementById('address').value.trim(),
+                    pincode: Number(pincodeValue),
+                    type: addressType,
+                    landmark: document.getElementById('landmark').value.trim() || null,
+                    mobile: Number(mobileValue),
+                    alternateMobile: alternateMobileValue ? Number(alternateMobileValue) : null,
+                    email: emailValue,
+                    default: defaultAddress,
+                };
+                fetch('/user/manage-address/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                })
                     .then(response => {
-                        if(!response.ok) throw new Error("Failed to update address")
+                        if (!response.ok) throw new Error("Failed to update address")
                         return response.json()
                     })
-                    .then(data =>{
+                    .then(data => {
                         addressData = data.addresses
                         changeAddress(addressData.length - 1)
                     })
                     .catch(error => console.error('Error:', error));
-                    showSnackbar('Address saved successfully!', 'bg-green-500');
-                    addAddressForm.reset();
-                    addAddressContainer.classList.add('hidden');
-                    addAddressLink.style.display = '';
-                } else {
-                    showSnackbar('Please correct the errors in the form.', 'bg-red-500');
+                showSnackbar('Address saved successfully!', 'bg-green-500');
+                addAddressForm.reset();
+                addAddressContainer.classList.add('hidden');
+                addAddressLink.style.display = '';
+            } else {
+                showSnackbar('Please correct the errors in the form.', 'bg-red-500');
+            }
+        });
+
+        // Main validation function
+        function validateForm() {
+            let isValid = true;
+            hideAllErrors();
+
+            // Validation for all required fields
+            const requiredFields = ['name', 'state', 'district', 'city', 'address', 'pincode', 'mobile', 'email'];
+            requiredFields.forEach(field => {
+                const input = addAddressForm.querySelector(`[name="${field}"]`);
+                const errorDiv = document.getElementById(`${field}-error`);
+                if (!input || !errorDiv) return;
+
+                if (input.value.trim() === '') {
+                    errorDiv.textContent = 'This field is required.';
+                    errorDiv.classList.remove('hidden');
+                    isValid = false;
                 }
             });
 
-            // Main validation function
-            function validateForm() {
-                let isValid = true;
-                hideAllErrors();
-
-                // Validation for all required fields
-                const requiredFields = ['name', 'state', 'district', 'city', 'address', 'pincode', 'mobile', 'email'];
-                requiredFields.forEach(field => {
-                    const input = addAddressForm.querySelector(`[name="${field}"]`);
-                    const errorDiv = document.getElementById(`${field}-error`);
-                    if (!input || !errorDiv) return;
-
-                    if (input.value.trim() === '') {
-                        errorDiv.textContent = 'This field is required.';
-                        errorDiv.classList.remove('hidden');
-                        isValid = false;
-                    }
-                });
-
-                // Specific format validations
-                const mobileInput = document.getElementById('mobile');
-                const mobileError = document.getElementById('mobile-error');
-                if (mobileInput.value.trim() !== '' && !/^\d{10}$/.test(mobileInput.value.trim())) {
-                    mobileError.textContent = 'Please enter a valid 10-digit mobile number.';
-                    mobileError.classList.remove('hidden');
-                    isValid = false;
-                }
-
-                const emailInput = document.getElementById('email');
-                const emailError = document.getElementById('email-error');
-                if (emailInput.value.trim() !== '' && !/^\S+@\S+\.\S+$/.test(emailInput.value.trim())) {
-                    emailError.textContent = 'Please enter a valid email address.';
-                    emailError.classList.remove('hidden');
-                    isValid = false;
-                }
-
-                const pincodeInput = document.getElementById('pincode');
-                const pincodeError = document.getElementById('pincode-error');
-                if (pincodeInput.value.trim() !== '' && !/^\d{6}$/.test(pincodeInput.value.trim())) {
-                    pincodeError.textContent = 'Please enter a valid 6-digit pincode.';
-                    pincodeError.classList.remove('hidden');
-                    isValid = false;
-                }
-
-                return isValid;
+            // Specific format validations
+            const mobileInput = document.getElementById('mobile');
+            const mobileError = document.getElementById('mobile-error');
+            if (mobileInput.value.trim() !== '' && !/^\d{10}$/.test(mobileInput.value.trim())) {
+                mobileError.textContent = 'Please enter a valid 10-digit mobile number.';
+                mobileError.classList.remove('hidden');
+                isValid = false;
             }
 
-            // Function to hide all error messages
-            function hideAllErrors() {
-                const errorDivs = addAddressForm.querySelectorAll('[id$="-error"]');
-                errorDivs.forEach(div => {
-                    div.classList.add('hidden');
-                    div.textContent = '';
-                });
+            const emailInput = document.getElementById('email');
+            const emailError = document.getElementById('email-error');
+            if (emailInput.value.trim() !== '' && !/^\S+@\S+\.\S+$/.test(emailInput.value.trim())) {
+                emailError.textContent = 'Please enter a valid email address.';
+                emailError.classList.remove('hidden');
+                isValid = false;
             }
 
-           
-            
+            const pincodeInput = document.getElementById('pincode');
+            const pincodeError = document.getElementById('pincode-error');
+            if (pincodeInput.value.trim() !== '' && !/^\d{6}$/.test(pincodeInput.value.trim())) {
+                pincodeError.textContent = 'Please enter a valid 6-digit pincode.';
+                pincodeError.classList.remove('hidden');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Function to hide all error messages
+        function hideAllErrors() {
+            const errorDivs = addAddressForm.querySelectorAll('[id$="-error"]');
+            errorDivs.forEach(div => {
+                div.classList.add('hidden');
+                div.textContent = '';
+            });
+        }
+
+
+
     }
 
 
- // Function to show a temporary snackbar message
+    // Function to show a temporary snackbar message
     function showSnackbar(message, colorClass) {
-                const snackbar = document.getElementById('snackbar');
-                snackbar.textContent = message;
-                snackbar.className = `fixed bottom-4 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg shadow-lg opacity-100 transition-opacity duration-300 z-50 ${colorClass}`;
-                setTimeout(() => {
-                    snackbar.classList.remove('opacity-100');
-                    snackbar.classList.add('opacity-0');
-                }, 3000);
-            }
+        const snackbar = document.getElementById('snackbar');
+        snackbar.textContent = message;
+        snackbar.className = `fixed bottom-4 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg shadow-lg opacity-100 transition-opacity duration-300 z-50 ${colorClass}`;
+        setTimeout(() => {
+            snackbar.classList.remove('opacity-100');
+            snackbar.classList.add('opacity-0');
+        }, 3000);
+    }
 
 
-    function fetchPage(){
-            fetch("/user/checkout/details")
-                .then(response =>{
-                    if(!response.ok) throw new Error("Cant fetch cart details")
-                    return response.json()
-                })
-                .then(data => {
-                    console.log(data)
-                    addressData = data.addresses
-                    userData = data.user
-                    const productContainer = document.getElementById("products-container")
-                    const checkoutDetails = document.getElementById("checkout-container")
-                    const addressContainer = document.getElementById("address-container")
-                    let productHTML = ''
-                    let checkoutHTML = ''
-                    let addressHTML = ''
-                    if(data.products.length == 0){
-                        productHTML += `
+    function fetchPage(couponCode, operation) {
+        couponCode = couponCode || null
+        operation = operation || null
+        fetch(`/user/checkout/details?couponCode=${couponCode}&operation=${operation}`)
+            .then(async response => {
+                const res = await response.json()
+                if (!response.ok) throw new Error(res.message || "Cant fetch cart details")
+                return res
+            })
+            .then(data => {
+                addressData = data.addresses
+                userData = data.user
+                const productContainer = document.getElementById("products-container")
+                const checkoutDetails = document.getElementById("checkout-container")
+                const addressContainer = document.getElementById("address-container")
+                let productHTML = ''
+                let checkoutHTML = ''
+                let addressHTML = ''
+                if (data.products.length == 0) {
+                    productHTML += `
                                 <div class="h-[90dvh] p-4 md:p-6 flex flex-col sm:flex-row items-center justify-end sm:items-start gap-4 m-6">
                                     <h2 class="text-xl font-semibold text-gray-400">Your cart is empty add something</h2>
                                 </div>
                             `
-                        productContainer.innerHTML = productHTML
-                        return
-                    }
-                    data.products.forEach(product => {
-                        productHTML +=`
+                    productContainer.innerHTML = productHTML
+                    return
+                }
+                data.products.forEach(product => {
+                    productHTML += `
                                 <div class="bg-card-bg border border-border-color rounded-xl p-4 md:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4">
                                     <img src="${product.thumbnail}" alt="${product.name}" class="w-16 h-auto sm:w-18 sm:h-auto rounded-lg object-cover flex-shrink-0">
                                     <div class="flex-grow w-full">
@@ -460,12 +442,12 @@
                                     </div>
                                 </div>
                             `
-                    })
+                })
 
 
-                    let details = data.checkoutDetails
-                    let address = data.addresses.find(add => add.default)
-                    checkoutHTML += `
+                let details = data.checkoutDetails
+                let address = data.addresses.find(add => add.default)
+                checkoutHTML += `
                         <div class="w-full lg:w-96 flex-shrink-0">
                             <div class="bg-card-bg border border-border-color rounded-xl p-6 sticky top-8">
                                 <h2 class="text-xl font-bold mb-4">Order Summary</h2>
@@ -486,15 +468,36 @@
                                         <span class="text-text-medium">Sub Total</span>
                                         <span class="font-medium" id="sub-total" data-subtotal="${details.subTotal}">₹${details.subTotal}</span>
                                     </div>
-                                    <div class="flex justify-between items-center border-b border-border-color pb-4">
+                                    <div class="flex justify-between items-center border-border-color ">
                                         <span class="text-text-medium">Discount</span>
                                         <span class="font-medium text-red-500" id="discounts" data-discounts="${details.discounts}">-₹${details.discounts}</span>
                                     </div>
-                                    <a href="#" onclick="showPopup('coupon-popup')" class="text-primary-blue text-sm font-semibold hover:underline">Show available coupons</a>
-                                    <div class="flex gap-2 items-center mt-2">
-                                        <input type="text" placeholder="Apply Coupon" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue">
-                                        <button class="bg-primary-blue hover:bg-primary-blue-hover text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium">Apply</button>
+                                    <div class="flex justify-between items-center border-b border-border-color pb-4">
+                                        <span class="text-text-medium">Coupon Discount</span>
+                                        <span class="font-medium text-red-500" id="discounts" data-discounts="${details.couponDiscount}">-₹${details.couponDiscount}</span>
                                     </div>
+                                    ${details.couponDiscount == 0 || !details.couponDiscount ?
+                        `
+                                        <a href="#" onclick="showPopup('coupon-popup')" class="text-primary-blue text-sm font-semibold hover:underline">Show available coupons</a>
+                                        <div class="flex gap-2 items-center mt-2">
+                                            <input type="text" placeholder="Apply Coupon" class="w-full px-4 py-2 bg-input-bg border border-border-color rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-blue" id="coupon-input">
+                                            <button class="bg-primary-blue hover:bg-primary-blue-hover text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium" onclick="updateCoupon()">Apply</button>
+                                        </div>
+                                    `
+                        :
+                        `
+                                        <div class="bg-input-bg rounded-lg border border-dashed border-border-color p-4 flex items-center justify-between">
+                                            <div>
+                                                ${details.couponDetails.discountType == "amount" ? `<span class="text-lg font-bold text-text-light block">₹${details.couponDetails.discount} Off</span>` : `<span class="text-lg font-bold text-text-light block">${details.couponDetails.discount}% Off</span>`}
+                                                <span class="text-sm font-medium text-text-medium block" data-couponid="${details.couponDetails._id}" id="coupon-id">${details.couponDetails.code}</span>
+                                                <span class="text-xs text-text-medium mt-1 block">Valid until ${new Date(details.couponDetails.expiryDate).toLocaleDateString()}</span>
+                                            </div>
+                                            <button class="text-sm text-primary-blue hover:underline" data-couponid="${details.couponDetails._id}" data-couponcode="${details.couponDetails.code}" onclick="removeCoupon(this)">Remove</button>
+                                        </div>
+                                    `
+                    }
+                                    
+                                    
                                     <div class="flex justify-between items-center pt-4 border-t border-border-color">
                                         <span class="text-lg font-bold">Total Price</span>
                                         <span class="text-2xl font-bold" id="total-amount" data-total="${details.total}">₹${details.total}</span>
@@ -503,7 +506,7 @@
 
                                 <h2 class="text-xl font-bold mt-8 mb-4">Address</h2>
                                 <div class="bg-input-bg border border-border-color rounded-lg p-4 space-y-1" id="address-section">
-                                    ${address? `
+                                    ${address ? `
                                         <input type="text" value="${address._id}" id="address_id" hidden>
                                         <span class="text-sm font-semibold text-text-light block">${address.name}</span>
                                         <span class="text-xs text-text-medium block">${address.address}, ${address.city}, ${address.district}, ${address.state}</span>
@@ -561,8 +564,8 @@
                         </div>
                     `
 
-                    data.addresses.forEach((address, index) =>{
-                        addressHTML += `
+                data.addresses.forEach((address, index) => {
+                    addressHTML += `
                         <button class="w-full" onclick="changeAddress(${index})">
                         <div class="bg-input-bg border border-border-color rounded-lg p-4 space-y-1">
                         <input type="text" value="${address._id}" id="address_id" hidden>
@@ -576,102 +579,160 @@
                         </div>
                         </button>
                         `
-                    })
-                                           
-
-                    productContainer.innerHTML = productHTML
-                    checkoutDetails.innerHTML = checkoutHTML
-                    addressContainer.innerHTML = addressHTML
-
                 })
-                .catch(error => {
-                    console.log(error)
+
+
+                productContainer.innerHTML = productHTML
+                checkoutDetails.innerHTML = checkoutHTML
+                addressContainer.innerHTML = addressHTML
+
+            })
+            .catch(error => {
+                console.log(error)
+                error = String(error).split(":")
+                Swal.fire({
+                    title: error[1],
+                    icon: "warning",
+                    background: "#242428",
+                    color: 'white',
+                    customClass: {
+                        popup: 'my-swal-border'
+                    }
+                });
+            })
+    }
+
+    function showPopup(elementId) {
+        const modal = document.getElementById(elementId);
+        modal.classList.remove('hidden');
+        fetch('/user/api/get-coupons')
+            .then(response => {
+                if (!response.ok) throw new Error("Can't fetch details")
+                return response.json()
+            })
+            .then(data => {
+                couponCardContainer = document.getElementById("coupon-card-container")
+                let html = ''
+                data.forEach(coupon => {
+                    html += `
+                            <div class="bg-input-bg rounded-lg border border-dashed border-border-color p-4 flex items-center justify-between">
+                                <div>
+                                    ${coupon.discountType == "amount" ? `<span class="text-lg font-bold text-text-light block">₹${coupon.discount} Off</span>` : `<span class="text-lg font-bold text-text-light block">${coupon.discount}% Off</span>`}
+                                    <span class="text-sm font-medium text-text-medium block">${coupon.code}</span>
+                                    <span class="text-xs text-text-medium mt-1 block">Valid until ${new Date(coupon.expiryDate).toLocaleDateString()}</span>
+                                </div>
+                                <button class="text-sm text-primary-blue hover:underline" data-couponid="${coupon._id}" data-couponcode="${coupon.code}" onclick="applyCoupon(this)">Apply</button>
+                            </div>
+                        `
                 })
+
+                couponCardContainer.innerHTML = html
+            })
+    }
+
+    function hidePopup(elementId) {
+        const modal = document.getElementById(elementId);
+        modal.classList.add('hidden');
+    }
+
+
+    function applyCoupon(button) {
+        couponInput = document.getElementById("coupon-input")
+        couponInput.value = button.dataset.couponcode
+        const modal = document.getElementById("coupon-popup");
+        modal.classList.add('hidden');
+    }
+
+    function removeCoupon(button) {
+        const couponCode = button.dataset.couponcode
+        fetchPage(couponCode, "remove")
+    }
+
+    function updateCoupon() {
+        const couponInput = document.getElementById("coupon-input")
+        if (couponInput.value.trim() == "") {
+            showSnackbar("Please Provide a Coupon code", "bg-red-500")
+            return
         }
+        const couponCode = couponInput.value
+        fetchPage(couponCode, "apply")
+        couponInput.value = ""
+    }
 
-        function showPopup(elementId) {
-            const modal = document.getElementById(elementId);
-            modal.classList.remove('hidden');
-        }
-
-        function hidePopup(elementId) {
-            const modal = document.getElementById(elementId);
-            modal.classList.add('hidden');
-        }
-
-        async function placeOrder(){
-            const placeBtn = document.getElementById("place-order")
-            placeBtn.innerText = "Packing your package.."
-            placeBtn.disabled = true
-            placeBtn.style.cursor = "wait";
+    async function placeOrder() {
+        const placeBtn = document.getElementById("place-order")
+        placeBtn.innerText = "Packing your package.."
+        placeBtn.disabled = true
+        placeBtn.style.cursor = "wait";
 
 
-            const addressId = document.getElementById("address_id")?.value.trim()
-            const total = document.getElementById("total-amount").dataset.total
-            const subTotal = document.getElementById("sub-total").dataset.subtotal
-            const discounts = document.getElementById("discounts").dataset.discounts
-            const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value
-            let bodyData = {addressId, total, subTotal, discounts, paymentMethod}
+        const addressId = document.getElementById("address_id")?.value.trim()
+        const total = document.getElementById("total-amount").dataset.total
+        const subTotal = document.getElementById("sub-total").dataset.subtotal
+        const discounts = document.getElementById("discounts").dataset.discounts
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value
+        const couponId = document.getElementById("coupon-id")?.dataset?.couponid
+        let bodyData = { addressId, total, subTotal, discounts, paymentMethod, couponId: couponId || null }
 
-            if(paymentMethod == "CARD" || paymentMethod == "UPI"){
-                // 1. Create order from backend
-                fetch("/payment/create-order", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ amount: parseInt(total) }) // ₹500
-                })
-                .then(response =>{
-                    if(!response.ok) throw new Error("Failed to create order")
+        if (paymentMethod == "CARD" || paymentMethod == "UPI") {
+            // 1. Create order from backend
+            fetch("/payment/create-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount: parseInt(total) }) // ₹500
+            })
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to create order")
                     return response.json()
                 })
-                .then(order =>{
-                        
+                .then(order => {
+
                     var options = {
-                        key: "rzp_test_RFOWbloxiCxKNB", 
+                        key: "rzp_test_RFOWbloxiCxKNB",
                         amount: order.amount,
                         currency: order.currency,
                         name: "SonicBoom",
                         description: "Test Transaction",
                         order_id: order.id,
                         handler: async function (response) {
-                        
-                        const verifyRes = await fetch("/payment/verify-payment", {
+
+                            const verifyRes = await fetch("/payment/verify-payment", {
                                 method: "POST",
                                 headers: { "Content-Type": "application/json" },
                                 body: JSON.stringify(response)
                             });
                             const verifyData = await verifyRes.json();
                             let bgColor = "bg-green-500"
-                            console.log("is success : ",verifyData.success)
+                            console.log("is success : ", verifyData.success)
 
-                            if(!verifyData.success){
+                            if (!verifyData.success) {
                                 bodyData.paymentStatus = false
                                 bgColor = "bg-red-500"
-                                fetch(`/user/checkout/place-order`,{
-                                    method:"POST",
-                                    headers:{'Content-Type': 'application/json'},
-                                    body:JSON.stringify(bodyData)
+                                fetch(`/user/checkout/place-order`, {
+                                    method: "POST",
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(bodyData)
                                 })
-                                .then(async function(response){
-                                    let res = await response.json()
-                                    if(!response.ok) throw new Error( res.message || "Failed to fetch" )
-                                    window.location.href = '/user/order-failed'
-                                })
-                                .catch((error) => {
-                                    showSnackbar(error, "bg-red-500")
-                                })
+                                    .then(async function (response) {
+                                        let res = await response.json()
+                                        if (!response.ok) throw new Error(res.message || "Failed to fetch")
+                                        window.location.href = '/user/order-failed'
+                                    })
+                                    .catch((error) => {
+                                        showSnackbar(error, "bg-red-500")
+                                    })
 
-                            }else{
+                            } else {
 
                                 bodyData.paymentStatus = true
-                                fetch(`/user/checkout/place-order`,{
-                                        method:"POST",
-                                        headers:{'Content-Type': 'application/json'},
-                                        body:JSON.stringify(bodyData)
-                                    })
-                                    .then(async function(response){
+                                fetch(`/user/checkout/place-order`, {
+                                    method: "POST",
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(bodyData)
+                                })
+                                    .then(async function (response) {
                                         let res = await response.json()
-                                        if(!response.ok) throw new Error( res.message || "Failed to fetch" )
+                                        if (!response.ok) throw new Error(res.message || "Failed to fetch")
                                         window.location.href = '/user/order-success'
                                     })
                                     .catch((error) => {
@@ -680,7 +741,7 @@
 
                             }
                             showSnackbar(verifyData.message, bgColor)
-                            
+
                         },
                         prefill: {
                             name: userData.name,
@@ -707,43 +768,62 @@
 
                     rzp1.open();
                 })
-                .catch(error =>{
+                .catch(error => {
                     console.log(error)
                     showSnackbar("Please check your internet", "bg-red-500")
                 })
 
-                
 
-            }else if(paymentMethod == "WALLET"){
 
-            }else{
-                fetch(`/user/checkout/place-order`,{
-                    method:"POST",
-                    headers:{'Content-Type': 'application/json'},
-                    body:JSON.stringify(bodyData)
-                })
-                .then(async function(response){
+        } else {
+            fetch(`/user/checkout/place-order`, {
+                method: "POST",
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bodyData)
+            })
+                .then(async function (response) {
                     let res = await response.json()
-                    if(!response.ok) throw new Error( res.message || "Failed to fetch" )
+                    if (!response.ok) throw new Error(res.message || "Failed to fetch")
                     window.location.href = '/user/order-success'
                 })
                 .catch((error) => {
-                    showSnackbar(error, "bg-red-500")
+                    if (error.message = "Insufficiant balance") {
+                        Swal.fire({
+                            title: "Insufficiant balance",
+                            text: "Add money to wallet",
+                            icon: "warning",
+                            background: "#242428",
+                            showCancelButton: true,
+                            confirmButtonColor: "#3085d6",
+                            cancelButtonColor: "#d33",
+                            confirmButtonText: "Add Cash",
+                            customClass: {
+                                popup: "my-swal-border"
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "/user/wallet"
+                            }
+                        });
+                    } else {
+                        showSnackbar(error.message, "bg-red-500")
+                    }
+
                 })
-            }
-
-            placeBtn.innerText = "Place Order"
-            placeBtn.disabled = false
-            placeBtn.style.cursor = "pointer";
-
-            
-
-            
         }
 
-        function changeAddress(index){
-            const addressSection = document.getElementById("address-section")
-            addressSection.innerHTML = 
+        placeBtn.innerText = "Place Order"
+        placeBtn.disabled = false
+        placeBtn.style.cursor = "pointer";
+
+
+
+
+    }
+
+    function changeAddress(index) {
+        const addressSection = document.getElementById("address-section")
+        addressSection.innerHTML =
             `
                 <input type="text" value="${addressData[index]._id}" id="address_id" hidden>
                 <span class="text-sm font-semibold text-text-light block">${addressData[index].name}</span>
@@ -758,47 +838,47 @@
                     <a href="#" onclick="showAddress()" class="hover:underline">Add</a>
                 </div>
             `
-            hideModal('coupon-modal')
-        }
+        hideModal('coupon-modal')
+    }
 
 
-        function showModal(elementId) {
-            const modal = document.getElementById(elementId);
-            modal.classList.remove('hidden');
-        }
+    function showModal(elementId) {
+        const modal = document.getElementById(elementId);
+        modal.classList.remove('hidden');
+    }
 
-        function hideModal(elementId) {
-            const modal = document.getElementById(elementId);
-            modal.classList.add('hidden');
-        }
+    function hideModal(elementId) {
+        const modal = document.getElementById(elementId);
+        modal.classList.add('hidden');
+    }
 
-    document.addEventListener("DOMContentLoaded", ()=>{
+    document.addEventListener("DOMContentLoaded", () => {
         fetchPage()
         const cancelBtn = document.getElementById("cancelBtn")
         if (addAddressForm) {
-                addAddressForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    if (validateForm()) {
-                        const formData = new FormData(addAddressForm);
-                        const newAddress = Object.fromEntries(formData.entries());
-                        // Add new address to our data store (in a real app, this would be a server call)
-                        addressData.push(newAddress);
-                        console.log('New Address Data:', newAddress);
-                        showSnackbar('Address saved successfully!', 'bg-green-500');
-                        addAddressForm.reset();
-                        hideModal('add-address-container');
-                        changeAddress(addressData.length - 1); // Select the newly added address
-                    } else {
-                        showSnackbar('Please correct the errors in the form.', 'bg-red-500');
-                    }
-                });
-            }
-            if(cancelBtn) {
-                cancelBtn.addEventListener('click', () => {
-                    addAddressForm.classList.add('hidden');
+            addAddressForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (validateForm()) {
+                    const formData = new FormData(addAddressForm);
+                    const newAddress = Object.fromEntries(formData.entries());
+                    // Add new address to our data store (in a real app, this would be a server call)
+                    addressData.push(newAddress);
+                    console.log('New Address Data:', newAddress);
+                    showSnackbar('Address saved successfully!', 'bg-green-500');
                     addAddressForm.reset();
-                    hideAllErrors();
-                });
-            }
+                    hideModal('add-address-container');
+                    changeAddress(addressData.length - 1); // Select the newly added address
+                } else {
+                    showSnackbar('Please correct the errors in the form.', 'bg-red-500');
+                }
+            });
+        }
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                addAddressForm.classList.add('hidden');
+                addAddressForm.reset();
+                hideAllErrors();
+            });
+        }
     })
 </script>

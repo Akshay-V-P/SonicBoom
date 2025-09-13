@@ -1,0 +1,233 @@
+<style>
+    /* Coupon Card Styling */
+        .coupon-card {
+            position: relative;
+            background-color: #1A1A1A;
+            border: 1px dashed #333333;
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+        }
+
+        .coupon-card::before,
+        .coupon-card::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 32px;
+            height: 32px;
+            background-color: #121212;
+            border: 1px solid #333333;
+        }
+        
+        .coupon-card::before {
+            left: -17px;
+            border-radius: 0 50% 50% 0;
+            border-left: none;
+        }
+        
+        .coupon-card::after {
+            right: -17px;
+            border-radius: 50% 0 0 50%;
+            border-right: none;
+        }
+</style>
+
+
+<div class="flex-1 min-h-screen">
+    <input type="hidden" id="focusIndicator" value="coupon">
+    <h1 class="text-3xl sm:text-4xl font-bold text-text-light mb-8">Available Coupons</h1>
+
+    <!-- Coupon Grid Section -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6" id="coupon-container">
+        <!-- Coupon 1 -->
+        <div class="coupon-card">
+            <div class="flex flex-col">
+                <span class="text-3xl font-bold text-text-light mb-1">₹499 Off</span>
+                <span class="text-text-medium text-lg">Sonic Coupon</span>
+            </div>
+            <div class="flex justify-end text-text-medium mt-4">
+                <span class="text-sm">Valid until 01 February 2022</span>
+            </div>
+        </div>
+
+        <!-- Coupon 2 -->
+        <div class="coupon-card">
+            <div class="flex flex-col">
+                <span class="text-3xl font-bold text-text-light mb-1">₹799 Off</span>
+                <span class="text-text-medium text-lg">Sonic Super</span>
+            </div>
+            <div class="flex justify-end text-text-medium mt-4">
+                <span class="text-sm">Valid until 01 February 2022</span>
+            </div>
+        </div>
+
+        <!-- Coupon 3 -->
+        <div class="coupon-card">
+            <div class="flex flex-col">
+                <span class="text-3xl font-bold text-text-light mb-1">25% Off</span>
+                <span class="text-text-medium text-lg">Sonic 25</span>
+            </div>
+            <div class="flex justify-end text-text-medium mt-4">
+                <span class="text-sm">Valid until 03 March 2022</span>
+            </div>
+        </div>
+
+        <!-- Coupon 4 -->
+        <div class="coupon-card">
+            <div class="flex flex-col">
+                <span class="text-3xl font-bold text-text-light mb-1">15% Off</span>
+                <span class="text-text-medium text-lg">Boom Play</span>
+            </div>
+            <div class="flex justify-end text-text-medium mt-4">
+                <span class="text-sm">Valid until 03 March 2022</span>
+            </div>
+        </div>
+
+        <!-- Coupon 5 -->
+        <div class="coupon-card">
+            <div class="flex flex-col">
+                <span class="text-3xl font-bold text-text-light mb-1">Free Gifts</span>
+                <span class="text-text-medium text-lg">Sonic Gifts</span>
+            </div>
+            <div class="flex justify-end text-text-medium mt-4">
+                <span class="text-sm">Valid until 11 September 2022</span>
+            </div>
+        </div>
+
+        <!-- Coupon 6 -->
+        <div class="coupon-card">
+            <div class="flex flex-col">
+                <span class="text-3xl font-bold text-text-light mb-1">Free Gifts</span>
+                <span class="text-text-medium text-lg">Sonic Special</span>
+            </div>
+            <div class="flex justify-end text-text-medium mt-4">
+                <span class="text-sm">Valid until 11 September 2022</span>
+            </div>
+        </div>
+
+        <!-- Coupon 7 -->
+        <div class="coupon-card">
+            <div class="flex flex-col">
+                <span class="text-3xl font-bold text-text-light mb-1">30% Off</span>
+                <span class="text-text-medium text-lg">Sonic Super</span>
+            </div>
+            <div class="flex justify-end text-text-medium mt-4">
+                <span class="text-sm">Valid until 03 October 2022</span>
+            </div>
+        </div>
+
+        <!-- Coupon 8 -->
+        <div class="coupon-card">
+            <div class="flex flex-col">
+                <span class="text-3xl font-bold text-text-light mb-1">50% Off</span>
+                <span class="text-text-medium text-lg">Boom Paper</span>
+            </div>
+            <div class="flex justify-end text-text-medium mt-4">
+                <span class="text-sm">Valid until 03 October 2022</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="pagination-controls" class="flex justify-center items-center gap-4 mt-6 pagination-container">
+                
+</div>
+
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", ()=>{
+        fetchCoupons()
+
+    })
+
+    function fetchCoupons() {
+            const couponContainer = document.getElementById("coupon-container")
+            fetch('/user/api/coupons')
+                .then(response => {
+                    if (!response.ok) throw new Error("Can't fetch coupon")
+                    return response.json()
+                })
+                .then(data => {
+                    couponContainer.innerHTML = '';
+                    let html = ""
+                    let today = new Date().toLocaleDateString()
+                    data.result.forEach(coupon => {
+                        const used = coupon.usedBy.find(coup => coup.userId ? coup.userId.toString() === data.userId.toString() ? true : false : false)
+                        const expried = new Date(coupon.expiryDate).toLocaleDateString() > today
+
+                        if(used){
+                            html += `
+                                <div class="coupon-card ">
+                                    <div class="flex flex-col">
+                                        ${coupon.discountType == "percentage"? `<span class="text-3xl font-bold text-text-light mb-1">${coupon.discount}% Off</span>` : `<span class="text-3xl font-bold text-text-light mb-1">₹${coupon.discount} Off</span>`}
+                                        <span class="text-text-medium text-lg">${coupon.code}</span>
+                                    </div>
+                                    <div class="flex justify-end text-text-medium mt-4">
+                                        <span class="text-sm text-red-500">Used</span>
+                                    </div>
+                                </div>
+                            `
+                        } else if(expried){
+                            html += `
+                                <div class="coupon-card opacity-[0.5]">
+                                    <div class="flex flex-col">
+                                        ${coupon.discountType == "percentage"? `<span class="text-3xl font-bold text-text-light mb-1">${coupon.discount}% Off</span>` : `<span class="text-3xl font-bold text-text-light mb-1">₹${coupon.discount} Off</span>`}
+                                        <span class="text-text-medium text-lg">${coupon.code}</span>
+                                    </div>
+                                    <div class="flex justify-end text-text-medium mt-4">
+                                        <span class="text-sm text-red-500">Expired</span>
+                                    </div>
+                                </div>
+                            `
+                        } else{
+                            html += `
+                                <div class="coupon-card">
+                                    <div class="flex flex-col">
+                                        ${coupon.discountType == "percentage"? `<span class="text-3xl font-bold text-text-light mb-1">${coupon.discount}% Off</span>` : `<span class="text-3xl font-bold text-text-light mb-1">₹${coupon.discount} Off</span>`}
+                                        <span class="text-text-medium text-lg">${coupon.code}</span>
+                                    </div>
+                                    <div class="flex justify-end text-text-medium mt-4">
+                                        <span class="text-sm">Valid until ${new Date(coupon.expiryDate).toLocaleDateString()}</span>
+                                    </div>
+                                </div>
+                            `
+                        }
+
+                        
+                    });
+
+                    couponContainer.innerHTML = html
+
+                    const pagination = document.querySelector('.pagination-container')
+                    // setting url for next Page
+                    let tempUrl = new URL(url, window.location.origin);
+                    let currentPage = parseInt(tempUrl.searchParams.get("currentPage"), 10);
+                    tempUrl.searchParams.set("currentPage", currentPage + 1);
+
+                    let nextUrl = tempUrl.pathname + '?' + tempUrl.searchParams.toString();
+
+                    // setting url for previous page
+                    tempUrl = new URL(url, window.location.origin);
+                    currentPage = parseInt(tempUrl.searchParams.get("currentPage"), 10);
+                    tempUrl.searchParams.set("currentPage", currentPage - 1);
+
+                    let prevUrl = tempUrl.pathname + '?' + tempUrl.searchParams.toString();
+
+                    pagination.innerHTML = `
+                                <div class="pagination-controls">
+                                    <button onclick="fetchCoupons('${prevUrl}')" class="bg-gray-600 text-white px-2 py-1 rounded-sm text-xs hover:bg-gray-500 page-btn" style="${data.currentPage > 1 ? "" : "display:none;"}">&lt;</button>
+                                    <button class="page-btn active">
+                                        ${data.currentPage} of ${data.totalPages} Pages
+                                    </button>
+                                    <button onclick="fetchCoupons('${nextUrl}')" class="bg-gray-600 text-white px-2 py-1 rounded-sm text-xs hover:bg-gray-500 page-btn" style="${data.currentPage < data.totalPages ? "" : "display:none;"}">&gt;</button>
+                                </div>
+                            `
+                })
+        }
+</script>

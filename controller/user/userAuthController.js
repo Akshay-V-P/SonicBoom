@@ -4,6 +4,7 @@ const userModel = require('../../model/userModel')
 const generateOtp = require('../../helper/randomOtp')
 const bcrypt = require('bcrypt')
 const mailSender = require('../../utils/mailSender')
+const walletModel = require('../../model/walletModel')
 
 // Page loading functions
 const loadLogin = (req, res) => {
@@ -76,6 +77,14 @@ const validateOtp = async (req, res) => {
             password: hashedPassword,
         })
         await newUser.save()
+        
+        const user = await userModel.find({ email })
+        const newWallet = new walletModel({
+            userId:user._id
+        })
+
+        await newWallet.save()
+        
         req.user = {email}
         res.render('user/login', {message:"User created", icon:"success"})
     } catch (error) {

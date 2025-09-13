@@ -543,7 +543,16 @@
                 let index = 0
                 let html = ''
                 data.result.forEach((product)=>{
-                    const variantStock = product.variants.map(variant =>  `<p class="product-stock stock-details">Edition - ${variant.stock} Nos</p>`).join("")
+                    const variantStock = product.variants.map((variant, index) =>  {
+                        if(index === 0) return ""
+                        return `<p class="product-stock stock-details">Edition - ${variant.stock} Nos</p>`
+                    }
+                    ).join("")
+
+                    const variantPrice = product.variants.map((variant, index)=>{
+                        if(index === 0) return ""
+                        return `<span class="price-old stock-details">Edition - </span><span class="price-new stock-details">₹${variant.offerPrice}</span>`
+                    }).join("")
                     html += `
                             <div class="product-card">
                                 <a href="/admin/products/${product._id}/edit"><button class="edit-btn">Edit</button></a>
@@ -561,8 +570,8 @@
                                             <span class="price-new stock-details">₹${product.variants[0].offerPrice}</span>
                                         </p>
                                         <p>
-                                            <span class="price-old stock-details">Edition - </span>
-                                            <span class="price-new stock-details">₹${product.offerPrice}</span>
+                                            
+                                            ${variantPrice}
                                         </p>
                                     </div>
                                     

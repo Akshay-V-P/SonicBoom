@@ -34,8 +34,16 @@ const couponSchema = mongoose.Schema({
         default:true,
         required:true
     },
+    isBlocked: {
+        type: Boolean,
+        default:false,
+        required:true
+    },
     usedBy: {
-        type: [mongoose.Schema.Types.ObjectId]
+        type: [{
+            userId: { type: mongoose.Schema.Types.ObjectId },
+            isOrdered:{type:Boolean, default:false}
+        }]
     },
     expiryDate: {
         type: Date,

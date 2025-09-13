@@ -7,7 +7,9 @@ const orderController = require('../controller/user/orderController')
 const addressController = require('../controller/user/addressController')
 const cartController = require('../controller/user/cartController')
 const checkoutController = require('../controller/user/checkoutController')
-  const wishlistController = require('../controller/user/wishlistController')
+const wishlistController = require('../controller/user/wishlistController')
+const walletController = require("../controller/user/walletController")
+  const couponController = require("../controller/user/couponController")
 
   const shopController = require('../controller/user/shopController')
   const { validate, validateSignin } = require('../middleware/validator')
@@ -121,7 +123,17 @@ router.post('/api/wishlist/remove', wishlistController.removeFromWishlist)
 router.get('/checkout',userAuth.isAuthenticated, checkoutController.loadCheckout)
 router.get('/checkout/details',userAuth.isAuthenticated, checkoutController.loadDetails)
 router.post('/checkout/place-order',userAuth.isAuthenticated, checkoutController.placeOrder)
-router.get('/order-success',userAuth.isAuthenticated, checkoutController.loadOrderSuccess)
+router.get('/order-success', userAuth.isAuthenticated, checkoutController.loadOrderSuccess)
+router.get('/api/get-coupons', checkoutController.fetchCoupons)
+
+// wallet 
+router.get('/wallet', walletController.loadWallet)
+router.get('/api/wallet', walletController.fetchWallet)
+router.post('/api/add-fund', walletController.addToWallet)
+
+// coupons
+router.get('/coupons', couponController.loadCoupons)
+router.get('/api/coupons', couponController.fetchCoupons)
 
 router.get('/logout',userAuth.isAuthenticated, userController.logout)
 

@@ -1,0 +1,366 @@
+<style>
+    .my-swal-border {
+		border: 1px solid #404044 !important;
+		/* Change color and thickness */
+		border-radius: 15px !important;
+	}
+</style>
+
+
+<div class="flex-1 min-h-screen">
+    <input type="hidden" id="focusIndicator" value="wallet">
+    <h1 class="text-3xl sm:text-4xl font-bold text-text-light mb-6">My Wallet</h1>
+
+    <!-- Wallet Balance Section -->
+    <div class="bg-card-bg border border-border-color rounded-xl shadow-md p-6 sm:p-8 mb-8">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-4 text-text-light">Current Balance</h2>
+        <div class="flex items-center gap-4">
+            <span class="text-4xl sm:text-5xl font-extrabold text-text-medium" id="walletBalance">₹0.00</span>
+            <button id="topUpBtn" class="bg-primary-blue hover:bg-primary-blue-hover text-white font-medium py-2 px-4 rounded-full transition-colors duration-200">
+                Top Up
+            </button>
+        </div>
+    </div>
+
+    <!-- Transaction History Section -->
+    <div class="bg-card-bg border border-border-color rounded-xl shadow-md p-6 sm:p-8">
+        <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-text-light">Transaction History</h2>
+        <div id="transactionsList" class="space-y-4">
+            <!-- Transactions will be populated here by JavaScript -->
+            
+        </div>
+        <div id="noTransactionsMessage" class="text-center py-10 hidden">
+            <p class="text-text-medium">No transactions found.</p>
+        </div>
+    </div>
+</div>
+
+
+<!-- Top Up Modal -->
+<div id="topUpModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+  <div class="bg-card-bg border border-border-color rounded-xl shadow-lg p-6 w-96 max-w-full">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold text-text-light">Top Up Wallet</h3>
+      <button id="closeModalBtn" class="text-text-medium hover:text-text-light transition-colors duration-200">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <form id="topUpForm" novalidate>
+      <!-- Predefined Values -->
+      <div class="mb-4">
+        <label class="block text-text-medium mb-2">Select Amount</label>
+        <div id="presetAmounts" class="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:gap-4">
+            <button type="button" class="preset-btn bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-full transition-colors duration-200" data-amount="1000">₹1,000</button>
+            <button type="button" class="preset-btn bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-full transition-colors duration-200" data-amount="2000">₹2,000</button>
+            <button type="button" class="preset-btn bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-full transition-colors duration-200" data-amount="5000">₹5,000</button>
+            <button type="button" class="preset-btn bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-full transition-colors duration-200" data-amount="10000">₹10,000</button>
+        </div>
+      </div>
+      <div class="mb-4">
+        <label for="topUpAmount" class="block text-text-medium mb-2">Or Enter a Custom Amount (₹)</label>
+        <input type="number" id="topUpAmount" name="amount" min="1" step="0.01" placeholder="Amount" required class="w-full px-4 py-2 border border-border-color rounded-md bg-input-bg text-text-light focus:outline-none focus:ring-2 focus:ring-primary-blue">
+      </div>
+      <div class="flex justify-end gap-2">
+        <button type="button" id="cancelTopUpBtn" class="bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-full transition-colors duration-200">
+          Cancel
+        </button>
+        <button type="submit" class="bg-primary-blue hover:bg-primary-blue-hover text-white font-medium py-2 px-4 rounded-full transition-colors duration-200">
+          Add Funds
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- Simple Snackbar for alerts -->
+    <div id="snackbar" class="fixed bottom-4 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50" style="z-index: 9999;"></div>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    let userData 
+document.addEventListener('DOMContentLoaded', () => {
+
+    fetchWallet()
+
+    // Get the DOM elements
+    const topUpButton = document.getElementById('topUpBtn');
+    const topUpModal = document.getElementById('topUpModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const cancelTopUpBtn = document.getElementById('cancelTopUpBtn');
+    const topUpForm = document.getElementById('topUpForm');
+    const topUpAmountInput = document.getElementById('topUpAmount');
+    const walletBalanceEl = document.getElementById('walletBalance');
+    const presetAmountsContainer = document.getElementById('presetAmounts');
+
+    // Function to show the modal
+    function showModal() {
+        topUpModal.classList.remove('hidden');
+    }
+
+    // Function to hide the modal
+    function hideModal() {
+        topUpModal.classList.add('hidden');
+        topUpForm.reset(); // Reset the form fields
+    }
+
+    // Event listener to open the modal
+    topUpButton.addEventListener('click', showModal);
+
+    // Event listeners to close the modal
+    closeModalBtn.addEventListener('click', hideModal);
+    cancelTopUpBtn.addEventListener('click', hideModal);
+
+    // Close the modal if the user clicks outside of it
+    window.addEventListener('click', (event) => {
+        if (event.target === topUpModal) {
+            hideModal();
+        }
+    });
+
+    presetAmountsContainer.addEventListener('click', (event) => {
+        const clickedButton = event.target.closest('.preset-btn');
+        if (clickedButton) {
+            const amount = clickedButton.dataset.amount;
+            topUpAmountInput.value = amount;
+        }
+    });
+
+    // Handle form submission
+    topUpForm.addEventListener('submit', (event) => {
+        event.preventDefault(); 
+
+        const amountToAdd = parseFloat(topUpAmountInput.value);
+        let bodyData = {}
+
+        if (isNaN(amountToAdd) || amountToAdd <= 0) {
+            Swal.fire({
+                title: "",
+                text: "Please Enter a valid amount",
+                icon: 'info',
+                background: "#242428",
+                showConfirmButton: false,
+                timer: 1000,
+                color: 'white',
+                customClass: {
+                    popup: 'my-swal-border'
+                }
+            });
+            return;
+        }
+
+        fetch("/payment/create-order", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount: parseFloat(amountToAdd).toFixed(2) }) // ₹500
+        })
+            .then(response => {
+                if (!response.ok) throw new Error("Failed to create order")
+                return response.json()
+            })
+            .then(order => {
+
+                var options = {
+                    key: "rzp_test_RFOWbloxiCxKNB",
+                    amount: order.amount,
+                    currency: order.currency,
+                    name: "SonicBoom",
+                    description: "Test Transaction",
+                    order_id: order.id,
+                    handler: async function (response) {
+
+                        const verifyRes = await fetch("/payment/verify-payment", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(response)
+                        });
+                        const verifyData = await verifyRes.json();
+                        let bgColor = "bg-green-500"
+                        console.log("is success : ", verifyData.success)
+                        bodyData.amount = amountToAdd
+                        bodyData.transactionType = 'credit'
+
+                        if (!verifyData.success) {
+                            bodyData.paymentStatus = false
+                            bgColor = "bg-red-500"
+                            fetch(`/user/api/add-fund`, {
+                                method: "POST",
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(bodyData)
+                            })
+                                .then(async function (response) {
+                                    let res = await response.json()
+                                    if (!response.ok) throw new Error(res.message || "Failed to fetch")
+                                    Swal.fire({
+                                        title: "Payment failed",
+                                        text: "Failed to add fund to wallet",
+                                        icon: 'warning',
+                                        background: "#242428",
+                                        timer: 1000,
+                                        color: 'white',
+                                        customClass: {
+                                            popup: 'my-swal-border'
+                                        }
+                                    });
+                                    setTimeout(() => {
+                                    if (rzp1) rzp1.close();
+                                }, 500);
+                                })
+                                .catch((error) => {
+                                    showSnackbar(error, "bg-red-500")
+                                })
+
+                        } else {
+
+                            bodyData.paymentStatus = true
+                            fetch(`/user/api/add-fund`, {
+                                method: "POST",
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(bodyData)
+                            })
+                                .then(async function (response) {
+                                    let res = await response.json()
+                                    if (!response.ok) throw new Error(res.message || "Failed to fetch")
+                                    Swal.fire({
+                                        title: "Payment success",
+                                        text: `₹${amountToAdd} added to wallet`,
+                                        icon: 'success',
+                                        background: "#242428",
+                                        timer: 1000,
+                                        color: 'white',
+                                        customClass: {
+                                            popup: 'my-swal-border'
+                                        }
+                                    });
+                                    fetchWallet()
+                                })
+                                .catch((error) => {
+                                    showSnackbar(error, "bg-red-500")
+                                })
+
+                        }
+                        showSnackbar(verifyData.message, bgColor)
+
+                    },
+                    prefill: {
+                        name: userData.name,
+                        email: userData.email,
+                        contact: userData.mobile
+                    },
+                    theme: { color: "#3399cc" }
+                };
+
+                var rzp1 = new Razorpay(options);
+
+                rzp1.on("payment.failed", async function (response) {
+                    console.error("Payment Failed:", response.error);
+
+                    bodyData.amount = amountToAdd
+                    bodyData.transactionType = 'credit'
+                    bodyData.paymentStatus = false;
+                     try {
+                        await fetch(`/user/api/add-fund`, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(bodyData)
+                        });
+
+                        Swal.fire({
+                            title: "Payment failed",
+                            text: "Failed to add fund to wallet",
+                            icon: "warning",
+                            background: "#242428",
+                            color: "white",
+                            customClass: {
+                                popup: "my-swal-border"
+                            }
+                        }).then(()=>{
+                            if (rzp1) rzp1.close();
+                        })
+
+                        fetchWallet();
+                    } catch (error) {
+                        showSnackbar("Failed to log failed payment", "bg-red-500");
+                    }
+                });
+
+                rzp1.open();
+                
+
+                
+            })
+            .catch(error => {
+                console.log(error)
+                showSnackbar("Please check your internet", "bg-red-500")
+            })
+        
+        
+        hideModal();
+    });
+});
+
+
+function fetchWallet(){
+    fetch('/user/api/wallet')
+        .then(async response => {
+            const res = await response.json()
+            if (!response.ok) throw new Error(res.message || "Can't fetch details")
+            return res
+        })
+        .then(wallet => {
+            let data = wallet.wallet
+            userData = wallet.userData
+            const walletBalance = document.getElementById("walletBalance")
+            const transactionList = document.getElementById("transactionsList")
+            walletBalance.textContent = `₹${data.amount}`
+            let html = ''
+            if (data.transactions.length == 0) {
+                html = `<p class="text-text-medium">No transactions found.</p>`
+            } else {
+                data.transactions.forEach(trn => {
+                    let operator = "+"
+                    let colorClass = "text-green-500"
+                    let statusText = ""
+                    if (trn.transactionType == "debit") {
+                        operator = "-"
+                    }
+                    // Check for failed payments
+                    if (trn.status === "failed") {
+                        operator = "" // No operator needed for failed transactions
+                        colorClass = "text-red-500"
+                        statusText = "Failed"
+                    }
+                    html += `
+                        <div class="flex items-center justify-between bg-input-bg rounded-lg p-4 shadow-sm">
+                            <div class="flex items-center gap-4">
+                                <div>
+                                    <p class="text-text-light font-medium">${trn.transactionType.toUpperCase()} ${statusText}</p>
+                                    <p class="text-text-medium text-sm">${new Date(trn.transactionDate).toLocaleDateString()}</p>
+                                </div>
+                            </div>
+                            <span class="font-semibold ${colorClass}">${operator}₹${trn.amount}</span>
+                        </div>
+                    `
+                })
+            }
+            transactionList.innerHTML = html
+        })
+        .catch(error => {
+            console.log(error)
+        })
+}
+
+
+
+// Function to show a temporary snackbar message
+function showSnackbar(message, colorClass) {
+    const snackbar = document.getElementById('snackbar');
+    snackbar.textContent = message;
+    snackbar.className = `fixed bottom-4 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg shadow-lg opacity-100 transition-opacity duration-300 z-50 ${colorClass}`;
+    setTimeout(() => {
+        snackbar.classList.remove('opacity-100');
+        snackbar.classList.add('opacity-0');
+    }, 3000);
+}
+</script>
