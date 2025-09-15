@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (!verifyData.success) {
                             bodyData.paymentStatus = false
                             bgColor = "bg-red-500"
-                            fetch(`/user/api/add-fund`, {
+                            fetch(`/api/add-fund`, {
                                 method: "POST",
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(bodyData)
@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
 
                             bodyData.paymentStatus = true
-                            fetch(`/user/api/add-fund`, {
+                            fetch(`/api/add-fund`, {
                                 method: "POST",
                                 headers: { 'Content-Type': 'application/json' },
                                 body: JSON.stringify(bodyData)
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     bodyData.transactionType = 'credit'
                     bodyData.paymentStatus = false;
                      try {
-                        await fetch(`/user/api/add-fund`, {
+                        await fetch(`/api/add-fund`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify(bodyData)
@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function fetchWallet(){
-    fetch('/user/api/wallet')
+    fetch('/api/wallet')
         .then(async response => {
             const res = await response.json()
             if (!response.ok) throw new Error(res.message || "Can't fetch details")

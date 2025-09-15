@@ -12,7 +12,7 @@
                 <p class="text-red-500">Cancelled</p>
             {{else}}
                 {{#if (eq order.status "delivered")}}
-                    <a href="/user/orders/download-invoice/{{order.orderId}}" class="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-md text-sm font-medium">Download Invoice</a>
+                    <a href="/orders/download-invoice/{{order.orderId}}" class="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 rounded-md text-sm font-medium">Download Invoice</a>
                 {{else}}
                     {{#if (eq order.status "returned")}}
                         <p class="text-blue-500">Returned</p>
@@ -75,6 +75,10 @@
                         <p class="font-semibold text-red-500">-₹{{order.discount}}</p>
                     </div>
                     <div class="flex justify-between text-sm">
+                        <p class="text-text-medium">Coupon Discount</p>
+                        <p class="font-semibold text-red-500">-₹{{order.couponDiscount}}</p>
+                    </div>
+                    <div class="flex justify-between text-sm">
                         <p class="text-text-medium">Shipping</p>
                         <p class="font-semibold text-text-light">{{order.deliveryCharge}}</p>
                     </div>
@@ -102,20 +106,20 @@
                     </svg>
                 </div>
                 <span class="mt-2 text-[0.55rem] md:text-sm text-green-500 font-semibold text-center whitespace-nowrap">Order
-                    received</span>
+                    Processing</span>
             </div>
             <div class="relative z-10 flex flex-col items-center overflow-hidden">
                 <div
                     class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-green-500 flex items-center justify-center border-2 border-white">
                     <span class="font-bold text-white">02</span>
                 </div>
-                <span class="mt-2 text-[0.55rem] md:text-sm text-green-500 font-semibold text-center whitespace-nowrap">Processing</span>
+                <span class="mt-2 text-[0.55rem] md:text-sm text-green-500 font-semibold text-center whitespace-nowrap">Shipped</span>
             </div>
             <div class="relative z-10 flex flex-col items-center overflow-hidden">
                 <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-border-color flex items-center justify-center">
                     <span class="font-bold text-text-medium">03</span>
                 </div>
-                <span class="mt-2 text-[0.55rem] md:text-sm text-text-medium text-center whitespace-nowrap">On the way</span>
+                <span class="mt-2 text-[0.55rem] md:text-sm text-text-medium text-center whitespace-nowrap">Out for delivery</span>
             </div>
             <div class="relative z-10 flex flex-col items-center overflow-hidden">
                 <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-border-color flex items-center justify-center">
@@ -160,7 +164,7 @@
                         <div class="flex flex-grow justify-between items-center">
                             <p class="text-lg font-semibold item-name">{{this.name}}</p>
                         </div>
-                        <div class="flex flex-col justify-between gap-6 h-[100%]">
+                        <div class="flex flex-col justify-between gap-6 h-[100%] items-end">
                             <span class="font-bold text-xl text-primary-blue item-price">₹{{this.offerPrice}}</span>
                             {{#if (eq this.status "cancelled")}}
                                 <p class="text-red-500">Cancelled</p>
@@ -169,7 +173,12 @@
                                     <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium return-item-btn">Return</button>
                                 {{else}}
                                     {{#if (eq this.status "returned")}}
-
+                                        <p class="text-blue-500">Returned</p>
+                                        {{#if this.returnApproved}}
+                                            <p class="text-green-500">Return Approved</p>
+                                        {{else}}
+                                            <p class="text-orange-500 text-right">Waiting for Approval</p>
+                                        {{/if}}
                                     {{else}}
                                         <button class="text-red-500 cancel-item-btn">Cancel</button>
                                     {{/if}}
@@ -290,7 +299,7 @@
     document.addEventListener('DOMContentLoaded', () => {
 
         // --- Order Cancellation Modal Logic ---
-        const orderCancelButton = document.getElementById('order-cancel-btn'); // New ID
+        const orderCancelButton = document.getElementById('order-cancel-btn'); 
         const orderModal = document.getElementById('order-cancellation-modal');
         const closeOrderModalButton = document.getElementById('close-order-modal');
         const confirmOrderCancelButton = document.getElementById('confirm-order-cancel');
@@ -309,24 +318,28 @@
             }
         });
         confirmOrderCancelButton.addEventListener('click', () => {
+            confirmOrderCancelButton.disabled = true
+            confirmOrderCancelButton.innerHTML = "Loading.."
             const reason = document.getElementById('order-cancellation-reason').value;
             const orderId = document.getElementById('orderId').innerText.trim();
             console.log(orderId)
             console.log(`Cancelling order ${orderId} with reason: "${reason}"`);
-            fetch(`/user/orders/cancel?orderId=${orderId}`, {
+            fetch(`/orders/cancel?orderId=${orderId}`, {
                 method:"PATCH",
                 headers:{'Content-Type' : 'application/json'},
                 body:JSON.stringify({reason:reason || null})
             })
             .then(response =>{
                 if(!response.ok) throw new Error("Can't cancel order at this moment")
-                window.location.href = '/user/orders'
+                window.location.href = '/orders'
             })
             .catch(error =>{
                 console.log(error)
             })
             .finally(()=>{
                 orderModal.classList.add('hidden');
+                confirmOrderCancelButton.disabled = false 
+                confirmOrderCancelButton.innerHTML = "Confirm Cancellation"
             })
             
         });
@@ -380,11 +393,11 @@
 
             console.log(`Cancelling item ${productId} (variant ${variantId}) from order ${orderId} with reason: "${reason}"`);
             
-            fetch(`/user/orders/cancel-item?productId=${productId}&variantId=${variantId}&orderId=${orderId}`, {method:"PATCH"})
+            fetch(`/orders/cancel-item?productId=${productId}&variantId=${variantId}&orderId=${orderId}`, {method:"PATCH"})
                 .then(response =>{
                     if(!response.ok) throw new Error("Can't cancel this product right now")
                     console.log("cancelled")
-                    window.location.href = '/user/orders'
+                    window.location.href = '/orders'
                 })
                 .catch(error =>{
                     console.log(error)
@@ -463,7 +476,7 @@
 
             console.log(`Returning item ${productId} (variant ${variantId}) from order ${orderId} with reason: "${reason}"`);
 
-            fetch(`/user/orders/return-item?productId=${productId}&variantId=${variantId}&orderId=${orderId}`, {
+            fetch(`/orders/return-item?productId=${productId}&variantId=${variantId}&orderId=${orderId}`, {
                 method: "PATCH",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ reason: reason })
@@ -472,7 +485,7 @@
                     const res = await response.json()
                     if (!response.ok) throw new Error("Can't return this product right now");
                     console.log("Returned");
-                    window.location.href = '/user/orders';
+                    window.location.href = '/orders';
                 })
                 .catch(error => {
                     console.log(error);

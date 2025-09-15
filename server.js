@@ -16,22 +16,35 @@ const hbs = require('hbs')
 // test
 
 
+
+
 require('./config/passport')
 app.use(nocache())
 // session
-app.use(session({
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-        maxAge:24*60*60*1000
-    }
-}))
+const userSession = session({
+  name: 'user.sid',
+  secret: process.env.SESSION_SECRET + "_user",
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 24 * 60 * 60 * 1000 }
+});
 
-app.use(passport.initialize())
-app.use(passport.session())
+app.use('/', userSession, passport.initialize(), passport.session());
 
-app.use(attachUser)
+// Admin session
+const adminSession = session({
+  name: 'admin.sid',
+  secret: process.env.SESSION_SECRET + "_admin",
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 24 * 60 * 60 * 1000 }
+});
+
+app.use('/admin', adminSession);
+
+
+
+app.use('/',attachUser)
 
 
 // hbs helpers
@@ -77,13 +90,10 @@ app.use(express.urlencoded({ extended: true }))
 // ----------------------------------------
 
 // Routes
-app.use('/user', userRoute)
+app.use('/', userRoute)
 app.use('/admin', adminRoute)
 app.use('/payment', payment)
 
-app.get('/',(req, res)=> {
-    res.redirect('/user/login')
-})
 
 connectDB()
 app.listen(process.env.PORT, ()=> console.log(`Server is listening on port ${process.env.PORT}`))

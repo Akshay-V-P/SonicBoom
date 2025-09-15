@@ -250,7 +250,7 @@
                         default: defaultAddress,
                     };
 
-                    fetch('/user/manage-address/add', {
+                    fetch('/manage-address/add', {
                          method: 'POST',
                          headers: { 'Content-Type': 'application/json' },
                          body: JSON.stringify(formData)
@@ -269,7 +269,7 @@
                             }
                         }).then((result)=>{
                             if(result.isConfirmed){
-                                window.location.href = '/user/manage-address'
+                                window.location.href = '/manage-address'
                             }
                         })
                     })

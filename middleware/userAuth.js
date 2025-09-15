@@ -1,11 +1,11 @@
 
 const isAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) return next()
-  res.redirect('/user/login')
+  res.redirect('/login')
 }
 
 const isSession = (req, res, next) => {
-  if (req.isAuthenticated()) return res.redirect('/user/landing_page')
+  if (req.isAuthenticated()) return res.redirect('/landing_page')
   next()
 }
 

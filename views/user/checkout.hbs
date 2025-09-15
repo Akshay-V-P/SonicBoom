@@ -303,7 +303,7 @@
                     email: emailValue,
                     default: defaultAddress,
                 };
-                fetch('/user/manage-address/add', {
+                fetch('/manage-address/add', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
@@ -402,7 +402,7 @@
     function fetchPage(couponCode, operation) {
         couponCode = couponCode || null
         operation = operation || null
-        fetch(`/user/checkout/details?couponCode=${couponCode}&operation=${operation}`)
+        fetch(`/checkout/details?couponCode=${couponCode}&operation=${operation}`)
             .then(async response => {
                 const res = await response.json()
                 if (!response.ok) throw new Error(res.message || "Cant fetch cart details")
@@ -433,7 +433,7 @@
                                     <div class="flex-grow w-full">
                                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full">
                                             <h3 class="text-xl font-semibold text-text-light">${product.name}</h3>
-                                            <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.offerPrice}</span>
+                                            <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.offerPrice * product.quantity}</span>
                                         </div>
                                         <span class="text-sm font-medium text-text-medium">Base Game</span>
                                         <div class="flex items-center gap-4 mt-4 text-sm font-medium">
@@ -462,7 +462,7 @@
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-text-medium">GST Amount</span>
-                                        <span class="font-medium">₹${details.gstAmount}</span>
+                                        <span class="font-medium" id="gst-amount" data-gst="${details.gstAmount}">₹${details.gstAmount}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-text-medium">Sub Total</span>
@@ -605,7 +605,7 @@
     function showPopup(elementId) {
         const modal = document.getElementById(elementId);
         modal.classList.remove('hidden');
-        fetch('/user/api/get-coupons')
+        fetch('/api/get-coupons')
             .then(response => {
                 if (!response.ok) throw new Error("Can't fetch details")
                 return response.json()
@@ -672,7 +672,8 @@
         const discounts = document.getElementById("discounts").dataset.discounts
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value
         const couponId = document.getElementById("coupon-id")?.dataset?.couponid
-        let bodyData = { addressId, total, subTotal, discounts, paymentMethod, couponId: couponId || null }
+        const gstAmount = document.getElementById("gst-amount").dataset.gst
+        let bodyData = { addressId, total, subTotal, discounts, paymentMethod, couponId: couponId || null, gstAmount }
 
         if (paymentMethod == "CARD" || paymentMethod == "UPI") {
             // 1. Create order from backend
@@ -708,7 +709,7 @@
                             if (!verifyData.success) {
                                 bodyData.paymentStatus = false
                                 bgColor = "bg-red-500"
-                                fetch(`/user/checkout/place-order`, {
+                                fetch(`/checkout/place-order`, {
                                     method: "POST",
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify(bodyData)
@@ -716,7 +717,7 @@
                                     .then(async function (response) {
                                         let res = await response.json()
                                         if (!response.ok) throw new Error(res.message || "Failed to fetch")
-                                        window.location.href = '/user/order-failed'
+                                        window.location.href = '/order-failed'
                                     })
                                     .catch((error) => {
                                         showSnackbar(error, "bg-red-500")
@@ -725,7 +726,7 @@
                             } else {
 
                                 bodyData.paymentStatus = true
-                                fetch(`/user/checkout/place-order`, {
+                                fetch(`/checkout/place-order`, {
                                     method: "POST",
                                     headers: { 'Content-Type': 'application/json' },
                                     body: JSON.stringify(bodyData)
@@ -733,7 +734,7 @@
                                     .then(async function (response) {
                                         let res = await response.json()
                                         if (!response.ok) throw new Error(res.message || "Failed to fetch")
-                                        window.location.href = '/user/order-success'
+                                        window.location.href = '/order-success'
                                     })
                                     .catch((error) => {
                                         showSnackbar(error, "bg-red-500")
@@ -757,7 +758,7 @@
                         console.error("Payment Failed:", response.error);
 
                         bodyData.paymentStatus = false;
-                        await fetch(`/user/checkout/place-order`, {
+                        await fetch(`/checkout/place-order`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify(bodyData)
@@ -776,7 +777,7 @@
 
 
         } else {
-            fetch(`/user/checkout/place-order`, {
+            fetch(`/checkout/place-order`, {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bodyData)
@@ -784,7 +785,7 @@
                 .then(async function (response) {
                     let res = await response.json()
                     if (!response.ok) throw new Error(res.message || "Failed to fetch")
-                    window.location.href = '/user/order-success'
+                    window.location.href = '/order-success'
                 })
                 .catch((error) => {
                     if (error.message = "Insufficiant balance") {
@@ -802,7 +803,7 @@
                             }
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                window.location.href = "/user/wallet"
+                                window.location.href = "/wallet"
                             }
                         });
                     } else {

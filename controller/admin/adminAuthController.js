@@ -26,8 +26,9 @@ const loginAdmin = async (req, res) => {
         const checkPass = await bcrypt.compare(password, admin.password)
         if (!checkPass) return res.render('admin/login', { message: "Invalid Password", icon: "error" })
         
-        req.session.user = email
-        res.redirect('/admin/dashboard')
+        req.session.admin = email
+        res.redirect('/admin/dashboard');
+        
         
     } catch (error) {
         console.log(error)
@@ -37,7 +38,7 @@ const loginAdmin = async (req, res) => {
 
 
 const logout = (req, res) => {
-    req.session.destroy()
+    req.session.admin = null
     res.redirect('/admin/login')
 }
 

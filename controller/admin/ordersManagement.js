@@ -1,6 +1,10 @@
 const orderModel = require('../../model/ordersModel')
 const paginate = require('../../helper/pagination')
 const productModel = require('../../model/productModel')
+const walletModel = require('../../model/walletModel')
+const refundMailer = require('../../utils/refundMail')
+const userModel = require('../../model/userModel')
+const refundCalculator = require('../../helper/refundOperator')
 
 const loadOrders = (req, res) => {
     res.render('admin/orders', {layout:'admin'})
@@ -39,16 +43,25 @@ const showOrderDetails = async (req, res) => {
 
         const order = await orderModel.findOne({ orderId })
         if (!order) return res.render('admin/orderDetails', { layout: 'admin' })
-        console.log(order)
         let items = []
 
         for (let item of order.orderItems) {
+            console.log("item is this : -------",item)
             const product = await productModel.findOne({ _id: item.itemId });
             if (!product) return res.render("user/404Error");
 
             let indexOfVariant = product.variants.findIndex((v) => v._id.toString() == item.variantId.toString());
+            let itemDetails = {
+                name:product.variants[indexOfVariant].name,
+                status:item.status,
+                offerPrice:product.variants[indexOfVariant].offerPrice,
+                quantity: item.quantity,
+                returnApproved: item.returnApproved,
+                itemId: item.itemId,
+                variantId:item.variantId
+            }
             
-            items.push(product.variants[indexOfVariant].name)
+            items.push(itemDetails)
 
         }
 
@@ -65,7 +78,6 @@ const showOrderDetails = async (req, res) => {
             items,
             status:order.status
         }
-        console.log(orderDetails)
         res.render('admin/orderDetails', {layout:'admin', orderDetails})
     } catch (error) {
         console.log(error)
@@ -97,9 +109,21 @@ const updateStatus = async (req, res) => {
     }
 }
 
+const approveReturn = async (req, res) => {
+    try {
+        const { itemId, variantId, orderId } = req.body
+        refundCalculator(variantId, orderId)
+        res.status(200).json({message:"Return approved"})
+    } catch (error) {
+        console.log(error)
+        res.status(error.status || 500).json({message:error.message || "Internal server error"})
+    }
+}
+
 module.exports = {
     loadOrders,
     showOrders,
     showOrderDetails,
     updateStatus,
+    approveReturn,
 }

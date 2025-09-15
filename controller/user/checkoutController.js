@@ -14,7 +14,7 @@ const loadCheckout = async (req, res) => {
         console.log(user);
         if (!user?.mobile)
             return res.redirect(
-                "/user/account?message='Please Update Mobile to continue checkout'"
+                "/account?message='Please Update Mobile to continue checkout'"
             );
         res.render("user/checkout", { layout: "user" });
     } catch (error) {
@@ -88,17 +88,14 @@ const loadDetails = async (req, res) => {
             checkoutDetails.discounts = (
                 parseInt(checkoutDetails.discounts) * item.quantity
             ).toFixed(2);
-            checkoutDetails.price += variant.price;
+            checkoutDetails.price += (variant.price * item.quantity);
             products.push(variant);
         }
 
         const addresses = await addressModel.find({ userId });
         const user = await userModel.findOne({ _id: userId });
 
-        checkoutDetails.gstAmount = (
-            (parseInt(checkoutDetails.subTotal) / 100) *
-            gst
-        ).toFixed(2);
+        checkoutDetails.gstAmount = ((parseInt(checkoutDetails.subTotal) / 100) * gst).toFixed(2);
         checkoutDetails.items = products.length;
         checkoutDetails.subTotal =
             parseInt(checkoutDetails.subTotal) +
@@ -156,19 +153,23 @@ const placeOrder = async (req, res) => {
             discounts,
             paymentMethod,
             couponId,
+            gstAmount,
         } = req.body;
         const userId = req.session.user._id;
         let payStatus;
         let decStock = paymentStatus;
         let status = "processing";
         let walletPaid = false;
+        let couponDiscount = 0
+
+        console.log(paymentMethod)
 
         if (!addressId)
             return res
                 .status(404)
                 .json({ message: "Please provide an Address" });
 
-        if (paymentMethod == "COD" || paymentMethod == "CARD") {
+        if (paymentMethod == "UPI" || paymentMethod == "CARD") {
             if (paymentStatus) {
                 payStatus = "paid";
             } else {
@@ -191,7 +192,7 @@ const placeOrder = async (req, res) => {
                     .status(401)
                     .json({ message: "Insufficiant balance" });
             }
-        } else {
+        } else if(paymentMethod == "COD") {
             payStatus = "unpaid";
             decStock = true;
         }
@@ -218,9 +219,37 @@ const placeOrder = async (req, res) => {
             const userIndex = coupon.usedBy.findIndex(
                 (user) => user.userId.toString() === userId.toString()
             );
-            coupon.usedBy[userIndex].isOrdered = true;
+            coupon.usedBy[userIndex].isOrdered = true; 
+            couponDiscount = (subTotal - discounts) - total
+            console.log(couponDiscount)
             await coupon.save();
         }
+
+        let totalItems = 0
+
+        const items = await Promise.all(orderItems.items.map(async item => {
+
+            let product = await productModel.findOne({ _id: item.itemId });
+            const variantIndex = product.variants.findIndex(
+                    (v) => v._id.toString() === item.variantId.toString()
+            );
+
+            totalItems += parseInt(item.quantity)
+
+            let discountAmount = (parseFloat(product.variants[variantIndex].price) - parseFloat(product.variants[variantIndex].offerPrice)).toFixed(2)
+
+            console.log(discountAmount)
+                return {itemId: item.itemId,
+                variantId: item.variantId,
+                status: "processing",
+                returnApproved: false,  
+                quantity: item.quantity,
+                price: product.variants[variantIndex].price,
+                offerPrice:product.variants[variantIndex].offerPrice,
+                discount: Number(discountAmount)}
+        }))
+        
+        console.log(items)
 
         const newOrder = new ordersModel({
             userId,
@@ -229,9 +258,12 @@ const placeOrder = async (req, res) => {
             paymentStatus: payStatus,
             subTotal,
             discount: discounts,
+            couponDiscount,
             total,
+            gstAmount,
             status,
-            orderItems: orderItems.items,
+            totalItems,
+            orderItems: items,
             address: {
                 name: address.name,
                 address: address.address,

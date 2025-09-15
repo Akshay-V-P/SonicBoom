@@ -4,7 +4,7 @@
     <!-- Page Header and Add Button -->
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h2 class="text-3xl font-bold text-text-light">Manage Addresses</h2>
-        <a href="/user/manage-address/add"><button class="bg-primary-blue hover:bg-primary-blue-hover text-white font-medium py-2 px-6 rounded-lg transition-colors whitespace-nowrap">
+        <a href="/manage-address/add"><button class="bg-primary-blue hover:bg-primary-blue-hover text-white font-medium py-2 px-6 rounded-lg transition-colors whitespace-nowrap">
             Add new Address
         </button></a>
     </div>
@@ -34,7 +34,7 @@
                 {{/if}}
             </div>
             <div class="flex space-x-4 text-sm font-medium">
-                <a href="/user/manage-address/edit?_id={{this._id}}"><button class="text-text-medium hover:text-primary-blue transition-colors flex items-center gap-2">
+                <a href="/manage-address/edit?_id={{this._id}}"><button class="text-text-medium hover:text-primary-blue transition-colors flex items-center gap-2">
                     <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
                     Edit
                 </button></a>
@@ -65,7 +65,7 @@ document.querySelectorAll('.delete-btn').forEach(button =>{
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch(`/user/manage-address/edit?_id=${userId}`, {
+            fetch(`/manage-address/edit?_id=${userId}`, {
                 method:"DELETE",
             })
                 .then(response => {
@@ -83,7 +83,7 @@ document.querySelectorAll('.delete-btn').forEach(button =>{
                         }
                     }).then(result =>{
                         if(result.isConfirmed){
-                            window.location.href = '/user/manage-address'
+                            window.location.href = '/manage-address'
                         }
                     })
                 })
@@ -96,7 +96,7 @@ document.querySelectorAll('.delete-btn').forEach(button =>{
 document.querySelectorAll('.default-btn').forEach(button =>{
         button.addEventListener('click', (e)=>{
         const userId = e.target.dataset._id
-        fetch(`/user/manage-address/edit?_id=${userId}`, {
+        fetch(`/manage-address/edit?_id=${userId}`, {
                 method:"POST",
             })
                 .then(response => {
@@ -114,7 +114,7 @@ document.querySelectorAll('.default-btn').forEach(button =>{
                         }
                     }).then(result =>{
                         if(result.isConfirmed){
-                            window.location.href = '/user/manage-address'
+                            window.location.href = '/manage-address'
                         }
                     })
                 })

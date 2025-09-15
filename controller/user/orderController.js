@@ -3,6 +3,7 @@ const ordersModel = require("../../model/ordersModel");
 const productModel = require("../../model/productModel");
 const PDFDocument = require("pdfkit");
 const path = require("path");
+const refundCalculator = require("../../helper/refundOperator");
 
 const loadOrders = async (req, res) => {
     try {
@@ -163,9 +164,11 @@ const cancelOrder = async (req, res) => {
             product.variants[indexOfVariant].stock += parseInt(item.quantity);
             await product.save();
         }
-        order.orderItems.forEach((orders) => {
+
+        for (let orders of order.orderItems) {
             orders.status = "cancelled";
-        });
+            await refundCalculator(orders.variantId, orderId);
+        }
         await order.save();
         res.status(200).json({ message: "Order cancelled" });
     } catch (error) {
@@ -221,6 +224,8 @@ const cancelItem = async (req, res) => {
 
         await order.save();
         await product.save();
+
+        await refundCalculator(variantId, orderId);
 
         res.status(200).json({ message: "cancelled" });
     } catch (error) {
@@ -295,7 +300,9 @@ const returnItem = async (req, res) => {
         res.status(200).json({ message: "Return successful" });
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Internal server error" });
+        res.status(error.status || 500).json({
+            message: error.message || "Internal server error",
+        });
     }
 };
 

@@ -15,7 +15,8 @@ const walletSchema = mongoose.Schema({
     },
     amount: {
         type: mongoose.Schema.Types.Double,
-        default:0.00
+        default: 0.00,
+        set: v => Math.round(v * 100) / 100 
     },
     transactions: {
         type: [{

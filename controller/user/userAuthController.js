@@ -32,13 +32,13 @@ const signup = async (req, res) => {
         
         // checking for mobile number exists
         const mobileExists = await userModel.findOne({ mobile })
-        if(mobileExists) return res.render('user/signup',{message:"Phone number already exists", icon:"warning"})
+        if (mobileExists) return res.render('user/signup', { message: "Phone number already exists", icon: "warning" })
         
         req.session.tempUser = {
             name,
             email,
             mobile,
-            password,
+            password
         }
 
         // generating otp
@@ -55,7 +55,7 @@ const signup = async (req, res) => {
         if (result.upsertedCount > 0 || result.modifiedCount > 0) {
             await mailSender(email, otp)
         }
-        res.render('user/otpValidation',{url:"/user/validate_otp", createdAt: Date.now()})
+        res.render('user/otpValidation',{url:"/validate_otp", createdAt: Date.now()})
     } catch (error) {
         console.log(error)
     }
@@ -65,7 +65,7 @@ const validateOtp = async (req, res) => {
     try {
         console.log('validate')
         const { otp } = req.body
-        const { name, email, mobile, password } = req.session.tempUser
+        const { name, email, mobile, password} = req.session.tempUser
         const savedOtp = await otpModel.findOne({ email })
         if (!savedOtp) return res.render('user/otpValidation', { message: "OTP expired, request a new one", icon: "info" })
         if (otp !== savedOtp.otp) return res.render('user/otpValidation', { message: "Invalid OTP", icon: "error" })
@@ -78,7 +78,7 @@ const validateOtp = async (req, res) => {
         })
         await newUser.save()
         
-        const user = await userModel.find({ email })
+        const user = await userModel.findOne({ email })
         const newWallet = new walletModel({
             userId:user._id
         })
@@ -127,10 +127,10 @@ const loginUser = async (req, res) => {
 
         req.session.tempUser = user.email
         const sendOtp = await otpModel.findOne({email})
-        res.render('user/otpValidation', { url: "/user/validate_login", createdAt: sendOtp.createdAt.getTime()})
+        res.render('user/otpValidation', { url: "/validate_login", createdAt: sendOtp.createdAt.getTime()})
     } catch (error) {
         console.log(error)
-        res.render('user/500Error', { url: "/user/login" })
+        res.render('user/500Error', { url: "/login" })
     }
 }
 
@@ -144,7 +144,7 @@ const validateLogin = async (req, res) => {
             return res.render('user/otpValidation', {
                 message: "OTP expired, request a new one",
                 icon: "info",
-                url: "/user/validate_login", 
+                url: "/validate_login", 
                 createdAt: Date.now() - 61000 
             });
         }
@@ -152,14 +152,14 @@ const validateLogin = async (req, res) => {
             return res.render('user/otpValidation', {
                 message: "Invalid OTP",
                 icon: "error",
-                url: "/user/validate_login", 
+                url: "/validate_login", 
                 createdAt: savedOtp.createdAt.getTime() 
             });
         }
         const user = await userModel.findOne({ email })
         
         req.session.user = {_id:user._id, email}
-        res.redirect('/user/landing_page')
+        res.redirect('/landing_page')
     } catch (error) {
         console.log(error)
     }
@@ -243,7 +243,7 @@ const verifyEmail = async (req, res) => {
 
         req.session.resetUser = user
         const sendOtp = await otpModel.findOne({email})
-        res.render('user/otpValidation', { url: "/user/validate_reset", createdAt: sendOtp.createdAt.getTime()})
+        res.render('user/otpValidation', { url: "/validate_reset", createdAt: sendOtp.createdAt.getTime()})
     } catch (error) {
         console.log(error)
         res.render('user/500Error')
@@ -260,7 +260,7 @@ const validateResetEmail = async (req, res) => {
             return res.render('user/otpValidation', {
                 message: "OTP expired, request a new one",
                 icon: "info",
-                url: "/user/validate_reset", 
+                url: "/validate_reset", 
                 createdAt: Date.now() - 61000 
             });
         }
@@ -268,7 +268,7 @@ const validateResetEmail = async (req, res) => {
             return res.render('user/otpValidation', {
                 message: "Invalid OTP",
                 icon: "error",
-                url: "/user/validate_reset", 
+                url: "/validate_reset", 
                 createdAt: savedOtp.createdAt.getTime() 
             });
         }
@@ -303,7 +303,7 @@ const logout = (req, res) => {
             if (err) {
                 return next(err);
             }
-            res.redirect('/user/login');
+            res.redirect('/login');
         });
     });
 }

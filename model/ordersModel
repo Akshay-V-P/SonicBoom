@@ -1,3 +1,5 @@
+
+
 const mongoose = require('mongoose')
 const { v4: uuidv4 } = require('uuid')
 
@@ -46,9 +48,21 @@ const orderSchema = mongoose.Schema({
         type: Number,
         required:true
     },
+    couponDiscount: {
+        type: Number,
+        default:0
+    },
+    gstAmount: {
+        type: Number,
+        required:true
+    },
     deliveryCharge: {
         type: String,
         default:"Free",
+        required:true
+    },
+    totalItems: {
+        type: Number,
         required:true
     },
     total: {
@@ -59,8 +73,12 @@ const orderSchema = mongoose.Schema({
         type: [{
             itemId: { type: mongoose.Schema.Types.ObjectId, ref: 'products', required: true },
             variantId: { type: mongoose.Schema.Types.ObjectId, required: true },
-            status:{type:String, enum:['processing','shipped', 'out-for-delivery', 'delivered', 'cancelled', 'returned', 'payment failed'], default:"processing", required:true},
-            quantity:{type:Number, required:true}
+            status: { type: String, enum: ['processing', 'shipped', 'out-for-delivery', 'delivered', 'cancelled', 'returned', 'payment failed'], default: "processing", required: true },
+            returnApproved:{type:Boolean, default:false, required:true},
+            quantity: { type: Number, required: true },
+            price: { type: Number, required: true },
+            offerPrice: { type: Number, required: true },
+            discount:{type:Number, required:true}
         }]
     },
     reason: {

@@ -8,9 +8,9 @@ const showPage = async (req, res) => {
     try {
         const { message } = req.query
         const _id = req.session.user._id
-        if(!_id) return res.redirect('/user/login')
+        if(!_id) return res.redirect('/login')
         const user = await userModel.findOne({ _id })
-        if(!user) return res.redirect('/user/login')
+        if(!user) return res.redirect('/login')
         res.render('user/account', {layout:'userAccount', user, message})
     } catch (error) {
         console.log(error)
@@ -33,7 +33,7 @@ const showEditPage = async (req, res) => {
     try {
         const { id } = req.params
         const user = await userModel.findOne({ _id: id, isBlocked:false })
-        if(!user) return res.redirect('/user/account')
+        if(!user) return res.redirect('/account')
         res.render('user/editAccount', {layout:'userAccount', user})
     } catch (error) {
         console.log(error)

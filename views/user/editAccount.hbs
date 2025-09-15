@@ -27,7 +27,7 @@
     <!-- Account Details Card -->
     <section class="bg-card-bg border border-border-color rounded-xl p-6 md:p-8">
         <div class="breadcrumb">
-            <a href="/user/account">
+            <a href="/account">
                 <h2 class="text-2xl font-bold mb-6">Account</h2>
             </a>
             <span class="material-symbols-outlined icon">
@@ -154,7 +154,7 @@
             }
         }).then((result) => {
             if (result.isConfirmed) {
-                window.location.href = '/user/forgot_password'
+                window.location.href = '/forgot_password'
             }
 
         });
@@ -214,7 +214,7 @@
             const id = document.getElementById('userId').value.trim()
             formData.append('profile-image', blob, 'profile-photo.png');
 
-            fetch(`/user/account/profilephoto?_id=${id}`, {
+            fetch(`/account/profilephoto?_id=${id}`, {
                 method: 'POST',
                 body: formData,
             })
@@ -283,7 +283,7 @@
             }
 
             // Validate the password on the server-side
-            fetch('/user/verify-password', {
+            fetch('/verify-password', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: userId, password: passwordInput.value }),
@@ -297,7 +297,7 @@
                         passwordInput.value = ''; // Clear the password field
 
                         // Send the OTP
-                        fetch('/user/send-otp', {
+                        fetch('/send-otp', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ newEmail: updatedEmail, userId: userId }),
@@ -378,7 +378,7 @@
         const updatedEmail = newEmailInput.value;
 
         if (otpCode.length === 6) {
-            fetch('/user/verify-otp', {
+            fetch('/verify-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ otp: otpCode, userId: userId, newEmail: updatedEmail }),
@@ -459,7 +459,7 @@
         if (email) {
             updateValue.email = email
         }
-        fetch(`/user/account/update?_id=${userId}`, {
+        fetch(`/account/update?_id=${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -145,13 +145,13 @@
 
 
         function fetchPage(){
-            fetch("/user/cart/details")
+            fetch("/cart/details")
                 .then(response =>{
                     if(!response.ok) throw new Error("Cant fetch cart details")
                     return response.json()
                 })
                 .then(data => {
-                    console.log(data.products)
+                    console.log(data)
                     const productContainer = document.getElementById("products-container")
                     const checkoutDetails = document.getElementById("checkout-container")
                     let productHTML = ''
@@ -312,7 +312,7 @@
                                     <span class="text-lg font-bold">Total Price</span>
                                     <span class="text-2xl font-bold">₹${details.total}</span>
                                 </div>
-                                <a href="/user/checkout" class="mt-6"><button class="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl transition-colors">
+                                <a href="/checkout" class="mt-6"><button class="mt-6 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl transition-colors">
                                     Check out
                                 </button></a>
                             </div>
@@ -334,7 +334,7 @@
         function removeFromCart(button){
             let productId = button.dataset.productid
             let variantId = button.dataset.variantid 
-            fetch(`/user/cart/remove?_id=${productId}&variantId=${variantId}`, {method:"POST"})
+            fetch(`/cart/remove?_id=${productId}&variantId=${variantId}`, {method:"POST"})
                 .then(response =>{
                     if(response.status == 401) return response.json()
                     if(!response.ok) throw new Error("failed to fetch data")
@@ -375,7 +375,7 @@
         function incrementQuantity(button) {
             let productId = button.dataset.productid
             let variantId = button.dataset.variantid 
-            fetch(`/user/cart/add?_id=${productId}&variantId=${variantId}`, {method:"POST"})
+            fetch(`/cart/add?_id=${productId}&variantId=${variantId}`, {method:"POST"})
                 .then(response =>{
                     if(response.status == 401) return response.json()
                     if(!response.ok) throw new Error("failed to fetch data")
@@ -404,7 +404,7 @@
         function decrementQuantity(button) {
             let productId = button.dataset.productid
             let variantId = button.dataset.variantid 
-            fetch(`/user/cart/decrement?_id=${productId}&variantId=${variantId}`, {method:"POST"})
+            fetch(`/cart/decrement?_id=${productId}&variantId=${variantId}`, {method:"POST"})
                 .then(response =>{
                     if(response.status == 401) return response.json()
                     if(!response.ok) throw new Error("failed to fetch data")

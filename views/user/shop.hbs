@@ -206,7 +206,7 @@
         let sortCheckBox
 
         document.addEventListener('DOMContentLoaded', ()=>{
-            const url = `/user/shop/load?sort=createdAt:-1&currentPage=1&limit=9`
+            const url = `/shop/load?sort=createdAt:-1&currentPage=1&limit=9`
             fetchProducts(url)
 
                 
@@ -214,7 +214,7 @@
 
         document.getElementById('apply-btn').addEventListener('click', ()=>{
             updateCheckBoxes()
-            let url = `/user/shop/load?`
+            let url = `/shop/load?`
             let categorySelected = []
             categoryCheckBoxes.forEach(check => categorySelected.push(check.dataset.categoryid))
             let min = priceCheckBox?.dataset.min || null
@@ -250,12 +250,12 @@
                 return
             }
 
-            fetchProducts(`/user/shop/load?search=${searchValue}&currentPage=1&limit=9`)
+            fetchProducts(`/shop/load?search=${searchValue}&currentPage=1&limit=9`)
         })
 
         document.getElementById('clear-btn').addEventListener('click', ()=>{
             document.getElementById('search-input').value = ""
-            const url = `/user/shop/load?sort=createdAt:-1&currentPage=1&limit=9`
+            const url = `/shop/load?sort=createdAt:-1&currentPage=1&limit=9`
             fetchProducts(url)
         })
 
@@ -274,7 +274,7 @@ clearBtn.addEventListener('click', () => {
         lastCheckedPerGroup[group] = null;
     }
 
-    const defaultUrl = `/user/shop/load?sort=createdAt:-1&currentPage=1&limit=9`;
+    const defaultUrl = `/shop/load?sort=createdAt:-1&currentPage=1&limit=9`;
     fetchProducts(defaultUrl);
 
     if (!filterSidebar.classList.contains('hidden')) {
@@ -311,7 +311,7 @@ function fetchProducts(url){
 
                     if(product.variants[0].stock < 1){
                         html += `
-                            <a href="/user/product_details?productId=${product._id}">
+                            <a href="/product_details?productId=${product._id}">
                                 <div class="game-card relative p-3 group">
                                     <div class="aspect-[3/4] rounded-lg overflow-hidden relative">
                                     <div class="absolute top-12 left-[-40px] bg-red-600 text-white text-xs font-bold px-14 py-1 rotate-[-45deg] shadow-lg">
@@ -343,7 +343,7 @@ function fetchProducts(url){
                     }else{
 
                         html += `
-                        <a href="/user/product_details?productId=${product._id}">
+                        <a href="/product_details?productId=${product._id}">
                             <div class="game-card relative p-3 group">
                                 <div class="aspect-[3/4] rounded-lg overflow-hidden relative">
                                     <img src="${product.variants[0].thumbnail}" alt="${product.name}" class="w-full h-full object-cover">
@@ -388,7 +388,7 @@ function fetchProducts(url){
                         
                         const productId = button.dataset.productId;
                         const variantId = button.dataset.variantId;
-                        fetch(`/user/cart/add?_id=${encodeURIComponent(productId)}&variantId=${encodeURIComponent(variantId)}`,{method:"POST"})
+                        fetch(`/cart/add?_id=${encodeURIComponent(productId)}&variantId=${encodeURIComponent(variantId)}`,{method:"POST"})
                             .then(response =>{
                                 if(!response.ok) throw new Error("Product cant add to cart")
                                 console.log("fetched to cart")
@@ -427,7 +427,7 @@ function fetchProducts(url){
                         
                         const productId = button.dataset.productId;
                         const variantId = button.dataset.variantId
-                        fetch(`/user/api/wishlist/add?_id=${productId}&variantId=${variantId}`, {method:"POST"})
+                        fetch(`/api/wishlist/add?_id=${productId}&variantId=${variantId}`, {method:"POST"})
                             .then(async response =>{
                                 const res = await response.json()
                                 if(!response.ok) throw new Error("Can't add to wishlist")

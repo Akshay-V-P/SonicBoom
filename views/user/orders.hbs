@@ -72,19 +72,14 @@
                 orderContainer.innerHTML = `<p class="text-text-medium text-center text-lg">Loading your orders...</p>`;
 
                 try {
-                    // --- IMPORTANT BACKEND NOTE ---
-                    // Your backend API at '/user/orders/details' needs to be updated.
-                    // It should now accept 'page' and 'limit' query parameters.
-                    // Example: /user/orders/details?page=1&limit=5
-                    const response = await fetch(`/user/orders/details?page=${page}&limit=${ordersPerPage}&search=${search||null}`);
+                    
+                    const response = await fetch(`/orders/details?page=${page}&limit=${ordersPerPage}&search=${search||null}`);
 
                     if (!response.ok) {
                         throw new Error(`HTTP error! Status: ${response.status}`);
                     }
 
-                    // --- IMPORTANT BACKEND NOTE ---
-                    // Your API response should be an object containing the orders list and the total number of orders.
-                    // Example: { "orders": [...], "totalOrders": 50 }
+                    
                     const data = await response.json();
                     console.log(data)
 
@@ -175,6 +170,7 @@
                                     <p class="text-text-medium flex justify-between">Sub Total: <span>₹${product.subTotal}</span></p>
                                     <p class="text-text-medium flex justify-between">Delivery Charge: <span>₹${product.deliveryCharge}</span></p>
                                     <p class="text-red-500 flex justify-between">Discount: <span>-₹${product.discount}</span></p>
+                                    <p class="text-red-500 flex justify-between">Coupon Discount: <span>-₹${product.couponDiscount}</span></p>
                                     <p class="text-text-light text-base font-semibold flex justify-between mt-2">Total: <span>₹${product.total}</span></p>
                                 </div>
                             </div>
@@ -199,7 +195,7 @@
                                 <div class="border-t border-border-color mt-4 pt-4 space-y-2 text-sm">
                                     <p class="text-text-medium flex justify-between">Sub Total: <span>₹${product.subTotal}</span></p>
                                     <p class="text-text-medium flex justify-between">Delivery Charge: <span>₹${product.deliveryCharge}</span></p>
-                                    <p class="text-red-500 flex justify-between">Discount: <span>-₹${product.discount}</span></p>
+                                    <p class="text-red-500 flex justify-between">Discount: <span>-₹${product.discount + product.couponDiscount}</span></p>
                                     <p class="text-text-light text-base font-semibold flex justify-between mt-2">Total: <span>₹${product.total}</span></p>
                                 </div>
                             </div>
@@ -210,7 +206,7 @@
                 document.querySelectorAll('#order-data').forEach(element =>{
                     element.addEventListener('click', () => {
                         let orderId = element.dataset.orderid
-                        window.location.href = `/user/orders/status?orderId=${orderId}`
+                        window.location.href = `/orders/status?orderId=${orderId}`
                     })
                 })
                 

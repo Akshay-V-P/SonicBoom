@@ -52,14 +52,16 @@ const addToWishlist = async (req, res) => {
             return res.status(400).json({ success: false, message: "Please select a variant." });
         }
 
-        const cart = await cartModel.findOne({userId})
+        const inWishlist = await wishlistModel.findOne({userId})
 
-        const itemExistsInCart = cart.items.some(item =>
-            item.itemId.toString() === _id.toString() &&
-            item.variantId.toString() === variantId.toString()
-        );
+        if (inWishlist) {
+            const itemExistsInWishlist = inWishlist.items.some(item =>
+                item.itemId.toString() === _id.toString() &&
+                item.variantId.toString() === variantId.toString()
+            );
 
-        if(itemExistsInCart) return res.status(200).json({message:"Item already exist in the cart"})
+            if(itemExistsInWishlist) return res.status(200).json({message:"Item already exist in the cart"})
+        }
 
         // Find or create the user's wishlist
         let wishlist = await wishlistModel.findOne({ userId });

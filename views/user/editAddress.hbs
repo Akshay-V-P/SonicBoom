@@ -258,7 +258,7 @@
                     
                     console.log('Form is valid. Data to be submitted:', formData);
 
-                    fetch('/user/manage-address/edit', {
+                    fetch('/manage-address/edit', {
                          method: 'PATCH',
                          headers: { 'Content-Type': 'application/json' },
                          body: JSON.stringify(formData)
@@ -277,7 +277,7 @@
                             }
                         }).then((result)=>{
                             if(result.isConfirmed){
-                                window.location.href = '/user/manage-address'
+                                window.location.href = '/manage-address'
                             }
                         })
                     })

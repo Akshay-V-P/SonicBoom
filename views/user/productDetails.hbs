@@ -189,7 +189,7 @@
                     {{#if relatedProducts}}<h2 class="text-2xl font-bold text-white mb-6">Related Products</h2>{{/if}}
                     <div class="flex space-x-4 overflow-x-auto pb-4 -mx-4 px-4">
                         {{#each relatedProducts}}
-                        <a href="/user/product_details?productId={{this._id}}">
+                        <a href="/product_details?productId={{this._id}}">
                         <div class="bg-[#1E1E1E] border border-[#404044] rounded-lg p-3 flex-shrink-0 w-40">
                             <img src="{{this.thumbnail}}" class="rounded-md w-full aspect-[3/4] object-cover" alt="GTA Premium Edition">
                             <h4 class="font-semibold mt-3 truncate text-sm">{{this.name}}</h4>
@@ -263,7 +263,7 @@
             addToCartBtn.classList.add('bg-green-checkout', 'packed-animation');
             const variantId = document.getElementById('variantId').value.trim()
 
-            fetch(`/user/cart/add?_id=${productId}&variantId=${variantId}`,{method:"POST"})
+            fetch(`/cart/add?_id=${productId}&variantId=${variantId}`,{method:"POST"})
                 .then(response =>{
                     if(!response.ok) throw new Error("Product cant add to cart")
                     console.log("fetched to cart")
@@ -283,19 +283,21 @@
        function addToWishlist(button){
         let addToWishlistBtn = document.getElementById("add-to-wishlist-btn")
         const productId = document.getElementById("productId").value.trim()
+        const originalText = addToWishlistBtn.textContent;
         addToWishlistBtn.textContent = 'Adding...';
         addToWishlistBtn.classList.add('bg-green-checkout', 'packed-animation');
         const variantId = document.getElementById('variantId').value.trim()
 
-        fetch(`/user/wishlist/add?_id=${productId}&variantId=${variantId}`,{method:"POST"})
-                .then(response =>{
-                    if(!response.ok) throw new Error("Product cant add to wishlist")
+        fetch(`/api/wishlist/add?_id=${productId}&variantId=${variantId}`,{method:"POST"})
+                .then(async response =>{
+                    const res = await response.json()
+                    if(!response.ok) throw new Error(res.message || "Product cant add to wishlist")
                     console.log("fetched to wishlist")
                     setTimeout(() => {
                         addToWishlistBtn.textContent = originalText;
                         addToWishlistBtn.classList.remove('bg-green-checkout', 'packed-animation');
                     }, 2000); 
-                    return response.json()
+                    return res
                 })
                 .then(data =>{
                     console.log(data)
@@ -310,7 +312,7 @@
 
     function fetchPurchaseInfo(index){
         let productId = document.getElementById("productId").value.trim()
-        fetch(`/user/product-info?index=${index}&productId=${productId}`)
+        fetch(`/product-info?index=${index}&productId=${productId}`)
             .then(response =>{
                 if(!response.ok) throw new Error("Failed to fetch product info")
                 console.log("Fetched correctly")
@@ -345,7 +347,7 @@
                         </div>
                     </div>
                      <div class="text-sm text-gray-400 mt-6 space-y-3">
-                        <div class="flex justify-between"><span>Developer</span> <span class="text-white font-semibold">${data.developer}</span></div>
+                        
                     </div>
                 </div>
                 `
