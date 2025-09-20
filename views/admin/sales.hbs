@@ -6,6 +6,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
+            padding: 0 10px;
         }
 
         .account-btn {
@@ -16,6 +17,11 @@
             border-radius: 6px;
             font-size: 14px;
             cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .account-btn:hover {
+            background-color: #555;
         }
 
         .page-title {
@@ -27,7 +33,7 @@
         .sales-report-section {
             background-color: #1a1a1a;
             padding: 30px;
-            border-radius: 8px;
+            border-radius: 12px;
             border: 1px solid #333;
             max-width: 1200px;
             margin: 0 auto;
@@ -50,26 +56,96 @@
             border-radius: 6px;
             font-size: 14px;
             cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .export-btn:hover {
+            background-color: #357bd8;
         }
 
         .report-filters {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
+            align-items: center;
+            justify-content: end;
+            width: 90%;
         }
 
         .filter-select {
             padding: 8px 12px;
-            border-radius: 4px;
+            border-radius: 8px;
             border: 1px solid #333;
             background-color: #2a2a2a;
-            color: #fff;
+            color: #e0e0e0;
             font-size: 14px;
             cursor: pointer;
+            appearance: none; /* Removes default dropdown arrow */
+            background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 16px;
+            transition: border-color 0.3s;
         }
 
+        .filter-select:hover {
+            border-color: #4a90e2;
+        }
+        
+        .custom-date-fields {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            display: none; /* Initially hidden */
+        }
+        
+        /* Modern styling for date inputs */
+        .custom-date-fields input[type="date"] {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: #e0e0e0;
+            font-size: 14px;
+            cursor: pointer;
+            /* Added transition for smooth effects */
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .custom-date-fields input[type="date"]:hover {
+            border-color: #4a90e2;
+            /* Added box-shadow for a modern glowing effect */
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.5);
+        }
+
+        .custom-date-fields input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            transition: filter 0.3s;
+        }
+
+        .custom-date-fields input[type="date"]:hover::-webkit-calendar-picker-indicator {
+            filter: invert(0.8); /* Slightly less inversion on hover for a subtle change */
+        }
+
+        .apply-btn {
+            background-color: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .apply-btn:hover {
+            background-color: #357bd8;
+        }
+        
         .report-table-container {
-            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #333;
         }
 
         .report-table {
@@ -81,15 +157,23 @@
             padding: 15px 12px;
             text-align: left;
             font-size: 12px;
-            color: #666;
+            color: #999;
             text-transform: uppercase;
             font-weight: 500;
             border-bottom: 1px solid #333;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
         }
         
         .table-row {
             border-bottom: 1px solid #333;
+            transition: background-color 0.3s;
+        }
+        
+        .table-row:hover {
+            background-color: #2a2a2a;
         }
         
         .table-row:last-child {
@@ -101,20 +185,22 @@
             font-size: 14px;
             vertical-align: middle;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
         }
         
         .pagination {
             padding-top: 20px;
-            border-top: 1px solid #333;
             display: flex;
             justify-content: flex-end;
             align-items: center;
             gap: 10px;
-            margin-top: 20px;
+            margin-top: 8px;
         }
 
         .pagination-info {
-            color: #666;
+            color: #999;
             font-size: 14px;
         }
 
@@ -136,6 +222,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: background-color 0.3s;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            background-color: #555;
         }
 
         .pagination-btn:disabled {
@@ -160,6 +251,7 @@
             
             .report-filters {
                 justify-content: space-between;
+                width: 100%;
             }
 
             .filter-select {
@@ -212,127 +304,282 @@
       
     </style>
         <input type="text" id="pageName" value="sales" hidden>
-            <div class="header">
-                <h1 class="page-title">Sales Report</h1>
-                <button class="account-btn">Account</button>
-            </div>
+        <div class="header">
+            <h1 class="page-title">Sales Report</h1>
+            <button class="account-btn">Account</button>
+        </div>
 
-            <div class="sales-report-section">
-                <div class="report-actions">
-                    <button class="export-btn">Export</button>
-                    <div class="report-filters">
-                        <select class="filter-select">
-                            <option>Sales</option>
-                        </select>
-                        <select class="filter-select">
-                            <option>Year</option>
-                        </select>
-                        <select class="filter-select">
-                            <option>Month</option>
-                        </select>
-                    </div>
+        <div class="sales-report-section">
+            <div class="report-actions">
+                <button class="export-btn">Export</button>
+                <div class="report-filters">
+                    <select id="dateRangeSelect" class="filter-select">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">This Week</option>
+                        <option value="thismonthly">This Monthly</option>
+                        <option value="yearly">Yearly</option>
+                        <option value="custom">Custom Range</option>
+                    </select>
                 </div>
-
-                <div class="report-table-container">
-                    <table class="report-table">
-                        <thead class="table-header">
-                            <tr>
-                                <th>Buyer</th>
-                                <th>Product Name</th>
-                                <th>Product Id</th>
-                                <th>Qty</th>
-                                <th>Price</th>
-                                <th>GST</th>
-                                <th>Category</th>
-                                <th>Unit/Type</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="table-row">
-                                <td data-label="Buyer">Megan</td>
-                                <td data-label="Product Name">GTA V</td>
-                                <td data-label="Product Id">#23712323e</td>
-                                <td data-label="Qty">1</td>
-                                <td data-label="Price">9000</td>
-                                <td data-label="GST">18%</td>
-                                <td data-label="Category">Action</td>
-                                <td data-label="Unit/Type">N/A</td>
-                                <td data-label="Total">9999</td>
-                            </tr>
-                            <tr class="table-row">
-                                <td data-label="Buyer">Merin</td>
-                                <td data-label="Product Name">Spiderman</td>
-                                <td data-label="Product Id">#23712323e</td>
-                                <td data-label="Qty">1</td>
-                                <td data-label="Price">10000</td>
-                                <td data-label="GST">18%</td>
-                                <td data-label="Category">Adventure</td>
-                                <td data-label="Unit/Type">N/A</td>
-                                <td data-label="Total">115000</td>
-                            </tr>
-                            <tr class="table-row">
-                                <td data-label="Buyer">David</td>
-                                <td data-label="Product Name">GTA V</td>
-                                <td data-label="Product Id">#23712323e</td>
-                                <td data-label="Qty">1</td>
-                                <td data-label="Price">9000</td>
-                                <td data-label="GST">18%</td>
-                                <td data-label="Category">Action</td>
-                                <td data-label="Unit/Type">N/A</td>
-                                <td data-label="Total">9999</td>
-                            </tr>
-                            <tr class="table-row">
-                                <td data-label="Buyer">Shijas</td>
-                                <td data-label="Product Name">Spiderman</td>
-                                <td data-label="Product Id">#23712323e</td>
-                                <td data-label="Qty">1</td>
-                                <td data-label="Price">100000</td>
-                                <td data-label="GST">18%</td>
-                                <td data-label="Category">Adventure</td>
-                                <td data-label="Unit/Type">N/A</td>
-                                <td data-label="Total">115000</td>
-                            </tr>
-                            <tr class="table-row">
-                                <td data-label="Buyer">Merin</td>
-                                <td data-label="Product Name">GTA V</td>
-                                <td data-label="Product Id">#23712323e</td>
-                                <td data-label="Qty">1</td>
-                                <td data-label="Price">9000</td>
-                                <td data-label="GST">18%</td>
-                                <td data-label="Category">Action</td>
-                                <td data-label="Unit/Type">N/A</td>
-                                <td data-label="Total">9999</td>
-                            </tr>
-                            <tr class="table-row">
-                                <td data-label="Buyer">David</td>
-                                <td data-label="Product Name">Spiderman</td>
-                                <td data-label="Product Id">#23712323e</td>
-                                <td data-label="Qty">1</td>
-                                <td data-label="Price">100000</td>
-                                <td data-label="GST">18%</td>
-                                <td data-label="Category">Adventure</td>
-                                <td data-label="Unit/Type">N/A</td>
-                                <td data-label="Total">115000</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="pagination">
-                    <div class="pagination-info">
-                        1 of 10 Pages
-                    </div>
-                    <div class="pagination-controls">
-                        <button class="pagination-btn" disabled>
-                            &lt;
-                        </button>
-                        <button class="pagination-btn active">
-                            1
-                        </button>
-                        <button class="pagination-btn">
-                            &gt;
-                        </button>
-                    </div>
+                <div id="customDateFields" class="custom-date-fields">
+                    <input type="date" id="startDate">
+                    <span>to</span>
+                    <input type="date" id="endDate">
+                    <button id="applyCustomFilterBtn" class="apply-btn">Apply</button>
                 </div>
             </div>
+            <p style="font-weight: 600; font-size:larger; margin-top:8px;">Total Sale : <span id="total-sale" style="color: #a9ceff; font-size:28px">₹0.00</span></p>
+            <p style="font-weight: 600; font-size:larger; margin-top:8px; margin-bottom:16px">Unpaid Amount : <span id="unpaid-amount" style="color: #a9ceff;">₹0.00</span></p>
+            <div class="report-table-container">
+                <table class="report-table" id="salesTable">
+                    <thead class="table-header">
+                        <tr>
+                            <th>Buyer</th>
+                            <th>Product Name</th>
+                            <th>Product Id</th>
+                            <th>Order Id</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                            <th>GST(18%)</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be populated here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination pagination-container">
+                <div class="pagination-controls">
+                    <button class="pagination-btn" id="prevPageBtn" disabled>
+                        &lt;
+                    </button>
+                    <button class="pagination-btn active" id="currentPageBtn">
+                        1
+                    </button>
+                    <button class="pagination-btn" id="nextPageBtn">
+                        &gt;
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const dateRangeSelect = document.getElementById('dateRangeSelect');
+            const customDateFields = document.getElementById('customDateFields');
+            const salesTableBody = document.querySelector('#salesTable tbody');
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').setAttribute('max', today);
+            document.getElementById('endDate').setAttribute('max', today);
+            
+            // Function to handle filter change
+            function handleFilterChange() {
+
+                const selectedValue = dateRangeSelect.value;
+                let startDate 
+                let endDate
+
+                if(selectedValue === 'daily'){
+
+                    startDate = new Date()
+                    startDate.setHours(0,0,0,0)
+                    console.log(startDate)
+                    startDate = startDate.toISOString()
+                    console.log(startDate)
+                    endDate = "null"
+
+                } else if(selectedValue === 'weekly'){
+
+                    endDate = new Date().toISOString()
+                    startDate = getStartOfWeek(endDate)
+
+                } else if(selectedValue === 'thismonthly'){
+
+                    endDate = new Date()
+                    startDate = new Date(endDate.getFullYear(), endDate.getMonth(), 1).toISOString()
+                    endDate = endDate.toISOString()
+
+                } else if(selectedValue === 'yearly'){
+
+                    endDate = new Date()
+                    startDate = new Date(endDate.getFullYear(), 0, 1).toISOString()
+                    endDate = endDate.toISOString()
+
+                }
+
+                if(selectedValue === 'custom'){
+
+                    customDateFields.style.display = 'flex';
+
+                }else {
+
+                    customDateFields.style.display = 'none';
+
+                }
+
+                
+                // For demonstration, we'll just re-render the dummy data
+                if(selectedValue !== "custom"){
+
+                    renderTable(`/admin/api/sales-report?startDate=${startDate}&endDate=${endDate}&currentPage=1&limit=10`);
+
+                }
+            }
+
+            // Initial render
+            handleFilterChange();
+
+            // Event listener for the dropdown change
+            dateRangeSelect.addEventListener('change', handleFilterChange);
+            
+            // Event listener for the custom date apply button (for demonstration)
+            document.getElementById('applyCustomFilterBtn').addEventListener('click', () => {
+                console.log("working")
+                let startDate = new Date(document.getElementById('startDate').value);
+                let endDate = new Date(document.getElementById('endDate').value);
+                startDate = startDate.toISOString()
+                endDate = endDate.toISOString()
+
+                if (startDate && endDate) {
+                    renderTable(`/admin/api/sales-report?startDate=${startDate}&endDate=${endDate}&currentPage=1&limit=10`)
+                } 
+            });
+
+
+
+            function getStartOfWeek(date) {
+                const d = new Date(date);
+                const day = d.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+
+                // shift so that Monday is start of week
+                const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+
+                return new Date(d.setDate(diff)).toISOString();
+            }
+            
+        });
+
+
+        function renderTable(url) {
+
+            const dateRangeSelect = document.getElementById('dateRangeSelect');
+            const customDateFields = document.getElementById('customDateFields');
+            const salesTableBody = document.querySelector('#salesTable tbody');
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('startDate').setAttribute('max', today);
+            document.getElementById('endDate').setAttribute('max', today);
+
+                const fontColor = {
+
+                    processing: "orange",
+                    shipped: "yellow",
+                    "out-for-delivery": "chartreuse",
+                    delivered: "green",
+                    returned: "gray",
+                    cancelled: "red"
+
+                };
+
+                let totalSales = 0
+                let pendingSale = 0
+                let totalDiscount = 0 
+
+                fetch(url)
+                .then(async response =>{
+
+                    const res = await response.json()
+                    if(!response.ok) throw new Error(res.message || "Check your Internet")
+                    return res
+
+                })
+                .then(data =>{
+
+                    console.log(data.report)
+
+                    salesTableBody.innerHTML = ""
+                    if(data.report.length == 0){
+
+                        const row = document.createElement('tr');
+                        row.className = 'table-row';
+                        row.innerHTML = `<td colspan="9" data-label="NoOrder" style="text-align:center;color:#999;">No Orders found!</td>`
+                        salesTableBody.appendChild(row);
+
+                    }
+
+                    totalSales = data.totalSales.amount 
+                    pendingSale = data.unpaidOrders.amount
+                    totalDiscount = data.discountAmount
+
+                    data.report.forEach(sale => {
+
+                        let couponDiscount = sale.couponDiscount ? sale.couponDiscount/ sale.totalItems : 0
+                        let gstAmount = sale.gstAmount/sale.totalItems
+
+
+                        const row = document.createElement('tr');
+                        row.className = 'table-row';
+                        row.innerHTML = `
+                            <td data-label="Buyer">${sale.address.name}</td>
+                            <td data-label="Product Name">${sale.orderItems.productName}</td>
+                            <td data-label="Product Id">${sale.orderItems.productId}</td>
+                            <td data-label="Order Id">${sale.orderId}</td>
+                            <td data-label="Qty">${sale.orderItems.quantity}</td>
+                            <td data-label="Price">${sale.orderItems.offerPrice}</td>
+                            <td data-label="GST">${gstAmount.toFixed(2)}</td>
+                            <td data-label="Category">${sale.category[0].name}</td>
+                            <td data-label="Status" style="color:${fontColor[sale.status]}">${sale.orderItems.status}</td>
+                            <td data-label="Total">${((sale.orderItems.offerPrice + gstAmount) - couponDiscount) * sale.orderItems.quantity}</td>
+                        `;
+                        salesTableBody.appendChild(row);
+
+                    });
+
+                    document.getElementById("total-sale").textContent = `₹${totalSales.toFixed(2)}`
+                    document.getElementById("unpaid-amount").textContent = `₹${pendingSale.toFixed(2)}`
+
+                    localStorage.setItem('salesCurrentPage', data.currentPage)
+
+                    const pagination = document.querySelector('.pagination-container')
+                    // setting url for next Page
+                    let tempUrl = new URL(url, window.location.origin);
+                    let currentPage = parseInt(tempUrl.searchParams.get("currentPage"), 10);
+                    tempUrl.searchParams.set("currentPage", currentPage+1);
+
+                    let nextUrl = tempUrl.pathname + '?' + tempUrl.searchParams.toString();
+                    console.log(nextUrl)
+                    
+                    // setting url for previous page
+                    tempUrl = new URL(url, window.location.origin);
+                    currentPage = parseInt(tempUrl.searchParams.get("currentPage"), 10);
+                    tempUrl.searchParams.set("currentPage", currentPage-1);
+
+                    let prevUrl = tempUrl.pathname + '?' + tempUrl.searchParams.toString();
+
+                    
+                    pagination.innerHTML = `
+
+                        <div class="pagination-controls">
+                            <button onclick="renderTable('${prevUrl}')" class="pagination-btn" id="prevPageBtn" style="${data.currentPage>1? "" : "display:none;"}">&lt;</button>
+                            <button class="pagination-btn" active">
+                                ${data.currentPage}
+                            </button>
+                            <button onclick="renderTable('${nextUrl}')" class="pagination-btn" id="nextPageBtn" style="${data.currentPage<data.totalPages? "":"display:none;"}">&gt;</button>
+                        </div>
+
+                    `
+                })
+                
+                
+            }
+
+    </script>

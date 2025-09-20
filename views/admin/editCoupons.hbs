@@ -1,0 +1,272 @@
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<div class="coupon-form-container bg-black bg-opacity-50 rounded-lg shadow-2xl p-8 relative">
+
+    <h2 class="text-3xl font-bold mb-8 text-center">Edit Coupon</h2>
+    {{#if coupon}}
+
+    <input type="text" value="{{coupon._id}}" id="couponId" hidden>
+
+    <div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Coupon Code -->
+            <div>
+                <label for="couponCode" class="block text-sm font-medium mb-1">Coupon Code</label>
+                <input type="text" id="couponCode" name="couponCode" value="{{coupon.code}}" placeholder="e.g., BLACKFRIDAY20"
+                    class="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-zinc-800">
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label for="description" class="block text-sm font-medium mb-1">Description</label>
+                <input type="text" id="description" name="description" value="{{coupon.description}}" placeholder="e.g., New User"
+                    class="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-zinc-800">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Discount -->
+            <div>
+                <label for="discount" class="block text-sm font-medium mb-1">Discount</label>
+                <input type="number" id="discount" name="discount" value="{{coupon.discount}}" placeholder="e.g., 20"
+                    class="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-zinc-800">
+            </div>
+
+            <!-- Discount Type -->
+            <div>
+                <label for="discountType" class="block text-sm font-medium mb-1">Discount Type</label>
+                <select id="discountType" name="discountType"
+                    class="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-zinc-800">
+                    <option value="percentage" {{#if (eq coupon.discountType "percentage")}}selected{{/if}}>Percentage</option>
+                    <option value="amount" {{#if (eq coupon.discountType "amount")}}selected{{/if}}>Amount</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <!-- Max Discount -->
+            <div>
+                <label for="maxDiscount" class="block text-sm font-medium mb-1">Max Discount</label>
+                <input type="number" id="maxDiscount" name="maxDiscount" value="{{coupon.maxDiscount}}" placeholder="e.g., 100"
+                    class="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-zinc-800">
+            </div>
+
+            <!-- Min Purchase -->
+            <div>
+                <label for="minPurchase" class="block text-sm font-medium mb-1">Min Purchase</label>
+                <input type="number" id="minPurchase" name="minPurchase" value="{{coupon.minPurchase}}" placeholder="e.g., 150"
+                    class="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-zinc-800">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-8">
+            <!-- Expiry Date -->
+            <div>
+                <label for="expiryDate" class="block text-sm font-medium mb-1">Expiry Date</label>
+                <div class="relative">
+                    <input type="date" id="expiryDate" name="expiryDate" data-expirydate="{{coupon.expiryDate}}" 
+                        class="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-zinc-800">
+                </div>
+            </div>
+
+            <!-- Is Active -->
+            <div class="flex items-center">
+                <input type="checkbox" id="isActive" name="isActive"
+                    class="h-4 w-4 text-green-600 rounded focus:ring-green-500" {{#if coupon.isActive}}checked{{/if}}>
+                <label for="isActive" class="ml-2 block text-sm font-medium">Is Active</label>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" id="submit-btn"
+                class="btn-primary bg-blue-600 w-full md:w-auto px-6 py-3 rounded-md text-lg font-semibold shadow-lg">Update
+                Coupon</button>
+        </div>
+    </div>
+    {{/if}}
+
+    <!-- Simple Snackbar for alerts -->
+<div id="snackbar"
+    class="fixed bottom-4 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50"
+    style="z-index: 9999;"></div>
+</div>
+
+
+
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            let dateObject = new Date(document.getElementById("expiryDate").dataset.expirydate)
+            let year = dateObject.getFullYear();
+            let month = String(dateObject.getMonth() + 1).padStart(2, '0');
+            let day = String(dateObject.getDate()).padStart(2, '0');
+
+            let formattedDate = `${year}-${month}-${day}`;
+            
+            document.getElementById("expiryDate").value = formattedDate
+
+
+            const form = document.getElementById('submit-btn');
+            const fields = ['couponCode', 'description', 'discount', 'maxDiscount', 'minPurchase', 'expiryDate'];
+
+
+    
+
+            // Function to validate a single field
+            const validateField = (field, value) => {
+                let isValid = true;
+                let errorMessage = '';
+
+                switch (field) {
+                    case 'couponCode':
+                        if (!value.trim()) {
+                            isValid = false;
+                            errorMessage = 'Coupon code is required.';
+                        }
+                        break;
+                    case 'description':
+                        if (!value.trim()) {
+                            isValid = false;
+                            errorMessage = 'Description is required.';
+                        }
+                        break;
+                    case 'discount':
+                        const discountType = document.getElementById('discountType').value;
+                        if (value === '' || value === null) {
+                            isValid = false;
+                            errorMessage = 'Discount is required.';
+                        } else if (value <= 0) {
+                             isValid = false;
+                            errorMessage = 'Discount must be a positive number.';
+                        } else if (discountType === 'Percentage' && (value > 100 || value < 0)) {
+                             isValid = false;
+                            errorMessage = 'Percentage discount must be between 0 and 100.';
+                        }
+                        break;
+                    case 'maxDiscount':
+                        const discount = document.getElementById('discount').value;
+                        if (value && parseFloat(value) < parseFloat(discount) && document.getElementById('discountType').value === 'Fixed Amount') {
+                            isValid = false;
+                            errorMessage = 'Max discount cannot be less than the fixed amount discount.';
+                        } else if (value && value < 0) {
+                            isValid = false;
+                            errorMessage = 'Max discount must be a positive number.';
+                        }else if(!value){
+                            isValid = false
+                            errorMessage = 'Max discount is required'
+                        }
+                        break;
+                    case 'minPurchase':
+                        if (value && value < 0) {
+                            isValid = false;
+                            errorMessage = 'Minimum purchase must be a positive number.';
+                        }
+                        break;
+                    case 'expiryDate':
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const expiryDate = new Date(value);
+                        if (!value) {
+                            isValid = false;
+                            errorMessage = 'Expiry date is required.';
+                        } else if (expiryDate < today) {
+                            isValid = false;
+                            errorMessage = 'Expiry date cannot be in the past.';
+                        }
+                        break;
+                }
+
+                if (!isValid) {
+
+                    showSnackbar(errorMessage, "bg-red-500")
+                }
+                return isValid;
+            };
+
+            
+            // form submission
+            form.addEventListener('click', (event) => {
+                event.preventDefault(); 
+
+                let bodyData = {}
+
+                let isFormValid = true;
+
+                
+                fields.forEach(field => {
+                    const inputElement = document.getElementById(field);
+                    bodyData[field] = inputElement.value
+                    if (!validateField(field, inputElement.value)) {
+                        isFormValid = false;
+                    }
+                });
+
+                if (isFormValid) {
+                    let couponId = document.getElementById("couponId").value
+                    updateCoupon(bodyData, couponId)
+                } else {
+                    console.log('Form is invalid. Please fix the errors.');
+                }
+            });
+
+            
+            fields.forEach(field => {
+                const inputElement = document.getElementById(field);
+                inputElement.addEventListener('input', (event) => {
+                    
+                    validateField(field, event.target.value);
+                });
+            });
+
+        });
+
+
+        function updateCoupon(bodyData, couponId){
+
+            fetch(`/admin/api/coupons/edit?couponId=${couponId}`, {
+                method:"PATCH",
+                headers:{"Content-Type":"application/json"},
+                body:JSON.stringify(bodyData)
+            })
+                .then(response =>{
+
+                    if(!response.ok) throw new Error("Internal server error")
+
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Product updated successfully.',
+                        icon: 'success',
+                        background: "#242428",
+                        color: "#fff",
+                        showConfirmButton: true
+                    }).then(() => {
+                        window.location.href = "/admin/coupons";
+                    });
+
+                })
+                .catch(error =>{
+                    console.log(error)
+                    Swal.fire({
+                        title: 'Failed',
+                        text: 'Unexpected error occured',
+                        icon: 'success',
+                        background: "#242428",
+                        color: "#fff",
+                    })
+                })
+
+        }
+
+
+        
+    function showSnackbar(message, colorClass) {
+        const snackbar = document.getElementById('snackbar');
+        snackbar.textContent = message;
+        snackbar.className = `fixed bottom-4 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg shadow-lg opacity-100 transition-opacity duration-300 z-50 ${colorClass}`;
+        setTimeout(() => {
+            snackbar.classList.remove('opacity-100');
+            snackbar.classList.add('opacity-0');
+        }, 3000);
+    }
+    </script>

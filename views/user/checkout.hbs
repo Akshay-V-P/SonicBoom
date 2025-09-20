@@ -667,6 +667,7 @@
 
 
         const addressId = document.getElementById("address_id")?.value.trim()
+        console.log(addressId)
         const total = document.getElementById("total-amount").dataset.total
         const subTotal = document.getElementById("sub-total").dataset.subtotal
         const discounts = document.getElementById("discounts").dataset.discounts
@@ -674,6 +675,14 @@
         const couponId = document.getElementById("coupon-id")?.dataset?.couponid
         const gstAmount = document.getElementById("gst-amount").dataset.gst
         let bodyData = { addressId, total, subTotal, discounts, paymentMethod, couponId: couponId || null, gstAmount }
+
+        if(!addressId){
+            showSnackbar("Please add a Address", "bg-red-500")
+            placeBtn.innerText = "Place Order"
+            placeBtn.disabled = false
+            placeBtn.style.cursor = "pointer";
+            return
+        }
 
         if (paymentMethod == "CARD" || paymentMethod == "UPI") {
             // 1. Create order from backend

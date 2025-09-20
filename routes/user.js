@@ -19,10 +19,10 @@ const upload = require("../config/multerUpload");
 const ordersModel = require("../model/ordersModel");
 
 // ---------- dev codes -----------
-// router.use((req, res, next) => {
-//   req.session.user = { _id: '68a9ab4e5584c7d280baa625', email:"akshayvp002@gmail.com" }
-//   next()
-// })
+router.use((req, res, next) => {
+    req.session.user = { _id: '68c9857a7dc2e8601b66cdd2', email: "akshayvp002@gmail.com" }
+    next()
+})
 // --------------------------------
 
 router.get("/", (req, res) => {
@@ -65,13 +65,25 @@ router.get(
 // GOOGLE callback
 router.get(
     "/auth/google/callback",
-    passport.authenticate("google", {
-        failureRedirect: "/login?error=Account Blocked",
-    }),
-    (req, res) => {
-        res.redirect("/landing_page");
+    (req, res, next) => {
+        passport.authenticate("google", {
+            failureRedirect: "/login?error=Account Blocked",
+        }, (err, user, info) => {
+            if (err) return next(err);
+            if (!user) return res.redirect("/login?error=Account Blocked");
+
+            req.logIn(user, (err) => {
+                if (err) return next(err);
+
+                if (info && info.isNewUser) {
+                    return res.redirect("/referral");
+                }
+                return res.redirect("/landing_page");
+            });
+        })(req, res, next);
     }
 );
+
 
 // shop router
 router.get("/shop", shopController.showShop);
@@ -230,6 +242,10 @@ router.post("/api/add-fund", walletController.addToWallet);
 // coupons
 router.get("/coupons", couponController.loadCoupons);
 router.get("/api/coupons", couponController.fetchCoupons);
+
+// referral 
+router.get('/referral', userController.loadReferral)
+router.post("/api/referral-validate", userController.validateReferral)
 
 router.get("/logout", userAuth.isAuthenticated, userController.logout);
 

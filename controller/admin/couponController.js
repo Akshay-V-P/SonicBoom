@@ -1,10 +1,12 @@
 const couponModel = require("../../model/couponModel")
 const paginate = require("../../helper/pagination")
 
+// Render Coupon Management Page
 const loadCoupons = (req, res) => {
     res.render('admin/coupons', {layout:'admin'})
 }
 
+// Adds new coupon
 const addCoupon = async (req, res) => {
     try {
         const couponData = req.body
@@ -37,6 +39,7 @@ const addCoupon = async (req, res) => {
     }
 }
 
+// Fetch coupon data
 const getCoupons = async (req, res) => {
     try {
         const page = parseInt(req.query.currentPage) || 1
@@ -88,6 +91,7 @@ const getCoupons = async (req, res) => {
     }
 }
 
+// change coupon status (To block and Unblock)
 const changeCouponStatus = async (req, res) => {
     try {
         const { _id } = req.params
@@ -96,14 +100,43 @@ const changeCouponStatus = async (req, res) => {
         res.status(200).json(coupon)
     } catch (error) {
         console.log(error)
-        res.render('admin/500Error')
+        res.status(500).json({message:"Internal server error"})
     }
 }
 
+// Load coupon edit page
+const loadCouponEdit = async (req, res) => {
+    try {
+        const couponId = req.query.couponId
+        const coupon = await couponModel.findOne({ _id: couponId })
+        if (!coupon) return res.render("admin/404Error")
+        res.render("admin/editCoupons", {layout:"admin", coupon})
+    } catch (error) {
+        console.log(error)
+        res.render("admin/500Error")
+    }
+}
+
+// coupon edit control
+const editCoupon = async (req, res) => {
+    try {
+        const bodyData = req.body
+        const couponId = req.query.couponId
+
+        await couponModel.updateOne({_id:couponId}, {$set:bodyData})
+
+        res.status(200).json({message:"Coupon updated"})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message:"Internal server error"})
+    }
+}
 
 module.exports = {
     loadCoupons,
     addCoupon,
     getCoupons,
-    changeCouponStatus
+    changeCouponStatus,
+    loadCouponEdit,
+    editCoupon
 }

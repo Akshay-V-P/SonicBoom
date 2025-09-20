@@ -14,10 +14,10 @@ const adminAuth = require("../middleware/adminAuth");
 const upload = require("../config/multerUpload");
 
 // ---------- dev codes -----------
-// router.use((req, res, next)=> {
-//     req.session.admin = { _id: "68998afac35ccc072487277a", email: "nosnoice@gmail.com" }
-//     next()
-// })
+router.use((req, res, next)=> {
+    req.session.admin = { _id: "68998afac35ccc072487277a", email: "nosnoice@gmail.com" }
+    next()
+})
 // --------------------------
 
 // login
@@ -117,11 +117,17 @@ router.route("/banners").get(bannerController.loadBanners);
 router.route("/coupons").get(couponController.loadCoupons);
 router.get("/api/coupons", couponController.getCoupons);
 router.put("/coupons/add", couponController.addCoupon);
+router.get("/coupons/edit", couponController.loadCouponEdit)
+router.patch("/api/coupons/edit", couponController.editCoupon)
 router.patch("/api/coupons/:_id/active", couponController.changeCouponStatus);
 router.patch("/api/coupons/:_id/block", couponController.changeCouponStatus);
 
+const makeSalesPdf = require("../helper/createSalesPDF")
+
 //sales
 router.route("/sales").get(salesController.loadSales);
+router.get('/api/sales-report', salesController.getData)
+router.get('/api/sales-report/download', makeSalesPdf)
 
 // Category routes
 router

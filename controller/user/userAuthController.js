@@ -16,6 +16,9 @@ const loadSignup = (req, res) => {
     res.render('user/signup')
 }
 
+const loadReferral = (req, res) => {
+    res.render("user/referral")
+}
 
 // Authentication functions
 const signup = async (req, res) => {
@@ -85,8 +88,9 @@ const validateOtp = async (req, res) => {
 
         await newWallet.save()
         
-        req.user = {email}
-        res.render('user/login', {message:"User created", icon:"success"})
+        const createdUser = await userModel.findOne({ email })
+        req.session.user = {_id:createdUser._id, email}
+        res.redirect("/referral")
     } catch (error) {
         console.log(error)
     }
@@ -309,6 +313,36 @@ const logout = (req, res) => {
 }
 
 
+const validateReferral = async (req, res) => {
+    try {
+        const { referralCode } = req.body
+        const userId = req.session.user._id
+        const hostUser = await userModel.findOne({ referralCode })
+        if (!hostUser) return res.status(404).json({ message: "Invalid Code" })
+        
+        const user = await userModel.findOne({ _id: userId })
+        if (referralCode !== hostUser.referralCode) return res.status(401).json({ message: "Invalid Code" })
+        
+        const userWallet = await walletModel.findOne({ userId })
+        const hostWallet = await walletModel.findOne({ userId: hostUser._id })
+        
+        user.usedReferralCode = referralCode
+
+        userWallet.amount += 100
+        hostWallet.amount += 100
+
+        await user.save()
+        await userWallet.save()
+        await hostWallet.save()
+
+        res.status(200).json({message:"Applied"})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message:"Internal server error"})
+    }
+}
+
+
 module.exports = {
     loadLogin,
     loadSignup,
@@ -322,4 +356,6 @@ module.exports = {
     resetPassword,
     logout, 
     validateResetEmail,
+    loadReferral,
+    validateReferral
 }

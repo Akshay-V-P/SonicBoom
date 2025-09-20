@@ -1,4 +1,12 @@
 const mongoose = require('mongoose')
+const { v4: uuidv4 } = require('uuid')
+
+function generateProductId() {
+    const uniquePart = uuidv4().replace(/-/g, "").slice(0, 5);
+    const uuid = `V${uniquePart.toUpperCase()}`
+  return uuid;
+}
+
 
 const productSchema = mongoose.Schema({
     name: {
@@ -63,6 +71,7 @@ const productSchema = mongoose.Schema({
             price: { type: Number, required: true },
             offerPrice: { type: Number, required: true },
             thumbnail: { type: String, required: true },
+            productId:{type:String, required:true, default:generateProductId, unique:true},
             stock:{type:Number, required:true}
         }],
         default:[],

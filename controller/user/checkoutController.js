@@ -104,18 +104,8 @@ const loadDetails = async (req, res) => {
             parseInt(checkoutDetails.subTotal) -
             parseInt(checkoutDetails.discounts);
 
-        if (
-            typeof couponCode === "string" &&
-            couponCode.trim() &&
-            operation === "apply"
-        ) {
-            checkoutDetails =
-                (await couponOperations.applyCoupon(
-                    checkoutDetails,
-                    couponCode,
-                    userId,
-                    res
-                )) || checkoutDetails;
+        if (typeof couponCode === "string" && couponCode.trim() && operation === "apply") {
+            checkoutDetails = (await couponOperations.applyCoupon( checkoutDetails, couponCode, userId, res )) || checkoutDetails;
         }
 
         if (
@@ -229,6 +219,7 @@ const placeOrder = async (req, res) => {
 
         const items = await Promise.all(orderItems.items.map(async item => {
 
+            console.log(item)
             let product = await productModel.findOne({ _id: item.itemId });
             const variantIndex = product.variants.findIndex(
                     (v) => v._id.toString() === item.variantId.toString()
@@ -244,6 +235,9 @@ const placeOrder = async (req, res) => {
                 status: "processing",
                 returnApproved: false,  
                 quantity: item.quantity,
+                categoryId: product.categoryId,
+                productName:product.variants[variantIndex].name,
+                productId:product.variants[variantIndex].productId,
                 price: product.variants[variantIndex].price,
                 offerPrice:product.variants[variantIndex].offerPrice,
                 discount: Number(discountAmount)}

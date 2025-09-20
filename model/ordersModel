@@ -73,6 +73,9 @@ const orderSchema = mongoose.Schema({
         type: [{
             itemId: { type: mongoose.Schema.Types.ObjectId, ref: 'products', required: true },
             variantId: { type: mongoose.Schema.Types.ObjectId, required: true },
+            categoryId:{type:mongoose.Schema.Types.ObjectId, ref:'categories', required:true},
+            productId: { type: String, required: true },
+            productName:{type:String, required:true},
             status: { type: String, enum: ['processing', 'shipped', 'out-for-delivery', 'delivered', 'cancelled', 'returned', 'payment failed'], default: "processing", required: true },
             returnApproved:{type:Boolean, default:false, required:true},
             quantity: { type: Number, required: true },

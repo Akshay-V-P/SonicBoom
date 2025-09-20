@@ -1,0 +1,64 @@
+
+    <!-- Use Tailwind CSS for responsive design and styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter font for a modern look -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+    <!-- Use Font Awesome for social media icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        /* Custom CSS to apply Inter font family to all elements */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            background-color: #121212; /* Very dark background for the whole page, matching the image */
+        }
+
+        /* Custom gradient for buttons */
+        .gradient-button {
+            background-image: linear-gradient(to right, #8B5CF6, #6366F1);
+        }
+
+        /* Keyframes for fade-in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Keyframes for subtle pulse animation on 404 */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* Apply animations */
+        .animate-fade-in {
+            animation: fadeIn 1s ease-out forwards;
+        }
+        .animate-pulse-subtle {
+            animation: pulse 2s infinite ease-in-out;
+        }
+    </style>
+
+
+
+    <!-- Main Content - 404 Error Section -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="text-center">
+            <h1 class="text-9xl font-extrabold text-gray-500 mb-4 animate-pulse-subtle">404</h1> <!-- Adjusted 404 color -->
+            <p class="text-4xl md:text-5xl font-bold text-white mb-6 animate-fade-in" style="animation-delay: 0.3s;">
+                We couldn't find that page
+            </p>
+            <p class="text-lg text-gray-400 mb-8 animate-fade-in" style="animation-delay: 0.6s;">
+                The page you're looking for might have been removed, had its name changed, or is temporarily unavailable.
+            </p>
+            <a href="/admin/coupons" class="inline-block gradient-button text-white font-semibold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 animate-fade-in" style="animation-delay: 0.9s;">
+                Go Back
+            </a>
+        </div>
+    </main>
+
+   
+
+

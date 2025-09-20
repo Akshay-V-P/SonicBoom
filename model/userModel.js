@@ -1,5 +1,11 @@
 const mongoose = require('mongoose')
 
+function createReferralCode() {
+    const referralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+    console.log(referralCode)
+    return referralCode
+}
+
 const userSchema = mongoose.Schema({
     name: {
         type: String,
@@ -23,6 +29,15 @@ const userSchema = mongoose.Schema({
         required: function () {
             return !this.googleId
         },
+    },
+    referralCode: {
+        type: String,
+        required: true,
+        default:createReferralCode,
+        unique:true
+    },
+    usedReferralCode: {
+        type: String,
     },
     profilePhoto: {
         type: String,
