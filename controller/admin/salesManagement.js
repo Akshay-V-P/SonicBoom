@@ -10,6 +10,7 @@ const getData = async (req, res) => {
     try {
         const startDate = req.query.startDate ? new Date(req.query.startDate.replace(/"/g, '')) : null
         const endDate = req.query.endDate === "null" ? null : new Date(req.query.endDate.replace(/"/g, ''))
+        const filter = req.query.filter 
         const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) : 1
         const limit = req.query.limit ? parseInt(req.query.limit) : 10
         let findQuery = {}
@@ -17,6 +18,10 @@ const getData = async (req, res) => {
             findQuery.createdAt = {$gte:startDate}
         } else {
             findQuery.createdAt = { $gte:startDate, $lte:endDate}
+        }
+
+        if (filter) {
+            findQuery.status = filter
         }
 
         let result = await getSalesData(limit, currentPage, findQuery, null)

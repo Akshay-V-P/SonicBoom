@@ -88,6 +88,7 @@ const updateStatus = async (req, res) => {
     try {
         const { orderId } = req.query
         const status = req.body.status
+        console.log(typeof status)
         console.log(status)
         
         const order = await orderModel.findOne({ orderId })
@@ -96,8 +97,8 @@ const updateStatus = async (req, res) => {
             order.status = status
         }
 
-        if (status == "delivered") {
-            order.paymentStatus == "paid"
+        if (status === "delivered") {
+            order.paymentStatus = "paid"
         }
         
         order.orderItems.forEach(item => {

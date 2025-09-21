@@ -7,7 +7,9 @@ async function refundCalculator(variantId, orderId) {
 
 
         const order = await orderModel.findOne({ orderId })
-        if (!order) throw {status: 404, message : "Order not found"}
+        if (!order) throw { status: 404, message: "Order not found" }
+    
+        if(order.paymentStatus == "unpaid") return
         
         const itemIndex = order.orderItems.findIndex(item => item.variantId.toString() == variantId.toString())
         order.orderItems[itemIndex].returnApproved = false
@@ -46,7 +48,7 @@ async function refundCalculator(variantId, orderId) {
 
         
 
-        wallet.transactions.push(transaction)
+        wallet.transactions.unshift(transaction)
         await wallet.save()
 
         await order.save()

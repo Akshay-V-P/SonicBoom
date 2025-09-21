@@ -116,9 +116,12 @@ const updateProduct = async (req, res) => {
         delete data.productId
         const fileMap = new Map()
         req.files.forEach(file => fileMap.set(file.fieldname, file.path))
+        console.log(fileMap)
 
         const product = await productModel.findOne({ _id })
-        const category = await categoryModel.findOne({_id:product.categoryId})
+        const category = await categoryModel.findOne({ _id: product.categoryId })
+        
+        
 
         if (data) {
             const keys = Object.keys(data)
@@ -142,7 +145,8 @@ const updateProduct = async (req, res) => {
 
         await product.save()
         
-        const updateQuery = {} ;
+
+        const updateQuery = {$set:{}} ;
         req.files.forEach(file => {
             const match = file.fieldname.match(/^coverImage\[(\d+)\]$/);
             if (match) {

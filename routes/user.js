@@ -158,6 +158,8 @@ router.patch(
     orderController.returnItem
 );
 
+router.post('/retry-payment', orderController.retryPayment)
+
 // invoice download
 router.get(
     "/orders/download-invoice/:orderId",

@@ -17,8 +17,18 @@
                     {{#if (eq order.status "returned")}}
                         <p class="text-blue-500">Returned</p>
                     {{else}}
-                    <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-                        id="order-cancel-btn">Cancel</button>
+                        {{#if (eq order.status "payment failed")}}
+                            <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                            data-mobile="{{order.address.mobile}}"
+                            data-name="{{order.address.name}}"
+                            data-email="{{order.address.email}}"
+                            data-total="{{order.total}}"
+                             onclick="retryPayment(this)" >Retry payment</button>
+                        {{else}}
+                            <button class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                                id="order-cancel-btn">Cancel</button>
+
+                        {{/if}}
                     {{/if}}
                 {{/if}}
             {{/if}}
@@ -150,7 +160,11 @@
                                 {{#if (eq this.status "delivered")}}
                                     <button class="text-red-500 return-item-btn">Return</button>
                                 {{else}}
-                                    <button class="text-red-500 cancel-item-btn">Cancel</button>
+                                    {{#if (eq this.status "payment failed")}}
+                                        
+                                    {{else}}
+                                        <button class="text-red-500 cancel-item-btn">Cancel</button>
+                                    {{/if}}
                                 {{/if}}
                             {{/if}}
                         </div>
@@ -180,7 +194,11 @@
                                             <p class="text-orange-500 text-right">Waiting for Approval</p>
                                         {{/if}}
                                     {{else}}
-                                        <button class="text-red-500 cancel-item-btn">Cancel</button>
+                                        {{#if (eq this.status "payment failed")}}
+                                            
+                                        {{else}}
+                                            <button class="text-red-500 cancel-item-btn">Cancel</button>
+                                        {{/if}}
                                     {{/if}}
                                 {{/if}}
                             {{/if}}
@@ -293,6 +311,10 @@
 </div>
 
 
+<div id="snackbar"
+    class="fixed bottom-4 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg shadow-lg opacity-0 transition-opacity duration-300 z-50"
+    style="z-index: 9999;"></div>
+
 
 
 <script>
@@ -364,8 +386,7 @@
 
                 const productId = itemContainer.dataset.productid;
                 const variantId = itemContainer.dataset.variantid;
-                console.log(productId)
-                console.log(variantId)
+               
 
                 modalItemThumbnail.src = itemThumbnail;
                 modalItemName.textContent = itemName;
@@ -386,6 +407,7 @@
             }
         });
         confirmItemCancelButton.addEventListener('click', () => {
+            showLoadingScreen()
             const reason = modalItemReason.value;
             const orderId = document.getElementById("orderId").innerText.trim();
             const productId = confirmItemCancelButton.dataset.productId;
@@ -397,6 +419,7 @@
                 .then(response =>{
                     if(!response.ok) throw new Error("Can't cancel this product right now")
                     console.log("cancelled")
+                    hideLoadingScreen()
                     window.location.href = '/orders'
                 })
                 .catch(error =>{
@@ -496,4 +519,114 @@
         });
 
     });
+
+
+    function retryPayment(button){
+        const data = button.dataset
+        const orderId = document.getElementById("orderId").innerText.trim();
+        const bodyData = {}
+        bodyData.orderId = orderId
+
+        fetch("/payment/create-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount: parseInt(data.total) })
+            })
+                    .then(response => { 
+                        if (!response.ok) throw new Error("Failed to create order")
+                    return response.json()
+                })
+                .then(order => {
+
+                    var options = {
+                        key: "rzp_test_RFOWbloxiCxKNB",
+                        amount: order.amount,
+                        currency: order.currency,
+                        name: "SonicBoom",
+                        description: "Test Transaction",
+                        order_id: order.id,
+                        handler: async function (response) {
+
+                            const verifyRes = await fetch("/payment/verify-payment", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify(response)
+                            });
+                            const verifyData = await verifyRes.json();
+                            let bgColor = "bg-green-500"
+                            console.log("is success : ", verifyData.success)
+
+                            if (!verifyData.success) {
+                                window.location.href = '/order-failed'
+
+                            } else {
+
+                                bodyData.paymentStatus = true
+                                fetch(`/retry-payment`, {
+                                    method: "POST",
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify(bodyData)
+                                })
+                                    .then(async function (response) {
+                                        let res = await response.json()
+                                        if (!response.ok) throw new Error(res.message || "Failed to fetch")
+                                        window.location.href = '/order-success'
+                                    })
+                                    .catch((error) => {
+                                        showSnackbar(error, "bg-red-500")
+                                    })
+
+                            }
+                            showSnackbar(verifyData.message, bgColor)
+
+                        },
+                        prefill: {
+                            name: data.name,
+                            email: data.email,
+                            contact: data.mobile
+                        },
+                        theme: { color: "#3399cc" }
+                    };
+
+                    var rzp1 = new Razorpay(options);
+
+                    rzp1.on("payment.failed", async function (response) {
+                        console.error("Payment Failed:", response.error);
+
+                        window.location.href = "/payment/failed";
+                    });
+
+                    rzp1.open();
+                })
+                .catch(error => {
+                    console.log(error)
+                    showSnackbar("Please check your internet", "bg-red-500")
+                })
+    }
+
+
+    function showSnackbar(message, colorClass) {
+        const snackbar = document.getElementById('snackbar');
+        snackbar.textContent = message;
+        snackbar.className = `fixed bottom-4 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg shadow-lg opacity-100 transition-opacity duration-300 z-50 ${colorClass}`;
+        setTimeout(() => {
+            snackbar.classList.remove('opacity-100');
+            snackbar.classList.add('opacity-0');
+        }, 3000);
+    }
+
+
+    function showLoadingScreen() {
+        const loadingScreen = document.getElementById('loading-screen');
+        loadingScreen.style.opacity = '1';
+        loadingScreen.style.display = 'flex';
+    }
+
+    function hideLoadingScreen() {
+        const loadingScreen = document.getElementById('loading-screen');
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => {
+            loadingScreen.style.display = 'none';
+        }, 500); // Wait for the transition to finish
+    }
 </script>

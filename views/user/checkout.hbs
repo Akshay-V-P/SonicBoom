@@ -691,9 +691,10 @@
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ amount: parseInt(total) }) // ₹500
             })
-                .then(response => {
-                    if (!response.ok) throw new Error("Failed to create order")
-                    return response.json()
+                .then(async response => {
+                    const res = response.json()
+                    if (!response.ok) throw new Error(res.message || "Stock unavailable for item")
+                    return res
                 })
                 .then(order => {
 
@@ -717,6 +718,8 @@
 
                             if (!verifyData.success) {
                                 bodyData.paymentStatus = false
+                                bodyData.isFailed = "i dontknow"
+                                console.log(bodyData.isFailed)
                                 bgColor = "bg-red-500"
                                 fetch(`/checkout/place-order`, {
                                     method: "POST",
@@ -767,6 +770,8 @@
                         console.error("Payment Failed:", response.error);
 
                         bodyData.paymentStatus = false;
+                        bodyData.isFailed = "failed"
+                        console.log(bodyData.isFailed)
                         await fetch(`/checkout/place-order`, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
@@ -779,8 +784,8 @@
                     rzp1.open();
                 })
                 .catch(error => {
-                    console.log(error)
-                    showSnackbar("Please check your internet", "bg-red-500")
+                    console.log(error.message)
+                    showSnackbar(error.message, "bg-red-500")
                 })
 
 
@@ -797,7 +802,9 @@
                     window.location.href = '/order-success'
                 })
                 .catch((error) => {
-                    if (error.message = "Insufficiant balance") {
+                    if(error.message == "Stock Unavailable for items"){
+                        showSnackbar(error.message, "bg-red-500")
+                    } else if (error.message = "Insufficiant balance") {
                         Swal.fire({
                             title: "Insufficiant balance",
                             text: "Add money to wallet",

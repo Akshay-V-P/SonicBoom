@@ -80,26 +80,7 @@ async function applyCoupon(checkoutDetails, couponCode, userId, res) {
 
 async function removeCoupon(checkoutDetails, couponCode, userId) {
 
-    let couponDiscountAmout
 
-        // const coupon = await couponModel.findOne({ code: couponCode })
-        
-        // if (coupon.discountType === "percentage") {
-        //   couponDiscountAmout = (parseInt(checkoutDetails.total) / 100) * parseInt(coupon.discount)
-        //   if (couponDiscountAmout > coupon.maxDiscount) {
-        //     couponDiscountAmout = coupon.maxDiscount
-        //   }
-        // } else {
-        //   couponDiscountAmout = parseInt(coupon.discount)
-        // }
-        // let totalBeforeCoupon = checkoutDetails.total
-        // checkoutDetails.total = parseInt(checkoutDetails.total) + couponDiscountAmout
-        // if (checkoutDetails.total < 0) {
-        //   couponDiscountAmout = totalBeforeCoupon
-        //   checkoutDetails.total = 0
-        // }
-        // checkoutDetails.couponDiscount = couponDiscountAmout
-  // checkoutDetails.couponDetails = coupon
   await couponModel.updateOne({ code: couponCode }, { $pull: { usedBy: { userId } } })
   checkoutDetails.couponDiscount = 0
   return checkoutDetails

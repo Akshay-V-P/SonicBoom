@@ -1,4 +1,4 @@
-
+<script src="https://cdn.tailwindcss.com"></script>
     <style>
 
         .header {
@@ -29,7 +29,6 @@
             font-weight: 600;
         }
 
-        /* Sales Report Section */
         .sales-report-section {
             background-color: #1a1a1a;
             padding: 30px;
@@ -80,7 +79,7 @@
             color: #e0e0e0;
             font-size: 14px;
             cursor: pointer;
-            appearance: none; /* Removes default dropdown arrow */
+            appearance: none; 
             background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
             background-repeat: no-repeat;
             background-position: right 8px center;
@@ -97,10 +96,9 @@
             gap: 10px;
             flex-wrap: wrap;
             align-items: center;
-            display: none; /* Initially hidden */
+            display: none; 
         }
         
-        /* Modern styling for date inputs */
         .custom-date-fields input[type="date"] {
             padding: 8px 12px;
             border-radius: 8px;
@@ -109,13 +107,12 @@
             color: #e0e0e0;
             font-size: 14px;
             cursor: pointer;
-            /* Added transition for smooth effects */
             transition: border-color 0.3s, box-shadow 0.3s;
         }
 
         .custom-date-fields input[type="date"]:hover {
             border-color: #4a90e2;
-            /* Added box-shadow for a modern glowing effect */
+            
             box-shadow: 0 0 8px rgba(74, 144, 226, 0.5);
         }
 
@@ -125,7 +122,7 @@
         }
 
         .custom-date-fields input[type="date"]:hover::-webkit-calendar-picker-indicator {
-            filter: invert(0.8); /* Slightly less inversion on hover for a subtle change */
+            filter: invert(0.8); 
         }
 
         .apply-btn {
@@ -311,7 +308,8 @@
 
         <div class="sales-report-section">
             <div class="report-actions">
-                <button class="export-btn">Export</button>
+                <button class="export-btn" onclick="createExport()">Export</button>
+                
                 <div class="report-filters">
                     <select id="dateRangeSelect" class="filter-select">
                         <option value="daily">Daily</option>
@@ -320,7 +318,19 @@
                         <option value="yearly">Yearly</option>
                         <option value="custom">Custom Range</option>
                     </select>
+                    <div class="w-full md:w-auto">
+                        <select id="status-filter" class="w-full px-4 py-2 rounded-md border border-zinc-700 bg-zinc-800 text-white text-sm focus:outline-none focus:ring focus:ring-blue-500">
+                            <option value="">Filter: All</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="processing">Processing</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="returned">Returned</option>
+                            <option value="out-for-delivery">Out for delivery</option>
+                        </select>
+                    </div>
                 </div>
+                
                 <div id="customDateFields" class="custom-date-fields">
                     <input type="date" id="startDate">
                     <span>to</span>
@@ -329,7 +339,8 @@
                 </div>
             </div>
             <p style="font-weight: 600; font-size:larger; margin-top:8px;">Total Sale : <span id="total-sale" style="color: #a9ceff; font-size:28px">₹0.00</span></p>
-            <p style="font-weight: 600; font-size:larger; margin-top:8px; margin-bottom:16px">Unpaid Amount : <span id="unpaid-amount" style="color: #a9ceff;">₹0.00</span></p>
+            <p style="font-weight: 600; font-size:larger; margin-top:8px;">Unpaid Amount : <span id="unpaid-amount" style="color: #a9ceff;">₹0.00</span></p>
+            <p style="font-weight: 600; font-size:larger; margin-top:8px; margin-bottom:16px">Cancelled Amount : <span id="cancelled-amount" style="color: #a9ceff;">₹0.00</span></p>
             <div class="report-table-container">
                 <table class="report-table" id="salesTable">
                     <thead class="table-header">
@@ -347,7 +358,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Data will be populated here by JavaScript -->
+                        
                     </tbody>
                 </table>
             </div>
@@ -371,20 +382,26 @@
 
     <script>
 
+        let currentUrl 
+
         document.addEventListener('DOMContentLoaded', () => {
 
             const dateRangeSelect = document.getElementById('dateRangeSelect');
             const customDateFields = document.getElementById('customDateFields');
             const salesTableBody = document.querySelector('#salesTable tbody');
+            const filterSelect = document.getElementById("status-filter")
+            console.log(filterSelect.value)
             
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('startDate').setAttribute('max', today);
             document.getElementById('endDate').setAttribute('max', today);
             
-            // Function to handle filter change
+           
             function handleFilterChange() {
 
                 const selectedValue = dateRangeSelect.value;
+                const filterValue = filterSelect.value
+                console.log(filterValue)
                 let startDate 
                 let endDate
 
@@ -392,9 +409,7 @@
 
                     startDate = new Date()
                     startDate.setHours(0,0,0,0)
-                    console.log(startDate)
                     startDate = startDate.toISOString()
-                    console.log(startDate)
                     endDate = "null"
 
                 } else if(selectedValue === 'weekly'){
@@ -427,23 +442,21 @@
                 }
 
                 
-                // For demonstration, we'll just re-render the dummy data
+                
                 if(selectedValue !== "custom"){
 
-                    renderTable(`/admin/api/sales-report?startDate=${startDate}&endDate=${endDate}&currentPage=1&limit=10`);
+                    renderTable(`/admin/api/sales-report?startDate=${startDate}&endDate=${endDate}&filter=${filterValue}&currentPage=1&limit=10`);
 
                 }
             }
 
-            // Initial render
+           
             handleFilterChange();
 
-            // Event listener for the dropdown change
             dateRangeSelect.addEventListener('change', handleFilterChange);
+            filterSelect.addEventListener('change', handleFilterChange);
             
-            // Event listener for the custom date apply button (for demonstration)
             document.getElementById('applyCustomFilterBtn').addEventListener('click', () => {
-                console.log("working")
                 let startDate = new Date(document.getElementById('startDate').value);
                 let endDate = new Date(document.getElementById('endDate').value);
                 startDate = startDate.toISOString()
@@ -458,9 +471,8 @@
 
             function getStartOfWeek(date) {
                 const d = new Date(date);
-                const day = d.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+                const day = d.getDay(); 
 
-                // shift so that Monday is start of week
                 const diff = d.getDate() - day + (day === 0 ? -6 : 1);
 
                 return new Date(d.setDate(diff)).toISOString();
@@ -470,6 +482,7 @@
 
 
         function renderTable(url) {
+            currentUrl = url
 
             const dateRangeSelect = document.getElementById('dateRangeSelect');
             const customDateFields = document.getElementById('customDateFields');
@@ -503,8 +516,6 @@
 
                 })
                 .then(data =>{
-
-                    console.log(data.report)
 
                     salesTableBody.innerHTML = ""
                     if(data.report.length == 0){
@@ -546,6 +557,7 @@
 
                     document.getElementById("total-sale").textContent = `₹${totalSales.toFixed(2)}`
                     document.getElementById("unpaid-amount").textContent = `₹${pendingSale.toFixed(2)}`
+                    document.getElementById("cancelled-amount").textContent = `₹${data.cancelledOrders.amount.toFixed(2)}`
 
                     localStorage.setItem('salesCurrentPage', data.currentPage)
 
@@ -556,7 +568,6 @@
                     tempUrl.searchParams.set("currentPage", currentPage+1);
 
                     let nextUrl = tempUrl.pathname + '?' + tempUrl.searchParams.toString();
-                    console.log(nextUrl)
                     
                     // setting url for previous page
                     tempUrl = new URL(url, window.location.origin);
@@ -580,6 +591,17 @@
                 })
                 
                 
+            }
+
+
+            function createExport(){
+                const params = new URLSearchParams(currentUrl.split("?")[1]);
+
+                const startDate = params.get("startDate");
+                const endDate = params.get("endDate");
+
+                window.location.href = `/admin/api/sales-report/download?startDate=${startDate}&endDate=${endDate}` 
+                    
             }
 
     </script>

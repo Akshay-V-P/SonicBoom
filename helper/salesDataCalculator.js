@@ -3,12 +3,13 @@ const orderModel = require('../model/ordersModel')
 async function calculateSalesData(findQuery) {
 
     let data = await orderModel.aggregate([{ $match: findQuery }, { $unwind: "$orderItems" }])
-    console.log("Date length : ",data)
-    let totalSales = {amount: 0, count: 0}
+    let totalSales = { amount: 0, count: 0 }
+    let totalValue = 0
     let unpaidOrders = {amount: 0, count: 0}
     let paidOrders = {amount: 0, count: 0}
     let refundedOrders = {amount: 0, count: 0}
-    let cancelledOrders = { amount: 0, count: 0}
+    let cancelledOrders = { amount: 0, count: 0 }
+    let actuallRevenue = 0
     let discountAmount = 0
     let couponDiscounts = 0
 
@@ -20,28 +21,33 @@ async function calculateSalesData(findQuery) {
         let orderPaymentStatus = order.paymentStatus
         let orderStatus = order.status
 
+        totalValue += orderTotalAmount
+
         // Total sales amount
-        totalSales.amount += orderTotalAmount
-        totalSales.count += orderQuantity
+        if (orderStatus !== "cancelled" && orderStatus !== "returned") {
+            totalSales.amount += orderTotalAmount
+            totalSales.count += orderQuantity
+
+
+            // unPaid orders
+            if (order.paymentStatus === "unpaid") {
+                unpaidOrders.amount += orderTotalAmount
+                unpaidOrders.count += orderQuantity
+            }
+
+             // paid orders
+            if (order.paymentStatus === "paid" && order?.orderItems?.returnApproved === false) {
+                paidOrders.amount += orderTotalAmount
+                paidOrders.count += orderQuantity
+            }                               
+        }
 
         // Total discount paid
         discountAmount += orderDiscountAmount
 
         // Total coupon discount
         couponDiscounts += orderCouponDiscount
-
-
-        // unPaid orders
-        if (order.paymentStatus === "unpaid") {
-            unpaidOrders.amount += orderTotalAmount
-            unpaidOrders.count += orderQuantity
-        }
-
-        // paid orders
-        if (order.paymentStatus === "paid" && order?.orderItems?.returnApproved === false) {
-            paidOrders.amount += orderTotalAmount
-            paidOrders.count += orderQuantity
-        }
+       
 
         // refundedOrders
         if (order?.orderItems?.returnApproved) {
@@ -59,7 +65,7 @@ async function calculateSalesData(findQuery) {
 
     })
 
-    return {totalSales, unpaidOrders, paidOrders, refundedOrders, cancelledOrders, discountAmount, couponDiscounts}
+    return {totalSales, totalValue, unpaidOrders, paidOrders, refundedOrders, cancelledOrders, discountAmount, couponDiscounts}
 }
 
 

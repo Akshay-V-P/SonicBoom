@@ -182,7 +182,9 @@
                                 customClass: {
                                     popup: 'my-swal-border'
                                 }
-                            });
+                            }).then(()=>{
+                                window.location.href = "/admin/orders"
+                            })
                         })
                         .catch(error => {
                             console.log(error)

@@ -1,9 +1,12 @@
 const razorpay = require('../../config/razorPay')
 const crypto = require("crypto");
+const validateStockAvailability = require('../../helper/stockValidator');
 
 
 const createOrder = async (req, res) => {
     try {
+        const userId = req.session.user._id
+        if(!await validateStockAvailability(userId)) return res.status(401).json({message:"Stock unavailable"})
         const options = {
           amount: req.body.amount * 100, 
           currency: "INR",

@@ -201,16 +201,9 @@ const cancelItem = async (req, res) => {
             (v) => v.variantId.toString() == variantId.toString()
         );
         order.orderItems[indexOfItem].status = "cancelled";
-        order.total = (
-            order.total - product.variants[indexOfVariant].offerPrice
-        ).toFixed(2);
-        order.subTotal = (
-            order.subTotal - product.variants[indexOfVariant].price
-        ).toFixed(2);
-        order.discount = (
-            order.discount -
-            order.discount / order.orderItems.length
-        ).toFixed(2);
+        order.total = ( order.total - product.variants[indexOfVariant].offerPrice).toFixed(2);
+        order.subTotal = ( order.subTotal - product.variants[indexOfVariant].price).toFixed(2);
+        order.discount = (order.discount - order.discount / order.orderItems.length ).toFixed(2);
 
         product.variants[indexOfVariant].stock += parseInt(
             order.orderItems[indexOfItem].quantity
@@ -305,6 +298,55 @@ const returnItem = async (req, res) => {
         });
     }
 };
+
+
+const retryPayment = async (req, res) => {
+
+    try {
+
+        const paymentStatus = req.body.paymentStatus
+        const orderId = req.body.orderId
+
+        if (!paymentStatus) return res.status(401).json({ message: "Payment Failed" })
+
+        const order = await ordersModel.findOne({ orderId })
+        if (!order) return res.status(404).json({ message: "Order not found!" })
+        
+        if (order.status != "cancelled") {
+
+            order.status = "processing"
+            order.paymentStatus = "paid"
+
+        }
+        
+        order.orderItems.forEach(item => {
+
+            if (item.status != "cancelled") {
+                item.status = "processing"
+            }
+        })
+
+        for (let item of order.orderItems) {
+
+            let product = await productModel.findOne({ _id: item.itemId });
+
+            const variantIndex = product.variants.findIndex((v) => v._id.toString() === item.variantId.toString());
+
+            product.variants[variantIndex].stock = parseInt(product.variants[variantIndex].stock) - parseInt(item.quantity);
+
+            await product.save();
+
+        }
+
+        await order.save()
+        res.status(200).json({message:"Payment success"})
+    
+    } catch (error) {
+
+        console.log(error)
+
+    }
+}
 
 const downloadInvoice = async (req, res) => {
     try {
@@ -419,4 +461,5 @@ module.exports = {
     cancelItem,
     returnItem,
     downloadInvoice,
+    retryPayment,
 };

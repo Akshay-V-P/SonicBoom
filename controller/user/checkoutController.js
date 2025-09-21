@@ -6,6 +6,7 @@ const userModel = require("../../model/userModel");
 const couponModel = require("../../model/couponModel");
 const couponOperations = require("../../helper/couponOperation");
 const walletModel = require("../../model/walletModel");
+const validateStockAvailability = require("../../helper/stockValidator");
 
 const loadCheckout = async (req, res) => {
     try {
@@ -65,6 +66,7 @@ const loadDetails = async (req, res) => {
             let indexOfVariant = product.variants.findIndex(
                 (v) => v._id.toString() == item.variantId.toString()
             );
+
 
             variant.index = indexOfVariant;
             variant.productId = product._id;
@@ -146,13 +148,15 @@ const placeOrder = async (req, res) => {
             gstAmount,
         } = req.body;
         const userId = req.session.user._id;
+
+        if(!await validateStockAvailability(userId)) return res.status(401).json({message:"Stock Unavailable for items"})
+
         let payStatus;
         let decStock = paymentStatus;
         let status = "processing";
         let walletPaid = false;
         let couponDiscount = 0
 
-        console.log(paymentMethod)
 
         if (!addressId)
             return res
@@ -167,7 +171,6 @@ const placeOrder = async (req, res) => {
                 status = "payment failed";
             }
         } else if (paymentMethod == "WALLET") {
-            console.log("ENtered dto wallet check");
             var wallet = await walletModel.findOne({ userId });
 
             if (!wallet)
@@ -179,8 +182,8 @@ const placeOrder = async (req, res) => {
                 walletPaid = true;
             } else {
                 return res
-                    .status(401)
-                    .json({ message: "Insufficiant balance" });
+                    .status(400)
+                    .json({ message: "Insufficiant balance"});
             }
         } else if(paymentMethod == "COD") {
             payStatus = "unpaid";
@@ -232,7 +235,7 @@ const placeOrder = async (req, res) => {
             console.log(discountAmount)
                 return {itemId: item.itemId,
                 variantId: item.variantId,
-                status: "processing",
+                status: status,
                 returnApproved: false,  
                 quantity: item.quantity,
                 categoryId: product.categoryId,

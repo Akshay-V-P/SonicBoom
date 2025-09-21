@@ -5,7 +5,6 @@ async function getSalesData(limit, currentPage, findQuery, sort, populate) {
     let skip = (limit * currentPage) - limit
     let docCount 
 
-    console.log("Find : ", findQuery)
     let pipeline = [
         { $match: findQuery || {} },
         { $unwind: "$orderItems" },
@@ -29,9 +28,6 @@ async function getSalesData(limit, currentPage, findQuery, sort, populate) {
     docCount = result[0]?.docData[0]?.docCount
     let report = result[0]?.data
     let totalPages = Math.ceil(docCount / limit)
-    console.log("Doc count : ", docCount)
-    console.log("Current Page : ", currentPage)
-    console.log("Total page : ", totalPages)
     
     
     return {report, docCount, totalPages, currentPage}
