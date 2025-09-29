@@ -12,7 +12,7 @@ async function refundCalculator(variantId, orderId) {
         if(order.paymentStatus == "unpaid") return
         
         const itemIndex = order.orderItems.findIndex(item => item.variantId.toString() == variantId.toString())
-        order.orderItems[itemIndex].returnApproved = false
+        order.orderItems[itemIndex].returnApproved = true
 
         let refundAmount 
         let gstAmount = parseFloat(order.gstAmount) / order.totalItems
@@ -31,7 +31,8 @@ async function refundCalculator(variantId, orderId) {
         wallet.amount +=  refundAmount
                 
         const transaction = {
-            transactionType : "credit",
+            transactionType: "credit",
+            description: `Refund for Item Cancellation`,
             amount : refundAmount,
             status:"success",
             transactionDate:new Date().toISOString()

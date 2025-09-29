@@ -24,6 +24,8 @@ const getData = async (req, res) => {
             findQuery.status = filter
         }
 
+        findQuery.status = "delivered"
+
         let result = await getSalesData(limit, currentPage, findQuery, null)
         
         let calculatedData = await calculateSalesData(findQuery)

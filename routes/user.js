@@ -158,7 +158,7 @@ router.patch(
     orderController.returnItem
 );
 
-router.post('/retry-payment', orderController.retryPayment)
+router.post('/retry-payment',userAuth.isAuthenticated, orderController.retryPayment)
 
 // invoice download
 router.get(
@@ -203,13 +203,15 @@ router.post(
     cartController.decrementQuantity
 );
 
+router.get("/api/cart/get-count", cartController.getCount)
+
 // wishlist
 router.get(
     "/wishlist",
     userAuth.isAuthenticated,
     wishlistController.loadWishlist
 );
-router.get("/api/wishlist/details", wishlistController.getDetails);
+router.get("/api/wishlist/details",userAuth.isAuthenticated, wishlistController.getDetails);
 router.post("/api/wishlist/add", wishlistController.addToWishlist);
 router.post("/api/wishlist/remove", wishlistController.removeFromWishlist);
 
@@ -249,6 +251,7 @@ router.get("/api/coupons", couponController.fetchCoupons);
 router.get('/referral', userController.loadReferral)
 router.post("/api/referral-validate", userController.validateReferral)
 
+router.get('/api/check-session', userController.checkSession)
 router.get("/logout", userAuth.isAuthenticated, userController.logout);
 
 module.exports = router;

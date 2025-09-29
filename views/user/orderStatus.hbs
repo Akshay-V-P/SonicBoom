@@ -191,7 +191,7 @@
                                         {{#if this.returnApproved}}
                                             <p class="text-green-500">Return Approved</p>
                                         {{else}}
-                                            <p class="text-orange-500 text-right">Waiting for Approval</p>
+                                            <p class="text-orange-500 text-right" id="return-test" data-returnapproved="{{this}}">Waiting for Approval</p>
                                         {{/if}}
                                     {{else}}
                                         {{#if (eq this.status "payment failed")}}
@@ -319,6 +319,8 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+
+        console.log("Is returnapproved ",document.getElementById("return-test").dataset.returnapproved)
 
         // --- Order Cancellation Modal Logic ---
         const orderCancelButton = document.getElementById('order-cancel-btn'); 

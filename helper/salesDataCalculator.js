@@ -3,6 +3,34 @@ const orderModel = require('../model/ordersModel')
 async function calculateSalesData(findQuery) {
 
     let data = await orderModel.aggregate([{ $match: findQuery }, { $unwind: "$orderItems" }])
+    let orderCount = await orderModel.countDocuments(findQuery)
+    let customerCount = await orderModel.aggregate([
+        {
+            $match:findQuery
+        },
+        {
+            $group: { _id: "$address.email" }
+        },
+        {
+            $count:"customerCount"
+        }
+    ])
+
+    let productCount = await orderModel.aggregate([
+        {
+            $match:findQuery
+        },
+        {   
+            $unwind:"$orderItems"
+        },
+        {
+            $group: { _id: "$orderItems.itemId" }
+        },
+        {
+            $count:"productCount"
+        }
+    ])
+    
     let totalSales = { amount: 0, count: 0 }
     let totalValue = 0
     let unpaidOrders = {amount: 0, count: 0}
@@ -21,11 +49,19 @@ async function calculateSalesData(findQuery) {
         let orderPaymentStatus = order.paymentStatus
         let orderStatus = order.status
 
-        totalValue += orderTotalAmount
+        if (order.total < 3000) {
+            totalValue += orderTotalAmount + 100
+        } else {
+            totalValue += orderTotalAmount
+        }
 
         // Total sales amount
         if (orderStatus !== "cancelled" && orderStatus !== "returned") {
-            totalSales.amount += orderTotalAmount
+            if (order.total < 3000) {
+                totalSales += orderTotalAmount + 100
+            } else {
+                totalSales += orderTotalAmount
+            }
             totalSales.count += orderQuantity
 
 
@@ -65,7 +101,7 @@ async function calculateSalesData(findQuery) {
 
     })
 
-    return {totalSales, totalValue, unpaidOrders, paidOrders, refundedOrders, cancelledOrders, discountAmount, couponDiscounts}
+    return {totalSales, totalValue, unpaidOrders, paidOrders, refundedOrders, cancelledOrders, discountAmount, couponDiscounts, orderCount, customerCount, productCount}
 }
 
 

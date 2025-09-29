@@ -68,7 +68,7 @@
             flex-wrap: wrap;
             align-items: center;
             justify-content: end;
-            width: 90%;
+            width: 100%;
         }
 
         .filter-select {
@@ -308,7 +308,11 @@
 
         <div class="sales-report-section">
             <div class="report-actions">
-                <button class="export-btn" onclick="createExport()">Export</button>
+                <div>
+
+                <button class="export-btn" onclick="createExport()">Export PDF</button>
+                <button class="export-btn" onclick="createExcelExport()">Export Excel</button>
+                </div>
                 
                 <div class="report-filters">
                     <select id="dateRangeSelect" class="filter-select">
@@ -601,6 +605,16 @@
                 const endDate = params.get("endDate");
 
                 window.location.href = `/admin/api/sales-report/download?startDate=${startDate}&endDate=${endDate}` 
+                    
+            }
+
+            function createExcelExport(){
+                const params = new URLSearchParams(currentUrl.split("?")[1]);
+
+                const startDate = params.get("startDate");
+                const endDate = params.get("endDate");
+
+                window.location.href = `/admin/api/sales-report/download/excel?startDate=${startDate}&endDate=${endDate}` 
                     
             }
 

@@ -113,6 +113,7 @@ const updateProduct = async (req, res) => {
     try {
         const { _id } = req.params
         const data = { ...req.body }
+        console.log(data)
         delete data.productId
         const fileMap = new Map()
         req.files.forEach(file => fileMap.set(file.fieldname, file.path))
@@ -176,6 +177,20 @@ const changeProductStatus = async (req, res) => {
 }
 
 
+const removeCoverImage = async (req, res) => {
+    try {
+        const productId = req.query.productId
+        const { url } = req.body
+        
+        await productModel.updateOne({_id:productId}, {$pull:{coverImage:url}})
+        
+        res.status(200).json({message:"Image removed"})
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message:"Internal server error"})
+    }
+}
 
 
 module.exports = {
@@ -186,6 +201,7 @@ module.exports = {
     updateProduct,
     loadProductsShow,
     changeProductStatus,
+    removeCoverImage,
 }
 
 

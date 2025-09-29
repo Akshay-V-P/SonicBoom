@@ -36,6 +36,7 @@ const addToWallet = async (req, res) => {
         
         const transaction = {
             transactionType,
+            description:"Amount added to wallet",
             amount,
             transactionDate:new Date().toISOString()
         }
@@ -48,7 +49,7 @@ const addToWallet = async (req, res) => {
         }
 
         console.log(wallet)
-        wallet.transactions.push(transaction)
+        wallet.transactions.unshift(transaction)
         await wallet.save()
         res.status(200).json({message:"Transaction successfull"})
 

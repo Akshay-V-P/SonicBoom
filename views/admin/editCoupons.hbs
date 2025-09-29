@@ -13,7 +13,7 @@
             <!-- Coupon Code -->
             <div>
                 <label for="couponCode" class="block text-sm font-medium mb-1">Coupon Code</label>
-                <input type="text" id="couponCode" name="couponCode" value="{{coupon.code}}" placeholder="e.g., BLACKFRIDAY20"
+                <input type="text" id="code" name="code" value="{{coupon.code}}" placeholder="e.g., BLACKFRIDAY20"
                     class="w-full px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 bg-zinc-800">
             </div>
 
@@ -108,7 +108,7 @@
 
 
             const form = document.getElementById('submit-btn');
-            const fields = ['couponCode', 'description', 'discount', 'maxDiscount', 'minPurchase', 'expiryDate'];
+            const fields = ['code', 'description', 'discount', 'maxDiscount', 'minPurchase', 'expiryDate'];
 
 
     
@@ -223,15 +223,16 @@
 
 
         function updateCoupon(bodyData, couponId){
+            console.log(bodyData)
 
             fetch(`/admin/api/coupons/edit?couponId=${couponId}`, {
                 method:"PATCH",
                 headers:{"Content-Type":"application/json"},
                 body:JSON.stringify(bodyData)
             })
-                .then(response =>{
-
-                    if(!response.ok) throw new Error("Internal server error")
+                .then(async response =>{
+                    const res = await response.json()
+                    if(!response.ok) throw new Error(res.message || "Internal server error")
 
                     Swal.fire({
                         title: 'Success!',
@@ -249,8 +250,8 @@
                     console.log(error)
                     Swal.fire({
                         title: 'Failed',
-                        text: 'Unexpected error occured',
-                        icon: 'success',
+                        text: error.message,
+                        icon: 'error',
                         background: "#242428",
                         color: "#fff",
                     })

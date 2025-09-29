@@ -33,6 +33,7 @@ router.get("/logout", adminController.logout);
 router
     .route("/dashboard")
     .get(adminAuth.isAuthenticated, dashboardController.loadDashboard);
+router.get("/api/sales-chart", dashboardController.getChartData)
 
 // user
 router.route("/users").get(adminAuth.isAuthenticated, userController.loadUsers);
@@ -85,6 +86,8 @@ router.patch(
     productController.changeProductStatus
 );
 
+router.patch("/api/products/remove-cover", productController.removeCoverImage)
+
 // orders
 router
     .route("/orders")
@@ -114,20 +117,22 @@ router.post(
 router.route("/banners").get(bannerController.loadBanners);
 
 // coupon
-router.route("/coupons").get(couponController.loadCoupons);
-router.get("/api/coupons", couponController.getCoupons);
-router.put("/coupons/add", couponController.addCoupon);
-router.get("/coupons/edit", couponController.loadCouponEdit)
-router.patch("/api/coupons/edit", couponController.editCoupon)
-router.patch("/api/coupons/:_id/active", couponController.changeCouponStatus);
-router.patch("/api/coupons/:_id/block", couponController.changeCouponStatus);
+router.route("/coupons").get(adminAuth.isAuthenticated, couponController.loadCoupons);
+router.get("/api/coupons",adminAuth.isAuthenticated, couponController.getCoupons);
+router.put("/coupons/add",adminAuth.isAuthenticated, couponController.addCoupon);
+router.get("/coupons/edit",adminAuth.isAuthenticated, couponController.loadCouponEdit)
+router.patch("/api/coupons/edit",adminAuth.isAuthenticated, couponController.editCoupon)
+router.patch("/api/coupons/:_id/active",adminAuth.isAuthenticated, couponController.changeCouponStatus);
+router.patch("/api/coupons/:_id/block",adminAuth.isAuthenticated, couponController.changeCouponStatus);
 
-const makeSalesPdf = require("../helper/createSalesPDF")
+const makeSalesPdf = require("../helper/createSalesPDF");
+const downloadSalesReportExcel = require("../helper/createSalesExcel");
 
 //sales
-router.route("/sales").get(salesController.loadSales);
-router.get('/api/sales-report', salesController.getData)
-router.get('/api/sales-report/download', makeSalesPdf)
+router.route("/sales").get(adminAuth.isAuthenticated, salesController.loadSales);
+router.get('/api/sales-report',adminAuth.isAuthenticated, salesController.getData)
+router.get('/api/sales-report/download',adminAuth.isAuthenticated, makeSalesPdf)
+router.get('/api/sales-report/download/excel',adminAuth.isAuthenticated, downloadSalesReportExcel)
 
 // Category routes
 router

@@ -1,5 +1,6 @@
 const couponModel = require("../../model/couponModel")
 const paginate = require("../../helper/pagination")
+const { default: mongoose } = require("mongoose")
 
 // Render Coupon Management Page
 const loadCoupons = (req, res) => {
@@ -122,6 +123,9 @@ const editCoupon = async (req, res) => {
     try {
         const bodyData = req.body
         const couponId = req.query.couponId
+        const coupon = await couponModel.findOne({ code: bodyData.code, _id: { $ne: couponId } })
+        console.log(coupon)
+        if (coupon) return res.status(400).json({ message: "Coupon code already exists" })
 
         await couponModel.updateOne({_id:couponId}, {$set:bodyData})
 

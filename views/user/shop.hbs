@@ -399,7 +399,6 @@ function fetchProducts(url){
                                 return response.json()
                             })
                             .then(data =>{
-                                console.log(data)
                                 Swal.fire({
                                     title: 'Added to Cart!',
                                     text: `Product has been added to your cart.`,
@@ -412,6 +411,21 @@ function fetchProducts(url){
                                         popup: 'my-swal-border'
                                     }
                                 });
+                                (function(){
+                                    const cartBadge = document.getElementById("cart-item-count")
+                                    fetch('/api/cart/get-count')
+                                    .then(async response => {
+                                        const res = await response.json()
+                                        console.log(res.count)
+                                        console.log(cartBadge)
+                                        if(!response.ok){
+                                            cartBadge.textContent = 0
+                                        }else{
+                                            cartBadge.textContent = res
+                                        }
+
+                                    }).catch(err => console.log(err))
+                                })();
                             })
                             .catch(error => console.log(error))
                         

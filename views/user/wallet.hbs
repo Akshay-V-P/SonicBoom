@@ -324,6 +324,7 @@ function fetchWallet(){
                     let statusText = ""
                     if (trn.transactionType == "debit") {
                         operator = "-"
+                        colorClass = "text-red-500"
                     }
                     // Check for failed payments
                     if (trn.status === "failed") {
@@ -335,7 +336,7 @@ function fetchWallet(){
                         <div class="flex items-center justify-between bg-input-bg rounded-lg p-4 shadow-sm">
                             <div class="flex items-center gap-4">
                                 <div>
-                                    <p class="text-text-light font-medium">${trn.transactionType.toUpperCase()} ${statusText}</p>
+                                    <p class="text-text-light font-medium">${trn.description} ${statusText}</p>
                                     <p class="text-text-medium text-sm">${new Date(trn.transactionDate).toLocaleDateString()}</p>
                                 </div>
                             </div>

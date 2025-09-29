@@ -99,19 +99,14 @@ const loadDetails = async (req, res) => {
 
         checkoutDetails.gstAmount = ((parseInt(checkoutDetails.subTotal) / 100) * gst).toFixed(2);
         checkoutDetails.items = products.length;
-        checkoutDetails.subTotal =
-            parseInt(checkoutDetails.subTotal) +
-            parseInt(checkoutDetails.gstAmount);
-        checkoutDetails.total =
-            parseInt(checkoutDetails.subTotal) -
-            parseInt(checkoutDetails.discounts);
+        checkoutDetails.subTotal = parseInt(checkoutDetails.subTotal) + parseInt(checkoutDetails.gstAmount);
+        checkoutDetails.total = parseInt(checkoutDetails.subTotal) - parseInt(checkoutDetails.discounts);
 
         if (typeof couponCode === "string" && couponCode.trim() && operation === "apply") {
             checkoutDetails = (await couponOperations.applyCoupon( checkoutDetails, couponCode, userId, res )) || checkoutDetails;
         }
 
-        if (
-            typeof couponCode === "string" &&
+        if (typeof couponCode === "string" &&
             couponCode.trim() &&
             operation === "remove"
         ) {
@@ -122,6 +117,13 @@ const loadDetails = async (req, res) => {
                     userId,
                     res
                 )) || checkoutDetails;
+        }
+
+        if (checkoutDetails.total < 3000) {
+            checkoutDetails.deliveryCharge = 100
+            checkoutDetails.total += 100 
+        } else {
+            checkoutDetails.deliveryCharge = "Free"
         }
 
         console.log("Checkout details : ", checkoutDetails);
@@ -148,6 +150,7 @@ const placeOrder = async (req, res) => {
             gstAmount,
         } = req.body;
         const userId = req.session.user._id;
+        console.log(total)
 
         if(!await validateStockAvailability(userId)) return res.status(401).json({message:"Stock Unavailable for items"})
 
@@ -185,7 +188,8 @@ const placeOrder = async (req, res) => {
                     .status(400)
                     .json({ message: "Insufficiant balance"});
             }
-        } else if(paymentMethod == "COD") {
+        } else if (paymentMethod == "COD") {
+            if(total > 3000) return res.status(401).json({message:"Cash On Delivery not available"})
             payStatus = "unpaid";
             decStock = true;
         }
@@ -277,11 +281,22 @@ const placeOrder = async (req, res) => {
 
         await newOrder.save();
         await cartModel.deleteOne({ userId });
+        const order = await ordersModel.findOne({_id:newOrder._id})
 
         if (walletPaid) {
             wallet.amount = (
                 parseFloat(wallet.amount) - parseFloat(total)
             ).toFixed(2);
+
+            const transaction = {
+                transactionType: "debit",
+                description:`Order ${order.orderId} settled from Wallet`,   
+                amount : total,
+                status:"success",
+                transactionDate:new Date().toISOString()
+            }
+
+            wallet.transactions.unshift(transaction)
             await wallet.save();
         }
         res.status(200).json({ message: "Order placed" });

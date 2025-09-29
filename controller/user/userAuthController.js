@@ -343,6 +343,17 @@ const validateReferral = async (req, res) => {
 }
 
 
+const checkSession = async (req, res) => {
+    try {
+        const session = req.session?.user?._id
+        if (!session) return res.status(404).json({message:"failed"})
+        res.status(200).json({message:"sucess"})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message:"failed"})
+    }
+}
+
 module.exports = {
     loadLogin,
     loadSignup,
@@ -357,5 +368,6 @@ module.exports = {
     logout, 
     validateResetEmail,
     loadReferral,
-    validateReferral
+    validateReferral,
+    checkSession
 }

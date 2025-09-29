@@ -1,7 +1,22 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <!-- Cropper.js CSS for image cropping UI -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <!-- Google Fonts for icons (used for breadcrumb and the new add button) -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d0d;
+            color: #fff;
+            padding: 20px;
+        }
 
+        /* General styles from original request */
         .header {
             display: flex;
             justify-content: space-between;
@@ -24,7 +39,6 @@
             font-weight: 600;
         }
 
-    
         .edit-product-form {
             background-color: #1a1a1a;
             padding: 30px;
@@ -90,10 +104,12 @@
             margin-top: 20px;
             flex-wrap: wrap;
         }
-
+        /* Common style for all upload boxes */
         .image-upload-box {
-            flex: 1;
+            flex-grow: 1;
+            flex-basis: 150px; /* Base width for wrapping */
             min-width: 150px;
+            max-width: 240px; 
             border: 2px dashed #4a90e2;
             border-radius: 8px;
             padding: 10px;
@@ -103,11 +119,34 @@
             justify-content: center;
             text-align: center;
             position: relative;
+            /* Explicitly set aspect ratio for cover images (16:9) */
+            aspect-ratio: 16 / 9; 
+            height: auto;
+        }
+        /* Specific style for the thumbnail box (3:4 ratio) */
+        .thumbnail-box {
+            aspect-ratio: 3 / 4;
+            max-width: 180px; 
         }
 
+        /* Style for the 'Add New' placeholder */
+        #addNewCoverPlaceholder {
+            background-color: #1a1a1a;
+            border: 2px dashed #4a90e2;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        #addNewCoverPlaceholder:hover {
+            background-color: #2a2a2a;
+        }
+        #addNewCoverPlaceholder p {
+            margin-top: 10px;
+            color: #4a90e2;
+        }
+        
         .image-upload-box img {
             width: 100%;
-            height: auto;
+            height: 100%;
             object-fit: cover;
             border-radius: 4px;
         }
@@ -118,21 +157,40 @@
             margin-top: 10px;
         }
 
-        .image-upload-box .remove-btn {
+        .image-upload-box .change-btn {
             position: absolute;
             top: 5px;
             right: 5px;
             background-color: rgba(226, 74, 74, 0.8);
             color: #fff;
             border: none;
-            border-radius: 2px;
-            padding: 2px;
-            height: 20px;
+            border-radius: 5%;
+            padding: 5px;
+            height: 24px;
             font-size: 12px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            line-height: 1;
+        }
+
+        .image-upload-box .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 69px;
+            background-color: rgba(226, 74, 74, 0.8);
+            color: #fff;
+            border: none;
+            border-radius: 5%;
+            padding: 5px;
+            height: 24px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }
 
         .edit-edition-container {
@@ -156,7 +214,7 @@
         .form-actions {
             margin-top: 30px;
             text-align: right;
-            justify-content: end;
+            justify-content: flex-end; /* Use flex-end for better control */
             display: flex;
             padding-right: 10%;
             margin-bottom: 24px;
@@ -174,101 +232,110 @@
         }
 
         /* Modal for cropping */
-    .cropper-modal {
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.8);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+        /* Updated modal styles for better positioning and background */
+        #cropModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+        .cropper-container-box {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 90vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #cropImage {
+            max-width: 100%;
+            max-height: 70vh;
+            display: block; /* Cropper needs this */
+        }
+        .cropper-buttons {
+            margin-top: 15px;
+            text-align: right;
+        }
+        .cropper-buttons button {
+            background: #4a90e2;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        .cropper-buttons #cropCancel {
+            background: #333;
+        }
+        .cropper-buttons button:hover {
+            opacity: 0.9;
+        }
 
-    #cropConfirm{
-        z-index: 9999;
-    }
+        .breadcrumb{
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
 
-    .cropper-container {
-        position: relative;
-    }
+        .icon{
+            padding-top: 2px;
+            font-size: 18px;
+        }
 
-    .cropper-container-box {
-        background: #222;
-        padding: 20px;
-        border-radius: 8px;
-        max-width: 90%;
-        max-height: 90%;
-    }
-    .cropper-container-box img {
-        max-width: 100%;
-    }
-    .cropper-buttons {
-        margin-top: 10px;
-        text-align: right;
-    }
-    .cropper-buttons button {
-        background: #4a90e2;
-        border: none;
-        color: #fff;
-        padding: 8px 16px;
-        margin-left: 10px;
-        cursor: pointer;
-        border-radius: 4px;
-    }
+        .thumbnail{
+            /* This class is now redundant as we use thumbnail-box */
+        }
 
-    .breadcrumb{
-    display: flex;
-    gap: 4px;
-    }
+        /* Add this to your existing <style> block on the form page */
+        .add-product-submit {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    .icon{
-        padding-top: 1%;
-    }
+        .add-product-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
 
-    .thumbnail{
-        aspect-ratio: 3/4;
-        min-width: 150px;
-        max-width: 240px;
-        border: 2px dashed #4a90e2;
-        border-radius: 8px;
-        padding: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        position: relative;
-    }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
 
-    .editionThumb{
-        max-width: 280px;
-    }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
-    /* Add this to your existing <style> block on the form page */
+        /* Validation styles */
+        .form-group input.error,
+        .form-group select.error,
+        .form-group textarea.error {
+            border-color: #e57373 !important; 
+        }
+        .error-message {
+            color: #ef5350;
+            font-size: 13px;
+            margin-top: 6px;
+            display: block;
+        }
 
-    .add-product-submit {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .add-product-submit:disabled {
-        opacity: 0.7;
-        cursor: not-allowed;
-    }
-
-    .spinner {
-        display: inline-block;
-        width: 20px;
-        height: 20px;
-        border: 3px solid rgba(255, 255, 255, 0.3);
-        border-radius: 50%;
-        border-top-color: #fff;
-        animation: spin 1s ease-in-out infinite;
-        margin-right: 10px;
-    }
-
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
 
         @media (max-width: 768px) {
             .header {
@@ -286,176 +353,196 @@
             }
 
             .image-upload-container {
-                flex-direction: column;
+                /* Allow container to wrap elements responsively */
+                justify-content: center; 
             }
 
+            .image-upload-box, .thumbnail-box {
+                flex-basis: 100%;
+                max-width: 100%;
+            }
         }
 
     </style>
+</head>
+<body>
+    <div class="header">
+        <div class="breadcrumb">
+            <a href="/admin/products" style="text-decoration: none; color:white;"><h2 class="page-title">Products</h2></a>
+            <span class="material-symbols-outlined icon">
+                arrow_forward_ios
+            </span> 
+        <h2 class="page-title">Edit Product</h2>
+    </div>
+        <button class="account-btn">Account</button>
+    </div>
+    <input type="text" id="pageName" name="product" value="products" hidden>
 
-            <div class="header">
-                <div class="breadcrumb">
-                    <a href="/admin/products" style="text-decoration: none; color:white;"><h2 class="page-title">Products</h2></a>
-                    <span class="material-symbols-outlined icon">
-                        arrow_forward_ios
-                    </span> 
-                <h2 class="page-title">Edit Product</h2>
-            </div>
-                <button class="account-btn">Account</button>
-            </div>
-            <input type="text" id="pageName" name="product" value="products" hidden>
+    <!-- Handlebars conditional check for product object - assumed context -->
     {{#if product}}
-            <form class="edit-product-form" action="/admin/products/edit" method="POST" enctype="multipart/form-data">
+        <form class="edit-product-form" action="/admin/products/edit" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <h2 class="form-section-title">Product details</h2>
+            </div>
+
+            <input type="text" id="productId" name="productId" value="{{product._id}}" hidden>
+
+            <div class="form-grid">
                 <div class="form-group">
-                    <h2 class="form-section-title">Product details</h2>
+                    <label for="productName">Product Name</label>
+                    <input type="text" id="productName" name="name" value="{{product.name}}">
+                </div>
+                <div class="form-group">
+                    <label for="developer">Developer</label>
+                    <input type="text" id="developer" name="developer" value="{{product.developer}}">
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <select name="category" id="category">
+                        <!-- Assumed Handlebars logic for categories -->
+                        {{#each categorys}}
+                        <option value="{{this._id}}" {{#if (eq ../product.categoryId this._id)}}selected{{/if}}>{{this.name}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description">{{product.description}}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price</label>
+                    <input type="text" id="price" name="price" value="{{product.variants.0.price}}">
+                </div>
+                <div class="form-group">
+                    <label for="offer">Offer</label>
+                    <input type="text" id="offer" name="offer" value="{{product.offer}}">
+                </div>
+                <div class="form-group">
+                    <label for="stock">Stock</label>
+                    <input type="text" id="stock" name="stock" value="{{product.variants.0.stock}}">
+                </div>
+                
+            </div>
+            <div class="form-group">
+                <h2 class="form-section-title">Images</h2>
+            </div>
+
+            <div class="image-upload-container" id="coverImageContainer">
+                <!-- Existing Cover Images -->
+                {{#each product.coverImage}}
+                <div class="image-upload-box cover-image-box" data-cover-index="{{@index}}">
+                    <button type="button" class="change-btn">Change</button>
+                    <button type="button" class="remove-btn" onclick="removeCoverImage('{{this}}')">Remove</button>
+                    <!-- Hidden input to track if this image slot is replaced (index is @index) -->
+                    <img src="{{this}}" class="coverImage" data-index="{{@index}}">
+                    <p>Cover {{@index}}</p>
+                </div>
+                {{/each}}
+                
+                <!-- NEW: Placeholder for adding a new cover image -->
+                <div class="image-upload-box add-new-cover-box" id="addNewCoverPlaceholder">
+                    <span class="material-symbols-outlined" style="font-size: 48px; color: #4a90e2;">add_photo_alternate</span>
+                    <p>Add New Cover (Max 6)</p>
                 </div>
 
-                <input type="text" id="productId" name="productId" value="{{product._id}}" hidden>
-
+                <!-- Product Thumbnail -->
+                <div class="image-upload-box thumbnail-box">
+                    <button type="button" class="change-btn">Change</button>
+                    <img src="{{product.variants.0.thumbnail}}" class="thumbnailImage" data-index="0">
+                    <p>Thumbnail</p>
+                </div>
+            </div>
+            
+            <!-- Existing Editions (if any) -->
+            {{#if product.variants}}
+            <div id="existing-editions-wrapper">
+            {{#each product.variants}}
+            {{#unless @first}}
+            <div class="edit-edition-container" data-edition-index="{{@index}}">
+                <h2 class="form-section-title">Edition: {{this.name}} <button type="button" class="remove-edition-btn" style="background-color: #e24a4a; margin-left: 10px; padding: 4px 8px; border-radius: 4px;">Remove</button></h2>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="productName">Product Name</label>
-                        <input type="text" id="productName" name="name" value="{{product.name}}">
+                        <label for="editionName_{{@index}}">Edition Name</label>
+                        <!-- Note: The name attributes below need to be fixed to use the correct index if this is a real form -->
+                        <input type="text" id="editionName_{{@index}}" name="variants[{{@index}}][name]" value="{{this.name}}">
                     </div>
                     <div class="form-group">
-                        <label for="developer">Developer</label>
-                        <input type="text" id="developer" name="developer" value="{{product.developer}}">
+                        <label for="editionPrice_{{@index}}">Price</label>
+                        <input type="text" id="editionPrice_{{@index}}" name="variants[{{@index}}][price]" value="{{this.price}}">
                     </div>
                     <div class="form-group">
-                        <label for="category">Category</label>
-                        <select name="category" id="category">
-                            {{#each categorys}}
-                            <option value="{{this._id}}" {{#if (eq ../product.categoryId this._id)}}selected{{/if}}>{{this.name}}</option>
-                            {{/each}}
-                        </select>
+                        <label for="editionStock_{{@index}}">Stock</label>
+                        <input type="text" id="editionStock_{{@index}}" name="variants[{{@index}}][stock]" value="{{this.stock}}">
                     </div>
-                    <div class="form-group full-width">
-                        <label for="description">Description</label>
-                        <textarea id="description" name="description">{{product.description}}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="price">Price</label>
-                        <input type="text" id="price" name="price" value="{{product.variants.0.price}}">
-                    </div>
-                    <div class="form-group">
-                        <label for="offer">Offer</label>
-                        <input type="text" id="offer" name="offer" value="{{product.offer}}">
-                    </div>
-                    <div class="form-group">
-                        <label for="stock">Stock</label>
-                        <input type="text" id="offer" name="stock" value="{{product.variants.0.stock}}">
-                    </div>
-                    
                 </div>
-                <div class="form-group">
-                    <h2 class="form-section-title">Images</h2>
-                </div>
-
-                <div class="image-upload-container">
-                    {{#each product.coverImage}}
-                    <div class="image-upload-box">
-                        <button class="remove-btn">Change</button>
-                        <img src="{{this}}">
-                        <p>Cover</p>
-                    </div>
-                    {{/each}}
-                    <div class="image-upload-box">
-                        <button class="remove-btn">Change</button>
-                        <img src="{{product.variants.0.thumbnail}}" >
+                <div class="image-upload-container edition-image-container">
+                    <div class="image-upload-box thumbnail-box edition-box">
+                        <button type="button" class="change-btn">Change</button>
+                        <img src="{{this.thumbnail}}" 
+                            class="editionThumb" 
+                            data-index="{{@index}}" 
+                            data-url="{{this.thumbnail}}"
+                            alt="{{this.name}} Thumbnail">
                         <p>Thumbnail</p>
                     </div>
                 </div>
-                {{#if product.variants}}
-                {{#each product.variants}}
-                {{#unless @first}}
-                <div class="edit-edition-container">
-                    <h2 class="form-section-title">Editions</h2>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="editionName">Product Name</label>
-                            <input type="text" id="editionName" value="{{this.name}}">
-                        </div>
-                        <div class="form-group">
-                            <label for="editionPrice">Price</label>
-                            <input type="text" id="editionPrice" value="{{this.price}}">
-                        </div>
-                    </div>
-                    <div class="image-upload-container">
-                        <div class="image-upload-box thumbnail">
-                            <button class="remove-btn">x</button>
-                            <img src="{{this.thumbnail}}" alt="GTA V Premium Thumbnail">
-                            <p>Thumbnail</p>
-                        </div>
-                    </div>
-                    {{/unless}}
-                    {{/each}}
-                    {{/if}}
+            </div>
+            {{/unless}}
+            {{/each}}
+            </div>
+            {{/if}}
 
-                    <div id="edition-wrapper">
-
-                </div>
-                    
-                </div>
-
-                
-                <button type="button" class="add-edition-btn">Add Edition</button>
-                <div class="form-actions">
-                    <button type="submit" class="add-product-submit">Update</button>
-                </div>
+            <!-- Dynamic New Editions Wrapper -->
+            <div id="new-edition-wrapper">
+                <!-- New editions added via JS will go here -->
+            </div>
+            
+            <button type="button" class="add-edition-btn">Add Edition</button>
+            <div class="form-actions">
+                <button type="submit" class="add-product-submit">Update</button>
+            </div>
+        </form>
     {{/if}}
-            </form>
-        </main>
-    </div>
+</body>
+</html>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 <script>
-// Add styles for validation errors
-const style = document.createElement('style');
-style.innerHTML = `
-    .form-group input.error,
-    .form-group select.error,
-    .form-group textarea.error {
-        border-color: #e57373; /* A soft red for dark mode */
-    }
-    .error-message {
-        color: #ef5350;
-        font-size: 13px;
-        margin-top: 6px;
-        display: block;
-    }
-`;
-document.head.appendChild(style);
-
+// Global constants
+const MAX_COVERS = 6;
+const THUMBNAIL_DATA_INDEX = 0; // The primary variant thumbnail is usually index 0
+const aspectRatios = { cover: 16 / 9, thumbnail: 3 / 4, edition: 3 / 4 };
 
 window.addEventListener('DOMContentLoaded', function () {
+    const form = document.querySelector('.edit-product-form');
+    const submitButton = document.querySelector('.add-product-submit');
+    const editionWrapper = document.querySelector('#new-edition-wrapper');
+    const coverImageContainer = document.querySelector('#coverImageContainer');
+    const addNewCoverPlaceholder = document.querySelector('#addNewCoverPlaceholder');
+
     let cropper;
     let currentImageElement;
-    let currentType;
+    let currentType; 
     let currentEditionIndex; 
-    let coverIndex
-    const aspectRatios = { cover: 16 / 9, thumbnail: 3 / 4, edition: 3 / 4 };
+    let currentCoverIndex; // Tracks the index of the cover being replaced OR the next index for a new cover
 
-    // Hidden file input
+    // Hidden file input (used globally for all image uploads)
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = 'image/jpeg,image/png,image/gif';
     fileInput.style.display = 'none';
     document.body.appendChild(fileInput);
 
-    // Crop modal
+    // --- Modal Setup ---
     const modal = document.createElement('div');
     modal.id = 'cropModal';
-    modal.style.cssText = `
-        display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-        background:rgba(0,0,0,0.8); justify-content:center; align-items:center; z-index:9999;
-    `;
     modal.innerHTML = `
-        <div style="background:#1a1a1a; padding:20px; border-radius:8px; border:1px solid #333; max-width:90%; max-height:90%; display:flex; flex-direction:column; align-items:center;">
+        <div class="cropper-container-box">
             <img id="cropImage" style="max-width:100%; max-height:70vh; object-fit:contain; border-radius:6px;">
-            <div style="margin-top:10px; text-align:right;">
-                <button id="cropConfirm" class="btn-confirm" style="background:#4a90e2;color:white;padding:8px 16px;border:none;border-radius:6px;font-size:14px;cursor:pointer;">Crop & Save</button>
-                <button id="cropCancel" class="btn-cancel" style="background:#333;color:white;padding:8px 16px;border:none;border-radius:6px;font-size:14px;cursor:pointer;margin-left:8px;">Cancel</button>
+            <div class="cropper-buttons">
+                <button id="cropConfirm" class="btn-confirm">Crop & Save</button>
+                <button id="cropCancel" class="btn-cancel">Cancel</button>
             </div>
         </div>
     `;
@@ -465,34 +552,72 @@ window.addEventListener('DOMContentLoaded', function () {
     const cropConfirmBtn = modal.querySelector('#cropConfirm');
     const cropCancelBtn = modal.querySelector('#cropCancel');
 
-    
+    // --- Utility Functions ---
+
+    /** Attaches click listeners to all 'Change' buttons and the 'Add New Cover' placeholder. */
     function attachCropListeners() {
-        document.querySelectorAll('.image-upload-box .remove-btn, .thumbnail .remove-btn').forEach(btn => {
+        // 1. Existing Cover Images & Thumbnail
+        document.querySelectorAll('.cover-image-box .change-btn, .thumbnail-box .change-btn, .edition-box .change-btn').forEach(btn => {
             btn.onclick = function (e) {
                 e.preventDefault();
-                currentImageElement = this.nextElementSibling;
-                const labelText = this.parentElement.querySelector('p')?.innerText.toLowerCase() || '';
-
-                if (labelText.includes('cover')) {
-                    currentType = 'cover';
-                    coverIndex = Array.from(
-                    document.querySelectorAll('.image-upload-container .image-upload-box')
-                    ).indexOf(this.parentElement);
-                } else if (this.closest('.edit-edition-container')) {
-                    currentType = 'edition';
-                    currentEditionIndex = currentImageElement.dataset.index; 
-                } else {
+                currentImageElement = this.parentElement.querySelector('img');
+                const parentBox = this.parentElement;
+                
+                if (parentBox.classList.contains('thumbnail-box') && !parentBox.classList.contains('edition-box')) {
+                    // Primary Thumbnail
                     currentType = 'thumbnail';
+                    currentCoverIndex = THUMBNAIL_DATA_INDEX;
+                } else if (parentBox.classList.contains('edition-box')) {
+                    // Edition Thumbnail
+                    currentType = 'edition';
+                    currentEditionIndex = currentImageElement.dataset.index;
+                } else {
+                    // Existing Cover Image
+                    currentType = 'cover';
+                    // The index is pulled from the data attribute set in the Handlebars loop
+                    currentCoverIndex = currentImageElement.dataset.index; 
                 }
-
                 fileInput.click();
             };
         });
+
+        // 2. New Cover Placeholder
+        if (addNewCoverPlaceholder) {
+            addNewCoverPlaceholder.onclick = function (e) {
+                e.preventDefault();
+                const currentCovers = document.querySelectorAll('.cover-image-box').length;
+                if (currentCovers >= MAX_COVERS) {
+                    Swal.fire({
+                        title: "Image Limit Reached",
+                        background: "#242428",
+                        color: "#fff",
+                        text: `You can only have a maximum of ${MAX_COVERS} cover images.`,
+                        icon: "warning"
+                    });
+                    return;
+                }
+                currentType = 'newCover';
+                // Set the index to the next available slot
+                currentCoverIndex = currentCovers;
+                fileInput.click();
+            };
+        }
     }
 
-    attachCropListeners();
+    /** Updates the visibility of the "Add New Cover" placeholder based on the current count. */
+    function updateCoverPlaceholderVisibility() {
+        if (!addNewCoverPlaceholder) return;
+        const currentCovers = document.querySelectorAll('.cover-image-box').length;
+        if (currentCovers >= MAX_COVERS) {
+            addNewCoverPlaceholder.style.display = 'none';
+        } else {
+            // Placeholder is positioned next to the thumbnail box
+            addNewCoverPlaceholder.style.display = 'flex';
+        }
+    }
 
-    
+    // --- File Input Listener (Triggers Cropper Modal) ---
+
     fileInput.addEventListener('change', function () {
         if (this.files.length !== 1) return;
         const file = this.files[0];
@@ -502,8 +627,13 @@ window.addEventListener('DOMContentLoaded', function () {
             modal.style.display = 'flex';
 
             if (cropper) cropper.destroy();
+
+            // Determine aspect ratio
+            const ratioType = currentType === 'thumbnail' ? 'thumbnail' : 
+                              currentType === 'edition' ? 'edition' : 'cover';
+
             cropper = new Cropper(cropImageEl, {
-                aspectRatio: aspectRatios[currentType],
+                aspectRatio: aspectRatios[ratioType],
                 viewMode: 1,
                 background: false
             });
@@ -511,40 +641,69 @@ window.addEventListener('DOMContentLoaded', function () {
         reader.readAsDataURL(file);
     });
 
+    // --- Crop Confirmation ---
+
     cropConfirmBtn.addEventListener('click', function () {
         if (!cropper) return;
         const canvas = cropper.getCroppedCanvas();
         canvas.toBlob(function (blob) {
             const file = new File([blob], `${currentType}_${Date.now()}.jpg`, { type: "image/jpeg" });
-
-            currentImageElement.src = URL.createObjectURL(file);
+            const tempUrl = URL.createObjectURL(file);
 
             let hiddenInput;
+
             if (currentType === "edition") {
-                hiddenInput = document.querySelector(`input[name="variants[${currentEditionIndex}][thumbnail]"]`);
-                if (!hiddenInput) {
-                    hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'file';
-                    hiddenInput.name = `variants[${currentEditionIndex}][thumbnail]`;
-                    hiddenInput.style.display = 'none';
-                    document.querySelector('form').appendChild(hiddenInput);
-                }
-            } else {
-                const inputName = `${currentType}Image[${coverIndex}]`;
+                // Handle Edition Thumbnail
+                const inputName = `variants[${currentEditionIndex}][thumbnail]`;
                 hiddenInput = document.querySelector(`input[name="${inputName}"]`);
                 if (!hiddenInput) {
-                    hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'file';
-                    hiddenInput.name = inputName;
-                    hiddenInput.style.display = 'none';
-                    document.querySelector('form').appendChild(hiddenInput);
+                    hiddenInput = createHiddenFileInput(inputName);
+                    form.appendChild(hiddenInput);
                 }
+                currentImageElement.src = tempUrl;
+
+            } else if (currentType === "newCover") {
+                // Handle New Cover Image
+                const inputName = `coverImage[${currentCoverIndex}]`;
+                
+                // 1. Create the new image box element
+                const newBox = document.createElement('div');
+                newBox.className = 'image-upload-box cover-image-box';
+                newBox.innerHTML = `
+                    <button type="button" class="change-btn">Change</button>
+                    <img src="${tempUrl}" class="coverImage" data-index="${currentCoverIndex}">
+                    <p>Cover ${currentCoverIndex}</p>
+                `;
+                
+                // 2. Insert it before the thumbnail box 
+                const thumbnailBox = document.querySelector('.thumbnail-box');
+                coverImageContainer.insertBefore(newBox, thumbnailBox);
+                
+                // 3. Create hidden input for the new file
+                hiddenInput = createHiddenFileInput(inputName);
+                form.appendChild(hiddenInput);
+                
+                // 4. Re-attach listeners and update visibility
+                attachCropListeners();
+                updateCoverPlaceholderVisibility();
+
+            } else if (currentType === "cover") {
+                // Handle Existing Cover Image Replacement
+                const inputName = `coverImage[${currentCoverIndex}]`;
+                hiddenInput = document.querySelector(`input[name="${inputName}"]`);
+                if (!hiddenInput) {
+                    hiddenInput = createHiddenFileInput(inputName);
+                    form.appendChild(hiddenInput);
+                }
+                currentImageElement.src = tempUrl;
             }
 
+            // Set the file data on the hidden input
             const dt = new DataTransfer();
             dt.items.add(file);
             hiddenInput.files = dt.files;
 
+            // Cleanup
             modal.style.display = 'none';
             if (cropper) cropper.destroy();
             cropper = null;
@@ -561,14 +720,32 @@ window.addEventListener('DOMContentLoaded', function () {
         fileInput.value = '';
     });
 
-    let varIndex = -1;
+    // Helper to create a hidden file input
+    function createHiddenFileInput(name) {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.name = name;
+        input.style.display = 'none';
+        return input;
+    }
+
+    // --- Edition Management ---
+
+    let nextEditionIndex = 1; 
+    // Calculate the starting index for new editions (skipping the main variant at 0)
+    document.querySelectorAll('[data-edition-index]').forEach(el => {
+        const index = parseInt(el.dataset.editionIndex);
+        if (index >= nextEditionIndex) {
+            nextEditionIndex = index + 1;
+        }
+    });
 
     document.querySelector('.add-edition-btn').addEventListener('click', () => {
-        varIndex++;
-        const editionContainer = document.querySelector('#edition-wrapper');
+        const varIndex = nextEditionIndex++;
+        
         const newEditionHTML = `
-            <div class="edit-edition-container" style="border-top:1px solid #333; padding-top:30px; margin-top:20px;">
-                <h2 class="form-section-title">New Edition</h2>
+            <div class="edit-edition-container new-edition-container" data-edition-index="${varIndex}" style="border-top:1px solid #333; padding-top:30px; margin-top:20px;">
+                <h2 class="form-section-title">New Edition <button type="button" class="remove-edition-btn" style="background-color: #e24a4a; margin-left: 10px; padding: 4px 8px; border-radius: 4px;">Remove</button></h2>
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="editionName_${varIndex}">Edition Name</label>
@@ -582,11 +759,12 @@ window.addEventListener('DOMContentLoaded', function () {
                         <label for="editionStock_${varIndex}">Stock</label>
                         <input type="text" id="editionStock_${varIndex}" name="variants[${varIndex}][stock]" placeholder="Enter Stock">
                     </div>
+                    <input type="hidden" name="variants[${varIndex}][variantId]" value="new">
                 </div>
-                <div class="image-upload-container">
-                    <div class="thumbnail">
-                        <button type="button" class="remove-btn">Upload</button>
-                        <img src="https://via.placeholder.com/150x200.png?text=Edition+Thumb" 
+                <div class="image-upload-container edition-image-container">
+                    <div class="image-upload-box thumbnail-box edition-box">
+                        <button type="button" class="change-btn">Upload</button>
+                        <img src="https://placehold.co/150x200/2a2a2a/999?text=Edition+Thumb" 
                             class="editionThumb" 
                             data-index="${varIndex}" 
                             alt="Edition Thumbnail">
@@ -596,167 +774,242 @@ window.addEventListener('DOMContentLoaded', function () {
             </div>
         `;
         
-        editionContainer.insertAdjacentHTML('beforeend', newEditionHTML);
+        editionWrapper.insertAdjacentHTML('beforeend', newEditionHTML);
         attachCropListeners();
+
+        // Attach remove listener for the newly added edition
+        document.querySelectorAll('.new-edition-container .remove-edition-btn').forEach(btn => {
+            btn.onclick = function() {
+                this.closest('.edit-edition-container').remove();
+            }
+        });
     });
-});
 
-const form = document.querySelector('.edit-product-form');
+    // --- Initialization ---
 
+    attachCropListeners();
+    updateCoverPlaceholderVisibility();
 
-function clearErrors() {
-    form.querySelectorAll('.error-message').forEach(el => el.remove());
-    form.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-}
+    // Attach remove listeners for existing editions
+    document.querySelectorAll('#existing-editions-wrapper .remove-edition-btn').forEach(btn => {
+        btn.onclick = function() {
+            const container = this.closest('.edit-edition-container');
+            const editionId = container.dataset.editionIndex;
 
+            // In a real application, you'd send an AJAX request to delete the edition
+            // For now, we visually remove it and add a hidden field to flag deletion on submit
+            const deleteInput = document.createElement('input');
+            deleteInput.type = 'hidden';
+            deleteInput.name = `variants[${editionId}][delete]`;
+            deleteInput.value = 'true';
+            form.appendChild(deleteInput);
+            
+            container.style.opacity = '0.5';
+            container.style.pointerEvents = 'none';
+            this.textContent = 'Deleted';
+            this.disabled = true;
+        }
+    });
 
-function showError(inputElement, message) {
-    inputElement.classList.add('error');
-    const formGroup = inputElement.closest('.form-group');
-    if (formGroup) {
-        const error = document.createElement('span');
-        error.className = 'error-message';
-        error.textContent = message;
-        formGroup.appendChild(error);
-    }
-}
+    // --- Validation and Submission Logic ---
 
-
-function validateForm() {
-    let isValid = true;
-
-    // --- Main Product Fields ---
-    const productName = form.querySelector('#productName');
-    const developer = form.querySelector('#developer');
-    const description = form.querySelector('#description');
-    const price = form.querySelector('#price');
-    const offer = form.querySelector('input[name="offer"]');
-    const stock = form.querySelector('input[name="stock"]');
-
-    if (productName.value.trim() === '') {
-        showError(productName, 'Product name cannot be empty.');
-        isValid = false;
-    }
-    if (developer.value.trim() === '') {
-        showError(developer, 'Developer name cannot be empty.');
-        isValid = false;
-    }
-    if (description.value.trim().length < 10) {
-        showError(description, 'Description must be at least 10 characters long.');
-        isValid = false;
-    }
-    if (price.value.trim() === '' || isNaN(price.value) || Number(price.value) <= 0) {
-        showError(price, 'Price must be a valid positive number.');
-        isValid = false;
-    }
-    if (offer.value.trim() !== '' && (isNaN(offer.value) || Number(offer.value) < 0 || Number(offer.value) >= Number(price.value))) {
-        showError(offer, 'Offer must be a number smaller than the price.');
-        isValid = false;
-    }
-    if (stock.value.trim() === '' || !/^\d+$/.test(stock.value) || parseInt(stock.value) < 0) {
-        showError(stock, 'Stock must be a non-negative integer (e.g., 0, 1, 50).');
-        isValid = false;
+    function clearErrors() {
+        form.querySelectorAll('.error-message').forEach(el => el.remove());
+        form.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
     }
 
-    // --- Dynamically Added Edition Fields ---
-    document.querySelectorAll('.edit-edition-container').forEach(container => {
-        const editionName = container.querySelector('input[name*="[name]"]');
-        const editionPrice = container.querySelector('input[name*="[price]"]');
-        const editionStock = container.querySelector('input[name*="[stock]"]');
+    function showError(inputElement, message) {
+        inputElement.classList.add('error');
+        const formGroup = inputElement.closest('.form-group');
+        if (formGroup) {
+            const error = document.createElement('span');
+            error.className = 'error-message';
+            error.textContent = message;
+            formGroup.appendChild(error);
+        }
+    }
+
+    function validateForm() {
+        let isValid = true;
         
-        if(editionName && editionName.value.trim() === ''){
-            showError(editionName, 'Edition name is required.');
+        // Ensure form is visible for validation checks
+        if (!form) return false;
+
+        // --- Main Product Fields ---
+        const productName = form.querySelector('#productName');
+        const developer = form.querySelector('#developer');
+        const description = form.querySelector('#description');
+        const price = form.querySelector('#price');
+        const offer = form.querySelector('input[name="offer"]');
+        const stock = form.querySelector('input[name="stock"]');
+
+        if (productName.value.trim() === '') {
+            showError(productName, 'Product name cannot be empty.');
             isValid = false;
         }
-        if(editionPrice && (editionPrice.value.trim() === '' || isNaN(editionPrice.value) || Number(editionPrice.value) <= 0)){
-            showError(editionPrice, 'Edition price must be a positive number.');
+        if (developer.value.trim() === '') {
+            showError(developer, 'Developer name cannot be empty.');
             isValid = false;
         }
-        if(editionStock && (editionStock.value.trim() === '' || !/^\d+$/.test(editionStock.value) || parseInt(editionStock.value) < 0)){
-            showError(editionStock, 'Edition stock must be a non-negative integer.');
+        if (description.value.trim().length < 10) {
+            showError(description, 'Description must be at least 10 characters long.');
             isValid = false;
         }
-    });
+        if (price.value.trim() === '' || isNaN(price.value) || Number(price.value) <= 0) {
+            showError(price, 'Price must be a valid positive number.');
+            isValid = false;
+        }
+        if (offer.value.trim() !== '') {
+            const offerVal = Number(offer.value);
+            const priceVal = Number(price.value);
+            if (isNaN(offerVal) || offerVal < 0 || offerVal >= priceVal) {
+                showError(offer, 'Offer must be a non-negative number smaller than the price.');
+                isValid = false;
+            }
+        }
+        if (stock.value.trim() === '' || !/^\d+$/.test(stock.value) || parseInt(stock.value) < 0) {
+            showError(stock, 'Stock must be a non-negative integer (e.g., 0, 1, 50).');
+            isValid = false;
+        }
 
-
-    return isValid;
-}
-
-const submitButton = document.querySelector('.add-product-submit')
-
-form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    
-    clearErrors();
-    
-    const isFormValid = validateForm();
-
-   
-    if (!isFormValid) {
-        Swal.fire({
-            title: "Check Your Form",
-            background: "#242428",
-            color: "#fff",
-            text: "Please fix the errors before submitting.",
-            icon: "warning",
-            customClass: { popup: 'my-swal-border' }
+        // --- Dynamically Added Edition Fields ---
+        document.querySelectorAll('.edit-edition-container:not([style*="opacity: 0.5"])').forEach(container => {
+            const editionName = container.querySelector('input[name*="[name]"]');
+            const editionPrice = container.querySelector('input[name*="[price]"]');
+            const editionStock = container.querySelector('input[name*="[stock]"]');
+            
+            if(editionName && editionName.value.trim() === ''){
+                showError(editionName, 'Edition name is required.');
+                isValid = false;
+            }
+            if(editionPrice && (editionPrice.value.trim() === '' || isNaN(editionPrice.value) || Number(editionPrice.value) <= 0)){
+                showError(editionPrice, 'Edition price must be a positive number.');
+                isValid = false;
+            }
+            if(editionStock && (editionStock.value.trim() === '' || !/^\d+$/.test(editionStock.value) || parseInt(editionStock.value) < 0)){
+                showError(editionStock, 'Edition stock must be a non-negative integer.');
+                isValid = false;
+            }
         });
-        return; 
+
+        return isValid;
     }
 
-    const originalButtonText = submitButton.innerHTML;
-    
-    submitButton.disabled = true;
-    submitButton.innerHTML = `<span class="spinner"></span>Processing...`;
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        clearErrors();
+        
+        const isFormValid = validateForm();
 
-    const formData = new FormData(form);
-
-    try {
-        const response = await fetch(`/admin/products/${formData.get('productId')}/edit`, {
-            method: "PATCH", 
-            body: formData
-        });
-
-        if (response.ok) {
+        if (!isFormValid) {
             Swal.fire({
-                title: 'Success!',
-                text: 'Product updated successfully.',
-                icon: 'success',
+                title: "Check Your Form",
                 background: "#242428",
                 color: "#fff",
-                timer: 2000,
-                showConfirmButton: false
-            }).then(() => {
-                window.location.href = "/admin/products";
+                text: "Please fix the errors before submitting.",
+                icon: "warning",
+                customClass: { popup: 'my-swal-border' }
             });
-        } else {
-             const errorData = await response.json();
-             Swal.fire({
-                 title: "Update Failed",
-                 background: "#242428",
-                 color: "#fff",
-                 text: errorData.message || "An unknown error occurred.",
-                 icon: "error",
-                 customClass: { popup: 'my-swal-border' }
-             });
-
-             submitButton.disabled = false
-             submitButton.innerHTML = originalButtonText
+            return; 
         }
-    } catch (error) {
-         Swal.fire({
-             title: "Network Error",
-             background: "#242428",
-             color: "#fff",
-             text: "Could not connect to the server.",
-             icon: "error",
-             customClass: { popup: 'my-swal-border' }
-         });
 
-         submitButton.disabled = false
-         submitButton.innerHTML = originalButtonText
-    }
+        const originalButtonText = submitButton.innerHTML;
+        
+        submitButton.disabled = true;
+        submitButton.innerHTML = `<span class="spinner"></span>Processing...`;
+
+        const formData = new FormData(form);
+
+        // Debugging: Log formData keys (optional, but helpful)
+        
+        for (let pair of formData.entries()) {
+            console.log(pair[0] + ': ' + (pair[1] instanceof File ? pair[1].name : pair[1]));
+        }
+        
+
+        try {
+            // Note: The original form action was /admin/products/edit, but the JS uses a PATCH to 
+            // the ID endpoint, which is a better RESTful approach for updates.
+            const response = await fetch(`/admin/products/${formData.get('productId')}/edit`, {
+                method: "PATCH", 
+                body: formData
+            });
+
+            if (response.ok) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Product updated successfully.',
+                    icon: 'success',
+                    background: "#242428",
+                    color: "#fff",
+                    timer: 2000,
+                    showConfirmButton: false
+                }).then(() => {
+                    // Redirect after success
+                    // window.location.href = "/admin/products"; 
+                });
+            } else {
+                const errorData = await response.json();
+                Swal.fire({
+                    title: "Update Failed",
+                    background: "#242428",
+                    color: "#fff",
+                    text: errorData.message || "An unknown error occurred.",
+                    icon: "error",
+                    customClass: { popup: 'my-swal-border' }
+                });
+
+                submitButton.disabled = false
+                submitButton.innerHTML = originalButtonText
+            }
+        } catch (error) {
+            Swal.fire({
+                title: "Network Error",
+                background: "#242428",
+                color: "#fff",
+                text: "Could not connect to the server.",
+                icon: "error",
+                customClass: { popup: 'my-swal-border' }
+            });
+
+            submitButton.disabled = false
+            submitButton.innerHTML = originalButtonText
+        }
+    });
 });
-</script>
 
+function removeCoverImage(url){
+
+    const productId = document.getElementById("productId").value
+
+    fetch(`/admin/api/products/remove-cover?productId=${productId}`, {
+        method:"PATCH",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({url})
+    })
+    .then(async response => {
+        const res = await response.json()
+        if(!response.ok) throw new Error(res.message || "Check your internet")
+        Swal.fire({
+            title: "Success",
+            background: "#242428",
+            color: "#fff",
+            text: "Cover Image updated",
+            icon: "success",
+            customClass: { popup: 'my-swal-border' }
+        });
+        window.reload()
+    })
+    .catch(error => {
+        Swal.fire({
+            title: "Error",
+            background: "#242428",
+            color: "#fff",
+            text: error.message,
+            icon: "error",
+            customClass: { popup: 'my-swal-border' }
+        });
+    })
+}
+</script>

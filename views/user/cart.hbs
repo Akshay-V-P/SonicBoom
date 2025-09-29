@@ -180,7 +180,7 @@
                             <div class="flex-grow w-full">
                                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full opacity-[0.3]">
                                     <h3 class="text-xl font-semibold text-text-light">${product.name}</h3>
-                                    <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.offerPrice * product.quantity}</span>
+                                    <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.price * product.quantity}</span>
                                 </div>
                                 <span class="text-sm font-medium text-text-medium opacity-[0.3]">Base Game</span>
                                 <p class="text-text-medium text-sm mt-2 mb-4 hidden sm:block opacity-[0.3]">${product.description}</p>
@@ -213,7 +213,7 @@
                                     <div class="flex-grow w-full">
                                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full">
                                             <h3 class="text-xl font-semibold text-text-light">${product.name}</h3>
-                                            <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.offerPrice * product.quantity}</span>
+                                            <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.price * product.quantity}</span>
                                         </div>
                                         <span class="text-sm font-medium text-text-medium">Base Game</span>
                                         <p class="text-text-medium text-sm mt-2 mb-4 hidden sm:block">${product.description}</p>
@@ -293,7 +293,7 @@
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-text-medium">Delivery charges</span>
-                                    <span class="font-medium text-green-500">Free</span>
+                                    <span class="font-medium text-green-500">₹${details.deliveryCharge}</span>
                                 </div>
                                 <div class="flex justify-between items-center">
                                     <span class="text-text-medium">GST Amount</span>
@@ -343,6 +343,21 @@
                     const quantityInput = quantityControl.querySelector('input[type="number"]');
                     let currentValue = parseInt(quantityInput.value, 10);
                     quantityInput.value = currentValue + 1;
+                    (function(){
+                        const cartBadge = document.getElementById("cart-item-count")
+                        fetch('/api/cart/get-count')
+                        .then(async response => {
+                            const res = await response.json()
+                            console.log(res.count)
+                            console.log(cartBadge)
+                            if(!response.ok){
+                                cartBadge.textContent = 0
+                            }else{
+                                cartBadge.textContent = res
+                            }
+
+                        }).catch(err => console.log(err))
+                    })();
                 })
                 .then(data => {
                     Swal.fire({
@@ -354,6 +369,7 @@
                             popup: 'my-swal-border'
                         }
                     });
+                    
                 })
                 .catch(error =>{
                     console.log(error)

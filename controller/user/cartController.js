@@ -66,13 +66,15 @@ const cartDetails = async (req, res) => {
             gst
         ).toFixed(2);
         checkoutDetails.items = products.length;
-        checkoutDetails.subTotal =
-            parseInt(checkoutDetails.subTotal) +
-            parseInt(checkoutDetails.gstAmount);
-        checkoutDetails.total =
-            parseInt(checkoutDetails.subTotal) -
-            parseInt(checkoutDetails.discounts);
-        console.log(checkoutDetails.discounts);
+        checkoutDetails.subTotal = parseInt(checkoutDetails.subTotal) + parseInt(checkoutDetails.gstAmount);
+        checkoutDetails.total = parseInt(checkoutDetails.subTotal) - parseInt(checkoutDetails.discounts);
+
+        if (checkoutDetails.total < 3000) {
+            checkoutDetails.deliveryCharge = 100
+            checkoutDetails.total += 100
+        } else {
+            checkoutDetails.deliveryCharge = "Free"
+        }
 
         res.status(200).json({ products, checkoutDetails });
     } catch (error) {
@@ -294,10 +296,28 @@ const removeFromCart = async (req, res) => {
     }
 };
 
+const getCount = async (req, res) => {
+    try {
+        let count
+        const cart = await cartModel.findOne({ userId: req.session?.user?._id })
+        if (!cart) {
+            count = 0
+        } else {
+            count = cart.items.length
+        }
+        
+        res.status(200).json(count)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message:"Internal server error"})
+    }
+}
+
 module.exports = {
     loadCart,
     addToCart,
     cartDetails,
     removeFromCart,
     decrementQuantity,
+    getCount
 };

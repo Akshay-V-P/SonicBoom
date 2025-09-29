@@ -228,7 +228,21 @@
                 })
                 .then(data =>{
                     console.log(data)
-                    // can use to increment cart icon value
+                    (function(){
+                        const cartBadge = document.getElementById("cart-item-count")
+                        fetch('/api/cart/get-count')
+                        .then(async response => {
+                            const res = await response.json()
+                            console.log(res.count)
+                            console.log(cartBadge)
+                            if(!response.ok){
+                                cartBadge.textContent = 0
+                            }else{
+                                cartBadge.textContent = res
+                            }
+
+                        }).catch(err => console.log(err))
+                    })();
                 })
                 .catch(error => console.log(error))
        }
@@ -259,6 +273,11 @@
                 .catch(error => console.log(error))
 
        }
+
+    async function buyNow(button){
+        await addToCart(button)
+        window.location.href = "/cart"
+    }
 
 
 
@@ -318,7 +337,7 @@
                         </div>
 
                         <div class="mt-6 space-y-3">
-                            <button class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition-colors duration-200">Buy Now</button>
+                            <button class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-lg transition-colors duration-200" data-variantId="${data._id}" onclick="buyNow(this)">Buy Now</button>
                             <button id="add-to-cart-btn" class="w-full bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white font-bold py-3 rounded-lg transition-colors duration-200" data-variantId="${data._id}" onclick="addToCart(this)">Add to Cart</button>
                             <button id="add-to-wishlist-btn" class="w-full border border-[#404044] hover:bg-[#2a2a2a] text-white font-bold py-3 rounded-lg transition-colors duration-200" onclick="addToWishlist(this)">Add to Wishlist</button>
                         </div>

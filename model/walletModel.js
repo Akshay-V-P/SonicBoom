@@ -20,7 +20,8 @@ const walletSchema = mongoose.Schema({
     },
     transactions: {
         type: [{
-            transactionType:{type:String, emum:["credit", "debit"], required:true},
+            transactionType: { type: String, emum: ["credit", "debit"], required: true },
+            description:{type:String, default:"default"},
             amount:{type:Number, required:true},
             status:{type:String,enum:["pending", "success", "failed"], required:true},
             transactionId: { type: String, default: generateOrderId, required: true },

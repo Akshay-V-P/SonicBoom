@@ -433,7 +433,7 @@
                                     <div class="flex-grow w-full">
                                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center w-full">
                                             <h3 class="text-xl font-semibold text-text-light">${product.name}</h3>
-                                            <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.offerPrice * product.quantity}</span>
+                                            <span class="text-xl font-bold text-text-light mt-2 sm:mt-0">₹${product.price * product.quantity}</span>
                                         </div>
                                         <span class="text-sm font-medium text-text-medium">Base Game</span>
                                         <div class="flex items-center gap-4 mt-4 text-sm font-medium">
@@ -458,7 +458,7 @@
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-text-medium">Delivery charges</span>
-                                        <span class="font-medium text-green-500">Free</span>
+                                        <span class="font-medium text-green-500">₹${details.deliveryCharge}</span>
                                     </div>
                                     <div class="flex justify-between items-center">
                                         <span class="text-text-medium">GST Amount</span>
@@ -547,9 +547,10 @@
                                     </label>
                                     <!-- Payment method 3: Cash on Delivery -->
                                     <label class="flex items-center gap-3 cursor-pointer">
-                                        <input type="radio" name="paymentMethod" value="COD" class="form-radio text-primary-blue h-4 w-4">
+                                        <input type="radio" name="paymentMethod" value="COD" class="form-radio text-primary-blue h-4 w-4" ${details.total > 3000 ? "disabled" : ""}>
                                         <span class="text-sm text-text-light">Cash on Delivery</span>
                                     </label>
+                                    ${details.total > 3000 ? `<p class="text-xs text-red-500 ml-7" style="margin-top:0;">Cash on Delivery not available for order Above ₹3000</p>` : ''}
                                     <!-- Payment method 4: Wallet -->
                                     <label class="flex items-center gap-3 cursor-pointer">
                                         <input type="radio" name="paymentMethod" value="WALLET" class="form-radio text-primary-blue h-4 w-4">

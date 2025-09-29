@@ -67,7 +67,7 @@ hbs.registerHelper('length', (array) => {
 hbs.registerHelper("ls", (a, b) => a < b);
 hbs.registerHelper("gt", (a, b) => a > b);
 hbs.registerHelper("eq", (a, b) => {
-    if (a == null || b == null) return false; 
+  if (a == null || b == null) return false; 
   return String(a) === String(b);
 });
 hbs.registerHelper("ne", (a, b) => a.toString() !== b.toString());
