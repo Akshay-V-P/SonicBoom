@@ -58,9 +58,9 @@ async function calculateSalesData(findQuery) {
         // Total sales amount
         if (orderStatus !== "cancelled" && orderStatus !== "returned") {
             if (order.total < 3000) {
-                totalSales += orderTotalAmount + 100
+                totalSales.amount += orderTotalAmount + 100
             } else {
-                totalSales += orderTotalAmount
+                totalSales.amount += orderTotalAmount
             }
             totalSales.count += orderQuantity
 
@@ -100,7 +100,7 @@ async function calculateSalesData(findQuery) {
 
 
     })
-
+    console.log(totalSales)
     return {totalSales, totalValue, unpaidOrders, paidOrders, refundedOrders, cancelledOrders, discountAmount, couponDiscounts, orderCount, customerCount, productCount}
 }
 

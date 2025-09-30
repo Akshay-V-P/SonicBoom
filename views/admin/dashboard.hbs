@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/css/dashboard.css">
+<script src="https://cdn.tailwindcss.com"></script>
 <input type="text" id="pageName" value="dashboard" hidden>
 <div class="header">
   <h1 class="account-details">Account Details</h1>
@@ -6,19 +7,19 @@
 
 <div class="stats-grid">
   <div class="stat-card">
-    <div class="stat-value" id="revenue-count">₹ 5,55,000</div>
+    <div class="stat-value" id="revenue-count">₹ 0,00,000</div>
     <div class="stat-label">Revenue</div>
   </div>
   <div class="stat-card">
-    <div class="stat-value" id="products-count">2,50</div>
+    <div class="stat-value" id="products-count">0,000</div>
     <div class="stat-label">Products</div>
   </div>
   <div class="stat-card">
-    <div class="stat-value" id="customer-count">1,500</div>
+    <div class="stat-value" id="customer-count">0,000</div>
     <div class="stat-label">Customers</div>
   </div>
   <div class="stat-card">
-    <div class="stat-value" id="order-count">1,013</div>
+    <div class="stat-value" id="order-count">0,000</div>
     <div class="stat-label">Orders</div>
   </div>
 </div>
@@ -26,14 +27,34 @@
 <div style="max-width: 900px; margin: auto; padding: 20px;">
   <h2 style="text-align:center; margin-bottom:20px;">Sales Chart</h2>
 
-  <select id="filter" style="padding:8px 12px; border-radius:6px; margin-bottom:20px; color:white;" class="stat-card">
+  <select id="filter"
+    class="px-4 py-2 rounded-lg bg-blue-600 text-white shadow-md focus:ring-2 focus:ring-blue-400 transition">
     <option value="daily" selected>Daily</option>
     <option value="weekly">Weekly</option>
     <option value="monthly">Monthly</option>
     <option value="yearly">Yearly</option>
   </select>
 
-  <!-- 👇 wrap canvas inside fixed-height container -->
+  <div class="flex items-center gap-4 mb-4 justify-center">
+  <div>
+    <label class="block text-sm font-medium text-gray-700">From</label>
+    <input type="date" id="startDate"
+      class="mt-1 block w-full rounded-sm px-3 bg-zinc-700 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
+  </div>
+
+  <div>
+    <label class="block text-sm font-medium text-gray-700">To</label>
+    <input type="date" id="endDate"
+      class="mt-1 block w-full rounded-sm px-3 bg-zinc-700 border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" />
+  </div>
+
+  <button id="applyFilter"
+    class="self-end mt-6 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+    Apply Range
+  </button>
+</div>
+
+
   <div style="height: 400px;">
     <canvas id="salesChart"></canvas>
   </div>
@@ -88,144 +109,156 @@
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/scripts/formater.js"></script>
 
 <script>
-  const ctx = document.getElementById('salesChart').getContext('2d');
-  let chart;
 
-  async function renderChart(filter) {
-    try{
+const ctx = document.getElementById('salesChart').getContext('2d');
+let chart;
 
-      let revenueCount = document.getElementById("revenue-count")
-      let productCount = document.getElementById("products-count")
-      let orderCount = document.getElementById("order-count")
-      let customerCount = document.getElementById("customer-count")
+async function renderChart(filter, from = null, to = null) {
+  try {
+    let revenueCount = document.getElementById("revenue-count");
+    let productCount = document.getElementById("products-count");
+    let orderCount = document.getElementById("order-count");
+    let customerCount = document.getElementById("customer-count");
 
-      let topProductBody = document.getElementById("ordersTableBody")
-      topProductBody.innerHTML = ""
-      let topCategoryBody = document.getElementById("categoryTableBody")
-      topCategoryBody.innerHTML = ""
+    let topProductBody = document.getElementById("ordersTableBody");
+    topProductBody.innerHTML = "";
+    let topCategoryBody = document.getElementById("categoryTableBody");
+    topCategoryBody.innerHTML = "";
 
+    // 👇 Build API URL with query params
+    let url = `/admin/api/sales-chart?filter=${filter}`;
+    if (from && to) {
+      url += `&from=${from}&to=${to}`;
+    }
 
-      const response = await fetch(`/admin/api/sales-chart?filter=${filter}`)
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.message || "Check your internet")
-      
+    const response = await fetch(url);
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || "Check your internet");
 
-      const labels = data.salesData.map(item => {
-        if (item._id.hour) return `${item._id.hour}`;
-        if (item._id.week) return `Week ${item._id.week}, ${item._id.year}`;
-        if (item._id.month) return `${item._id.month}-${item._id.year}`;
-        return `${item._id.year}`;
-      });
+    const labels = data.salesData.map(item => {
+      if (filter == "daily") return `${item._id.hour}`;
+      if (filter == "weekly") return `${item._id.day}-${item._id.month}-${item._id.year}`;
+      if (filter == "monthly") return `Week ${item._id.week}`;
+      if (filter == "custom") return `${item._id.day}-${item._id.month}-${item._id.year}`;
+      return `${item._id.year}`;
+    });
 
+    const revenue = data.salesData.map(item => item.totalRevenue);
+    const orders = data.salesData.map(item => item.totalOrders);
 
-      const revenue = data.salesData.map(item => item.totalRevenue);
-      const orders = data.salesData.map(item => item.totalOrders);
+    // Dashboard updates
+    revenueCount.innerText = formatINR(data.salesDashboardData.totalValue);
+    orderCount.innerText = data.salesDashboardData.orderCount;
+    customerCount.innerText = data.salesDashboardData.customerCount[0]?.customerCount || 0;
+    productCount.innerText = data.salesDashboardData.productCount[0]?.productCount || 0;
 
-      //Dashboard data update
-      console.log(data.salesDashboardData)
-      revenueCount.innerText = `₹${data.salesDashboardData.totalValue}`
-      orderCount.innerText = data.salesDashboardData.orderCount
-      customerCount.innerText = data.salesDashboardData.customerCount[0]?.customerCount || 0
-      productCount.innerText = data.salesDashboardData.productCount[0]?.productCount || 0
+    if (chart) chart.destroy();
 
-      if (chart) chart.destroy();
-
-      chart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [
-            {
-              label: 'Revenue (₹)',
-              data: revenue,
-              backgroundColor: 'rgba(54, 162, 235, 0.7)',
-              borderColor: 'rgba(54, 162, 235, 1)',
-              borderWidth: 2,
-              borderRadius: 6
-            },
-            {
-              label: 'Orders',
-              data: orders,
-              backgroundColor: 'rgba(75, 192, 192, 0.7)',
-              borderColor: 'rgba(75, 192, 192, 1)',
-              borderWidth: 2,
-              borderRadius: 6
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false, 
-          plugins: {
-            legend: { position: 'top' },
-            title: { display: true, text: `Sales Report (${filter})` }
+    chart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [
+          {
+            label: "Revenue (₹)",
+            data: revenue,
+            backgroundColor: "rgba(37, 99, 235, 0.7)",
+            borderColor: "rgba(37, 99, 235, 1)",
+            borderRadius: 6,
+            yAxisID: "y",
           },
-          scales: {
-            y: { beginAtZero: true }
-          }
-        }
-      });
+          {
+            label: "Orders",
+            data: orders,
+            type: "line",
+            borderColor: "rgba(22, 163, 74, 1)",
+            borderWidth: 3,
+            tension: 0.4,
+            fill: false,
+            yAxisID: "y1",
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { position: "top" },
+          title: {
+            display: true,
+            text: `Sales Report (${filter})`,
+            font: { size: 16, weight: "bold" },
+          },
+        },
+        scales: {
+          y: { beginAtZero: true, title: { display: true, text: "Revenue (₹)" } },
+          y1: {
+            beginAtZero: true,
+            position: "right",
+            grid: { drawOnChartArea: false },
+            title: { display: true, text: "Orders" },
+          },
+        },
+      },
+    });
 
-
-      if(data.topSellingProduct.length > 0){
-        data.topSellingProduct.forEach(product =>{
-          const row = document.createElement('tr');
-          row.className = 'table-row';
-          row.innerHTML = `
-            <td data-label="Product">${product.productName}</td>
-            <td data-label="quantity">${product.totalQuantity}</td>
-            <td data-label="Total">${product.totalRevenue}</td>
-            `;
-
-          topProductBody.appendChild(row)
-        })
-      }
-
-      if(data.topSellingCategory.length > 0){
-        data.topSellingCategory.forEach(category =>{
-          const row = document.createElement('tr');
-          row.className = 'table-row';
-          row.innerHTML = `
-            <td data-label="Product">${category.categoryName}</td>
-            <td data-label="quantity">${category.totalRevenue}</td>
-            `;
-
-          topCategoryBody.appendChild(row)
-        })
-      }
-
-
-    }catch (err){
-      console.log(err)
-      Swal.fire({
-          title: "Something went wrong",
-          icon: "warning",
-          background: "#242428",
-          color: 'white',
-          customClass: {
-            popup: 'my-swal-border'
-          }
-      });
-
-      if (chart) chart.destroy();
-
-      chart = new Chart(ctx, {
-        type: 'line',
-        data: { labels: [], datasets: [] },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            title: { display: true, text: "Error loading sales data" }
-          }
-        }
+    // Top Products
+    if (data.topSellingProduct.length > 0) {
+      data.topSellingProduct.forEach(product => {
+        const row = document.createElement('tr');
+        row.className = 'table-row';
+        row.innerHTML = `
+          <td>${product.productName}</td>
+          <td>${product.totalQuantity}</td>
+          <td>${formatINR(product.totalRevenue)}</td>
+        `;
+        topProductBody.appendChild(row);
       });
     }
+
+    // Top Categories
+    if (data.topSellingCategory.length > 0) {
+      data.topSellingCategory.forEach(category => {
+        const row = document.createElement('tr');
+        row.className = 'table-row';
+        row.innerHTML = `
+          <td>${category.categoryName}</td>
+          <td>${formatINR(category.totalRevenue)}</td>
+        `;
+        topCategoryBody.appendChild(row);
+      });
+    }
+
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// 👇 Dropdown filter change
+document.getElementById("filter").addEventListener("change", (e) => {
+  renderChart(e.target.value);
+});
+
+// 👇 Custom range filter
+document.getElementById("applyFilter").addEventListener("click", () => {
+  const from = document.getElementById("startDate").value;
+  const to = document.getElementById("endDate").value;
+
+  if (!from || !to) {
+    alert("Please select both start and end dates");
+    return;
   }
 
-  renderChart("daily");
+  renderChart("custom", from, to);
+});
+
+// Default
+renderChart("daily");
+
 
   document.getElementById("filter").addEventListener("change", (e) => {
     renderChart(e.target.value);

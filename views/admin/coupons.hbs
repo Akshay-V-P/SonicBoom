@@ -186,7 +186,7 @@
 
         
     </div>
-
+<script src="/scripts/formater.js"></script>
     <script>
         let currentUrl 
         document.addEventListener('DOMContentLoaded', () => {
@@ -466,8 +466,8 @@
                                 <td data-label="Code" class="p-4 text-sm align-middle whitespace-nowrap block md:table-cell">${coupon.code}</td>
                                 <td data-label="Description" class="p-4 text-sm align-middle whitespace-nowrap block md:table-cell">${coupon.description}</td>
                                 <td data-label="Discount" class="p-4 text-sm align-middle whitespace-nowrap block md:table-cell">${discountDisplay}</td>
-                                <td data-label="Max Discount" class="p-4 text-sm align-middle whitespace-nowrap block md:table-cell">${coupon.maxDiscount}</td>
-                                <td data-label="Min Purchase" class="p-4 text-sm align-middle whitespace-nowrap block md:table-cell">₹${coupon.minPurchase}</td>
+                                <td data-label="Max Discount" class="p-4 text-sm align-middle whitespace-nowrap block md:table-cell">${formatINR(coupon.maxDiscount)}</td>
+                                <td data-label="Min Purchase" class="p-4 text-sm align-middle whitespace-nowrap block md:table-cell">${formatINR(coupon.minPurchase)}</td>
                                 <td data-label="Expiry Date" class="p-4 text-sm align-middle whitespace-nowrap block md:table-cell">${formattedDate}</td>
                                 <td data-label="Status" class="p-4 text-sm align-middle whitespace-nowrap block md:table-cell">
                                     <button onclick="${coupon.isActive? `block('${coupon._id}', this)` : `active('${coupon._id}', this)`}"><span class="inline-block px-3 py-1 rounded-full text-xs font-medium text-center ${statusClass}">${statusText}</span></button>

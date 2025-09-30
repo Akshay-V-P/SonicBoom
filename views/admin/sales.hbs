@@ -383,7 +383,7 @@
         </div>
 
 
-
+<script src="/scripts/formater.js"></script>
     <script>
 
         let currentUrl 
@@ -549,19 +549,19 @@
                             <td data-label="Product Id">${sale.orderItems.productId}</td>
                             <td data-label="Order Id">${sale.orderId}</td>
                             <td data-label="Qty">${sale.orderItems.quantity}</td>
-                            <td data-label="Price">${sale.orderItems.offerPrice}</td>
-                            <td data-label="GST">${gstAmount.toFixed(2)}</td>
+                            <td data-label="Price">${formatINR(sale.orderItems.offerPrice)}</td>
+                            <td data-label="GST">${formatINR(gstAmount)}</td>
                             <td data-label="Category">${sale.category[0].name}</td>
                             <td data-label="Status" style="color:${fontColor[sale.status]}">${sale.orderItems.status}</td>
-                            <td data-label="Total">${((sale.orderItems.offerPrice + gstAmount) - couponDiscount) * sale.orderItems.quantity}</td>
+                            <td data-label="Total">${formatINR(((sale.orderItems.offerPrice + gstAmount) - couponDiscount) * sale.orderItems.quantity)}</td>
                         `;
                         salesTableBody.appendChild(row);
 
                     });
 
-                    document.getElementById("total-sale").textContent = `₹${totalSales.toFixed(2)}`
-                    document.getElementById("unpaid-amount").textContent = `₹${pendingSale.toFixed(2)}`
-                    document.getElementById("cancelled-amount").textContent = `₹${data.cancelledOrders.amount.toFixed(2)}`
+                    document.getElementById("total-sale").textContent = formatINR(totalSales)
+                    document.getElementById("unpaid-amount").textContent = formatINR(pendingSale)
+                    document.getElementById("cancelled-amount").textContent = formatINR(data.cancelledOrders.amount)
 
                     localStorage.setItem('salesCurrentPage', data.currentPage)
 

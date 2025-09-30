@@ -373,6 +373,7 @@
                 </div>
             </div>
 
+<script src="/scripts/formater.js"></script>
 <script>
     let current = 1
     let lim = 10
@@ -451,7 +452,7 @@
                         <tr class="table-row orderDetails" data-orderid="${order.orderId}">
                             <td class="checkbox-cell" data-label="All">${++index}</td>
                             <td data-label="Reference No">${order.orderId}</td>
-                            <td data-label="Amount">₹${order.total}</td>
+                            <td data-label="Amount">${formatINR(order.total)}</td>
                             <td data-label="Payment">${order.paymentMethod}</td>
                             <td data-label="Status"><span class="status-badge ${order.paymentStatus == 'paid'? 'status-paid': 'status-unpaid'}">${order.paymentStatus}</span></td>
                             <td data-label="Status"><span class="status-badge ${order.status.toLowerCase() == 'cancelled'? 'status-unpaid': 'status-paid'}">${order.status}</span></td>

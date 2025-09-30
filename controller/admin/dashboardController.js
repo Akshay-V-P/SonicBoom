@@ -20,7 +20,8 @@ function getStartOfWeek(date) {
 
 const getChartData = async (req, res) => {
     try {
-        const { filter } = req.query
+        
+        const { filter, from, to } = req.query;
         console.log(filter)
         let groupId = null
         let matchStage = {
@@ -80,6 +81,17 @@ const getChartData = async (req, res) => {
                 month: { $month: "$createdAt" }
             };
 
+        } else if (filter === "custom" && from && to) {
+            matchStage.createdAt = {
+                $gte: new Date(from),
+                $lte: new Date(to),
+            };
+
+            groupId = {
+                year: { $year: "$createdAt" },
+                month: { $month: "$createdAt" },
+                day: { $dayOfMonth: "$createdAt" }
+            };
         } else {
             return res.status(400).json({ message: "Invalid filter" });
         }
@@ -152,7 +164,7 @@ const getChartData = async (req, res) => {
             { $limit:10 }
         ])
 
-        console.log(topSellingCategory)
+        console.log(salesData)
 
         
         res.status(200).json({ salesData, salesDashboardData, topSellingProduct, topSellingCategory })

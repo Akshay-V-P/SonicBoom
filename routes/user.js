@@ -10,6 +10,7 @@ const checkoutController = require("../controller/user/checkoutController");
 const wishlistController = require("../controller/user/wishlistController");
 const walletController = require("../controller/user/walletController");
 const couponController = require("../controller/user/couponController");
+const isBlocked = require("../middleware/isBlocked")
 
 const shopController = require("../controller/user/shopController");
 const { validate, validateSignin } = require("../middleware/validator");
@@ -94,7 +95,7 @@ router.get("/product_details", productPageController.showPage);
 router.get("/product-info", productPageController.getInfo);
 
 // account
-router.get("/account", userAuth.isAuthenticated, accountController.showPage);
+router.get("/account", userAuth.isAuthenticated, isBlocked, accountController.showPage);
 router.get(
     "/account/:id",
     userAuth.isAuthenticated,
