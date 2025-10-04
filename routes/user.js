@@ -18,12 +18,7 @@ const userAuth = require("../middleware/userAuth");
 const upload = require("../config/multerUpload");
 const ordersModel = require("../model/ordersModel");
 
-// ---------- dev codes -----------
-router.use((req, res, next) => {
-    req.session.user = { _id: '68c9857a7dc2e8601b66cdd2', email: "akshayvp002@gmail.com" }
-    next()
-})
-// --------------------------------
+
 
 router.get("/", (req, res) => {
     res.redirect("/landing_page");
