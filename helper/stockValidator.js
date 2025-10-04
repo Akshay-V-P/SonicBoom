@@ -1,16 +1,26 @@
 const cartModel = require("../model/cartModel")
+const ordersModel = require("../model/ordersModel")
 const productModel = require("../model/productModel")
 
-async function validateStockAvailability(userId) {
+async function validateStockAvailability(userId, orderId) {
     try {
 
-        const cart = await cartModel.findOne({ userId })
-        
-        for (let item of cart.items) {
-            const product = await productModel.findOne({ _id: item.itemId })
-            
-            const indexOfVariant = product.variants.findIndex((v) => v._id.toString() === item.variantId.toString())
-            if(product.variants[indexOfVariant].stock < item.quantity) return false
+        if (orderId) {
+            const order = await ordersModel.findOne({ orderId })
+            for (let item of order.orderItems) {
+                const product = await productModel.findOne({ _id: item.itemId })
+                
+                const indexOfVariant = product.variants.findIndex((v) => v._id.toString() === item.variantId.toString())
+                if(product.variants[indexOfVariant].stock < item.quantity) return false
+            }
+        } else {
+            const cart = await cartModel.findOne({ userId })
+            for (let item of cart.items) {
+                const product = await productModel.findOne({ _id: item.itemId })
+                
+                const indexOfVariant = product.variants.findIndex((v) => v._id.toString() === item.variantId.toString())
+                if(product.variants[indexOfVariant].stock < item.quantity) return false
+            }
         }
         
         return true

@@ -12,7 +12,7 @@ const loadCheckout = async (req, res) => {
     try {
         const { _id } = req.session.user;
         const user = await userModel.findOne({ _id });
-        console.log(user);
+       
         if (!user?.mobile)
             return res.redirect(
                 "/account?message='Please Update Mobile to continue checkout'"
@@ -126,7 +126,6 @@ const loadDetails = async (req, res) => {
             checkoutDetails.deliveryCharge = "Free"
         }
 
-        console.log("Checkout details : ", checkoutDetails);
 
         res.status(200).json({ products, checkoutDetails, addresses, user });
     } catch (error) {
@@ -150,7 +149,6 @@ const placeOrder = async (req, res) => {
             gstAmount,
         } = req.body;
         const userId = req.session.user._id;
-        console.log(total)
 
         if(!await validateStockAvailability(userId)) return res.status(401).json({message:"Stock Unavailable for items"})
 
@@ -212,13 +210,13 @@ const placeOrder = async (req, res) => {
 
         if (couponId) {
             const coupon = await couponModel.findOne({ _id: couponId });
-            console.log(coupon);
+
             const userIndex = coupon.usedBy.findIndex(
                 (user) => user.userId.toString() === userId.toString()
             );
             coupon.usedBy[userIndex].isOrdered = true; 
             couponDiscount = (subTotal - discounts) - total
-            console.log(couponDiscount)
+
             await coupon.save();
         }
 
@@ -226,7 +224,6 @@ const placeOrder = async (req, res) => {
 
         const items = await Promise.all(orderItems.items.map(async item => {
 
-            console.log(item)
             let product = await productModel.findOne({ _id: item.itemId });
             const variantIndex = product.variants.findIndex(
                     (v) => v._id.toString() === item.variantId.toString()
@@ -250,7 +247,6 @@ const placeOrder = async (req, res) => {
                 discount: Number(discountAmount)}
         }))
         
-        console.log(items)
 
         const newOrder = new ordersModel({
             userId,

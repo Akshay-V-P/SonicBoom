@@ -100,7 +100,6 @@ async function calculateSalesData(findQuery) {
 
 
     })
-    console.log(totalSales)
     return {totalSales, totalValue, unpaidOrders, paidOrders, refundedOrders, cancelledOrders, discountAmount, couponDiscounts, orderCount, customerCount, productCount}
 }
 

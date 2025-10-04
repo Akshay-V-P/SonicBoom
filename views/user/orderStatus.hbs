@@ -346,8 +346,7 @@
             confirmOrderCancelButton.innerHTML = "Loading.."
             const reason = document.getElementById('order-cancellation-reason').value;
             const orderId = document.getElementById('orderId').innerText.trim();
-            console.log(orderId)
-            console.log(`Cancelling order ${orderId} with reason: "${reason}"`);
+
             fetch(`/orders/cancel?orderId=${orderId}`, {
                 method:"PATCH",
                 headers:{'Content-Type' : 'application/json'},
@@ -529,14 +528,15 @@
         const bodyData = {}
         bodyData.orderId = orderId
 
-        fetch("/payment/create-order", {
+        fetch(`/payment/create-order?orderId=${orderId}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ amount: parseInt(data.total) })
             })
-                    .then(response => { 
-                        if (!response.ok) throw new Error("Failed to create order")
-                    return response.json()
+                    .then(async response => { 
+                        const res = await response.json()
+                        if (!response.ok) throw new Error(res.message || "Failed to create order")
+                    return res
                 })
                 .then(order => {
 
@@ -602,7 +602,7 @@
                 })
                 .catch(error => {
                     console.log(error)
-                    showSnackbar("Please check your internet", "bg-red-500")
+                    showSnackbar(error.message, "bg-red-500")
                 })
     }
 

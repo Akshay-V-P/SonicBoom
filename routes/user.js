@@ -10,7 +10,6 @@ const checkoutController = require("../controller/user/checkoutController");
 const wishlistController = require("../controller/user/wishlistController");
 const walletController = require("../controller/user/walletController");
 const couponController = require("../controller/user/couponController");
-const isBlocked = require("../middleware/isBlocked")
 
 const shopController = require("../controller/user/shopController");
 const { validate, validateSignin } = require("../middleware/validator");
@@ -95,7 +94,7 @@ router.get("/product_details", productPageController.showPage);
 router.get("/product-info", productPageController.getInfo);
 
 // account
-router.get("/account", userAuth.isAuthenticated, isBlocked, accountController.showPage);
+router.get("/account", userAuth.isAuthenticated, accountController.showPage);
 router.get(
     "/account/:id",
     userAuth.isAuthenticated,
@@ -240,17 +239,17 @@ router.get(
 router.get("/api/get-coupons", checkoutController.fetchCoupons);
 
 // wallet
-router.get("/wallet", walletController.loadWallet);
-router.get("/api/wallet", walletController.fetchWallet);
-router.post("/api/add-fund", walletController.addToWallet);
+router.get("/wallet", userAuth.isAuthenticated, walletController.loadWallet);
+router.get("/api/wallet", userAuth.isAuthenticated, walletController.fetchWallet);
+router.post("/api/add-fund", userAuth.isAuthenticated, walletController.addToWallet);
 
 // coupons
-router.get("/coupons", couponController.loadCoupons);
-router.get("/api/coupons", couponController.fetchCoupons);
+router.get("/coupons", userAuth.isAuthenticated, couponController.loadCoupons);
+router.get("/api/coupons", userAuth.isAuthenticated, couponController.fetchCoupons);
 
 // referral 
-router.get('/referral', userController.loadReferral)
-router.post("/api/referral-validate", userController.validateReferral)
+router.get('/referral', userAuth.isAuthenticated, userController.loadReferral)
+router.post("/api/referral-validate", userAuth.isAuthenticated, userController.validateReferral)
 
 router.get('/api/check-session', userController.checkSession)
 router.get("/logout", userAuth.isAuthenticated, userController.logout);

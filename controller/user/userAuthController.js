@@ -9,6 +9,7 @@ const walletModel = require('../../model/walletModel')
 // Page loading functions
 const loadLogin = (req, res) => {
     const error = req.query.error
+    res.set('Cache-Control', 'no-store');
     res.render('user/login',{message:error, icon:'error'})
 }
 
@@ -58,6 +59,7 @@ const signup = async (req, res) => {
         if (result.upsertedCount > 0 || result.modifiedCount > 0) {
             await mailSender(email, otp)
         }
+        res.set('Cache-Control', 'no-store');
         res.render('user/otpValidation',{url:"/validate_otp", createdAt: Date.now()})
     } catch (error) {
         console.log(error)
@@ -89,7 +91,8 @@ const validateOtp = async (req, res) => {
         await newWallet.save()
         
         const createdUser = await userModel.findOne({ email })
-        req.session.user = {_id:createdUser._id, email}
+        req.session.user = { _id: createdUser._id, email }
+        res.set('Cache-Control', 'no-store');
         res.redirect("/referral")
     } catch (error) {
         console.log(error)
@@ -130,7 +133,8 @@ const loginUser = async (req, res) => {
         }
 
         req.session.tempUser = user.email
-        const sendOtp = await otpModel.findOne({email})
+        const sendOtp = await otpModel.findOne({ email })
+        res.set('Cache-Control', 'no-store');
         res.render('user/otpValidation', { url: "/validate_login", createdAt: sendOtp.createdAt.getTime()})
     } catch (error) {
         console.log(error)
@@ -162,7 +166,8 @@ const validateLogin = async (req, res) => {
         }
         const user = await userModel.findOne({ email })
         
-        req.session.user = {_id:user._id, email}
+        req.session.user = { _id: user._id, email }
+        res.set('Cache-Control', 'no-store');
         res.redirect('/landing_page')
     } catch (error) {
         console.log(error)

@@ -22,7 +22,7 @@ const getChartData = async (req, res) => {
     try {
         
         const { filter, from, to } = req.query;
-        console.log(filter)
+    
         let groupId = null
         let matchStage = {
             status: { $eq: "delivered" },
@@ -163,8 +163,6 @@ const getChartData = async (req, res) => {
             { $sort: { totalRevenue: -1 } },
             { $limit:10 }
         ])
-
-        console.log(salesData)
 
         
         res.status(200).json({ salesData, salesDashboardData, topSellingProduct, topSellingCategory })

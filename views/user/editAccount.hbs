@@ -55,7 +55,7 @@
                     <label for="email" class="block text-sm font-medium text-text-medium mb-2">Email</label>
                     <input type="email" id="email"
                         class="w-full bg-input-bg border border-border-color rounded-lg p-3 focus:ring-2 focus:ring-primary-blue focus:border-primary-blue outline-none"
-                        value="{{user.email}}">
+                        value="{{user.email}}" {{#if user.googleId}}readonly{{/if}}>
                 </div>
                 <div>
                     <input type="password" id="current-password"
@@ -226,13 +226,31 @@
                 })
                 .then(serverData => {
                     profilePicturePreview.src = serverData.profilePhoto;
-                    alert('Profile picture updated successfully!');
+                    Swal.fire({
+                        title: 'Success',
+                        text: 'Profile picture updated successfully!',
+                        icon: 'success',
+                        background: "#242428",
+                        color: 'white',
+                        customClass: {
+                            popup: 'my-swal-border'
+                        }
+                    });
                     cropModal.classList.add('hidden');
                     document.getElementById('profile').src = serverData.profilePhoto
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('An error occurred during the update process.');
+                    Swal.fire({
+                        title: 'Oops',
+                        text: 'An error occurred during the update process.',
+                        icon: 'warning',
+                        background: "#242428",
+                        color: 'white',
+                        customClass: {
+                            popup: 'my-swal-border'
+                        }
+                    });
                     cropModal.classList.add('hidden');
                 });
         }, 'image/png');
@@ -356,7 +374,7 @@
                 });
         } else if (isOtherDataChanged) {
             // If only other data is changed, save without password verification
-            saveProfileChanges(updatedName, updatedPhone, updatedEmail);
+            saveProfileChanges(updatedName, updatedPhone);
         } else {
             Swal.fire({
                 title: 'No Changes',
@@ -448,7 +466,7 @@
         otpCodeInput.value = '';
     });
 
-    function saveProfileChanges(name, phone, email) {
+    function saveProfileChanges(name, phone) {
         let updateValue = {}
         if (name) {
             updateValue.name = name
@@ -456,9 +474,8 @@
         if (phone) {
             updateValue.mobile = phone
         }
-        if (email) {
-            updateValue.email = email
-        }
+
+        console.log(updateValue)
         fetch(`/account/update?_id=${userId}`, {
             method: 'POST',
             headers: {
@@ -466,11 +483,12 @@
             },
             body: JSON.stringify(updateValue),
         })
-            .then(response => {
+            .then(async response => {
+                const res = await response.json()
                 if (!response.ok) {
-                    throw new Error('Failed to update profile.');
+                    throw new Error(res.message || 'Failed to update profile.');
                 }
-                return response.json();
+                return res;
             })
             .then(data => {
                 Swal.fire({
@@ -495,7 +513,7 @@
                 console.error('Error updating profile:', error);
                 Swal.fire({
                     title: 'Error',
-                    text: 'Unexpected error occured',
+                    text: error.message,
                     icon: 'warning',
                     background: "#242428",
                     color: 'white',

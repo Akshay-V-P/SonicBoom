@@ -7,7 +7,6 @@ const calculateOffer = require('../../helper/offerCalculator')
 const loadProducts = async (req, res) => {
     try {
         const categorys = await categoryModel.find()
-        console.log('Hello')
         res.render('admin/products', {layout:'admin', categorys})
     } catch (error) {
         console.log(error)
@@ -69,7 +68,6 @@ const addProduct = async (req, res) => {
         const categoryForOffer = await categoryModel.findOne({_id:category})
         if (findProduct) return res.redirect('/admin/products/add')
         const thumbnailFile = req.files.find(file => file.fieldname === 'thumbnail');
-        console.log(thumbnailFile)
         const coverImagePaths = req.files
             .filter(file => file.fieldname === 'coverImage')
             .map(file => file.path);

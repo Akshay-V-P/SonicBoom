@@ -20,6 +20,9 @@ const hbs = require('hbs')
 
 require('./config/passport')
 app.use(nocache())
+
+
+
 // session
 const userSession = session({
   name: 'user.sid',

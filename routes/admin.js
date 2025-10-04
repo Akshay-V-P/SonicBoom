@@ -15,7 +15,7 @@ const upload = require("../config/multerUpload");
 
 // ---------- dev codes -----------
 router.use((req, res, next)=> {
-    req.session.admin = { _id: "68998afac35ccc072487277a", email: "nosnoice@gmail.com" }
+    req.session.admin = "sonicadmin@gmail.com"
     next()
 })
 // --------------------------

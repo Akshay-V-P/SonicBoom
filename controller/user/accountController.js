@@ -122,21 +122,23 @@ const updateProfile = async (req, res) => {
         if (req.body.email) {
             body.email = req.body.email
         }
-        const emailExist = await userModel.find({ email: req.body.email })
-        if (emailExist.length == 0) return res.status(401).json({ success: false })
+
+        console.log(body)
+        const emailExist = await userModel.find({ email: req.body.email, _id:{$ne:_id} })
+        if (emailExist.length > 0) return res.status(401).json({ success: false, message:"Email already Exist"})
         
-        const mobileExist = await userModel.findOne({ mobile: req.body.mobile })
-        if(mobileExist && (mobileExist._id !== emailExist._id)) return res.status(401).json({success:false})
+        const mobileExist = await userModel.findOne({ mobile: req.body.mobile, _id:{$ne:_id} })
+        if(mobileExist && (mobileExist._id !== emailExist._id)) return res.status(401).json({success:false, message:"Phone number already exist"})
         
         const user = await userModel.findOne({ _id })
-        if (!user) return res.status(404).json({ success: false })
-        if (user.isBlocked) return res.status(401).json({ success: false })
+        if (!user) return res.status(404).json({ success: false, message:"Can't find user" })
+        if (user.isBlocked) return res.status(401).json({ success: false, message:"User is blocked" })
         
         await userModel.updateOne({ _id }, { $set: body })
-        res.status(200).json({success:true})
+        res.status(200).json({success:true, message:"Profile updated"})
     } catch (error) {
         console.log(error)
-        res.status(500).json({success:false})
+        res.status(500).json({success:false, message:"Internal server error"})
     }
 }
 

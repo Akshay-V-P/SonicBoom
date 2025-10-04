@@ -46,7 +46,6 @@ const showOrderDetails = async (req, res) => {
         let items = []
 
         for (let item of order.orderItems) {
-            console.log("item is this : -------",item)
             const product = await productModel.findOne({ _id: item.itemId });
             if (!product) return res.render("user/404Error");
 
@@ -88,8 +87,6 @@ const updateStatus = async (req, res) => {
     try {
         const { orderId } = req.query
         const status = req.body.status
-        console.log(typeof status)
-        console.log(status)
         
         const order = await orderModel.findOne({ orderId })
         if (!order) return res.status(404).json({ messsage: "can't find order" })
