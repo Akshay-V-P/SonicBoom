@@ -84,12 +84,7 @@ const loadDetails = async (req, res) => {
                 parseInt(checkoutDetails.subTotal) +
                 variant.price * item.quantity
             ).toFixed(2);
-            checkoutDetails.discounts =
-                parseInt(checkoutDetails.discounts) +
-                (parseInt(variant.price) - parseInt(variant.offerPrice));
-            checkoutDetails.discounts = (
-                parseInt(checkoutDetails.discounts) * item.quantity
-            ).toFixed(2);
+            checkoutDetails.discounts += (parseInt(variant.price) - parseInt(variant.offerPrice)) * parseInt(item.quantity);
             checkoutDetails.price += (variant.price * item.quantity);
             products.push(variant);
         }

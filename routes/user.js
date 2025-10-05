@@ -20,6 +20,9 @@ const ordersModel = require("../model/ordersModel");
 
 
 
+
+
+
 router.get("/", (req, res) => {
     res.redirect("/landing_page");
 });
