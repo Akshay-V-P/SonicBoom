@@ -98,5 +98,16 @@ app.use('/admin', adminRoute)
 app.use('/payment', payment)
 
 
+app.use((req, res, next) => {
+  res.status(404).render("user/404Error");
+});
+
+
+app.use((err, req, res, next) => {
+  console.error(err.stack); 
+  const statusCode = err.status || 500;
+  res.status(statusCode).render("user/500Error");
+});
+
 connectDB()
 app.listen(process.env.PORT, ()=> console.log(`Server is listening on port ${process.env.PORT}`))
