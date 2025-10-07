@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        fetch("/payment/create-order", {
+        fetch("/payment/create-order?orderType=wallet", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ amount: parseFloat(amountToAdd).toFixed(2) }) // ₹500

@@ -6,8 +6,13 @@ const validateStockAvailability = require('../../helper/stockValidator');
 const createOrder = async (req, res) => {
     try {
         const orderId = req.query.orderId || null
+        const orderType = req.query.orderType || "default"
         const userId = req.session.user._id
-        if(!await validateStockAvailability(userId, orderId)) return res.status(401).json({message:"Stock unavailable"})
+
+        if (orderType !== "wallet") {
+            if(!await validateStockAvailability(userId, orderId)) return res.status(401).json({message:"Stock unavailable"})
+        }
+        
         const options = {
           amount: req.body.amount * 100, 
           currency: "INR",
