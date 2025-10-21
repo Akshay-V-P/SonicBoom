@@ -111,6 +111,7 @@ const loadOrderStatus = async (req, res) => {
             variant.offer = product.offer;
             variant.quantity = item.quantity;
             variant.status = item.status;
+            variant.returnApproved = item.returnApproved
             delete variant.stock;
             orders.orderItems.push(variant);
         }

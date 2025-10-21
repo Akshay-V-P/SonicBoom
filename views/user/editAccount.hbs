@@ -96,7 +96,9 @@
 
     <!-- Reset Password Card -->
     {{#if user.googleId}}
-
+<button type="submit" id="reset-password"
+                class="bg-primary-blue hover:bg-primary-blue-hover text-white font-semibold py-3 px-6 rounded-lg transition-colors" hidden>Reset
+                Password</button>
     {{else}}
     <section class="bg-card-bg border border-border-color rounded-xl p-6 md:p-8">
         <h2 class="text-2xl font-bold mb-6">Password</h2>
