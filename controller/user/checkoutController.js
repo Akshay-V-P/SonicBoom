@@ -241,6 +241,10 @@ const placeOrder = async (req, res) => {
                 offerPrice:product.variants[variantIndex].offerPrice,
                 discount: Number(discountAmount)}
         }))
+
+        if (parseInt(total) < 3000) {
+            var deliveryCharge = '₹100'
+        }
         
 
         const newOrder = new ordersModel({
@@ -253,6 +257,7 @@ const placeOrder = async (req, res) => {
             couponDiscount,
             total,
             gstAmount,
+            deliveryCharge,
             status,
             totalItems,
             orderItems: items,

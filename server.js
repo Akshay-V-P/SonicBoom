@@ -67,6 +67,10 @@ hbs.registerHelper('length', (array) => {
     return array.length
 })
 
+hbs.registerHelper('mult', (a, b) => a * b)
+hbs.registerHelper('minus', (a, b) => a - b)
+hbs.registerHelper('add', (a, b)=> a+b)
+
 hbs.registerHelper("ls", (a, b) => a < b);
 hbs.registerHelper("gt", (a, b) => a > b);
 hbs.registerHelper("eq", (a, b) => {

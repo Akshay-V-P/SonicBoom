@@ -70,7 +70,7 @@ const cartDetails = async (req, res) => {
         checkoutDetails.total = parseInt(checkoutDetails.subTotal) - parseInt(checkoutDetails.discounts);
 
         if (checkoutDetails.total < 3000) {
-            checkoutDetails.deliveryCharge = 100
+            checkoutDetails.deliveryCharge = '100'
             checkoutDetails.total += 100
         } else {
             checkoutDetails.deliveryCharge = "Free"

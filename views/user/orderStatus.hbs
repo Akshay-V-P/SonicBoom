@@ -78,7 +78,11 @@
                 <div class="border-t border-border-color py-4 space-y-2">
                     <div class="flex justify-between text-sm">
                         <p class="text-text-medium">Subtotal</p>
-                        <p class="font-semibold text-text-light">₹{{order.subTotal}}</p>
+                        <p class="font-semibold text-text-light">₹{{minus order.subTotal order.gstAmount}}</p>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <p class="text-text-medium">GST</p>
+                        <p class="font-semibold text-text-light">₹{{order.gstAmount}}</p>
                     </div>
                     <div class="flex justify-between text-sm">
                         <p class="text-text-medium">Discount</p>
@@ -153,7 +157,7 @@
                             <p class="text-lg font-semibold item-name">{{this.name}}</p>
                         </div>
                         <div class="flex flex-col justify-between gap-6 h-[100%]">
-                            <span class="font-bold text-xl text-primary-blue item-price">₹{{this.offerPrice}}</span>
+                            <span class="font-bold text-xl text-primary-blue item-price">₹{{mult this.offerPrice this.quantity}}</span>
                             {{#if (eq this.status "cancelled")}}
                                 <p class="text-red-500">Cancelled</p>
                             {{else}}
@@ -179,7 +183,7 @@
                             <p class="text-lg font-semibold item-name">{{this.name}}</p>
                         </div>
                         <div class="flex flex-col justify-between gap-6 h-[100%] items-end">
-                            <span class="font-bold text-xl text-primary-blue item-price">₹{{this.offerPrice}}</span>
+                            <span class="font-bold text-xl text-primary-blue item-price">₹{{mult this.offerPrice this.quantity}}</span>
                             
                             {{#if (eq this.status "cancelled")}}
                                 <p class="text-red-500">Cancelled</p>
