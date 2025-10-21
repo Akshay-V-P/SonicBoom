@@ -123,12 +123,12 @@ const updateProfile = async (req, res) => {
             body.email = req.body.email
         }
 
-        console.log(body)
+        console.log("Body : ",body)
         const emailExist = await userModel.find({ email: req.body.email, _id:{$ne:_id} })
         if (emailExist.length > 0) return res.status(401).json({ success: false, message:"Email already Exist"})
         
-        const mobileExist = await userModel.findOne({ mobile: req.body.mobile, _id:{$ne:_id} })
-        if(mobileExist && (mobileExist._id !== emailExist._id)) return res.status(401).json({success:false, message:"Phone number already exist"})
+        // const mobileExist = await userModel.findOne({ mobile: req.body.mobile, _id:{$ne:_id} })
+        // if(mobileExist && (mobileExist._id !== emailExist._id)) return res.status(401).json({success:false, message:"Phone number already exist"})
         
         const user = await userModel.findOne({ _id })
         if (!user) return res.status(404).json({ success: false, message:"Can't find user" })

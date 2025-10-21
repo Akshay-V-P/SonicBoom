@@ -154,6 +154,7 @@ function startTimer() {
 // Event listener for the "Resend" button
 resendBtn.addEventListener('click', () => {
     // Make a GET request to the resend OTP endpoint
+    resendBtn.innerText = "Sending..."
     fetch('/validate_otp')
         .then(response => response.json()) // Expect and parse the JSON response
         .then(data => {

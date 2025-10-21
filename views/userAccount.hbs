@@ -333,47 +333,6 @@
 
 
             
-
-
-
-            document.getElementById("sign-in-btn").onclick = async function () {
-                // 1. Create order from backend
-                const response = await fetch("/payment/create-order", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ amount: 500 }) // ₹500
-                });
-                const order = await response.json();
-
-                // 2. Open Razorpay Checkout
-                var options = {
-                    key: "rzp_test_RFOWbloxiCxKNB", // Your Key ID (from dashboard)
-                    amount: order.amount,
-                    currency: order.currency,
-                    name: "SonicBoom",
-                    description: "Test Transaction",
-                    order_id: order.id,
-                    handler: async function (response) {
-                    // 3. Verify payment with backend
-                    const verifyRes = await fetch("/payment/verify-payment", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(response)
-                        });
-                        const verifyData = await verifyRes.json();
-                        alert(verifyData.message);
-                    },
-                    prefill: {
-                        name: "Test User",
-                        email: "test@example.com",
-                        contact: "9876543210"
-                    },
-                    theme: { color: "#3399cc" }
-                };
-
-                var rzp1 = new Razorpay(options);
-                rzp1.open();
-            };
     })
 
 

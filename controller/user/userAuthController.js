@@ -176,7 +176,7 @@ const validateLogin = async (req, res) => {
 
 const resendOtp = async (req, res) => {
     try {
-        const tempUser = req.session.tempUser;
+        const tempUser = req.session.tempUser || req.session.resetUser;
         if (!tempUser) {
             return res.status(400).json({ success: false, message: "Session has expired. Please start over." });
         }

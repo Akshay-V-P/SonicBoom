@@ -284,6 +284,7 @@
         const updatedPhone = document.getElementById('phone').value;
         const isOtherDataChanged = updatedName !== '{{user.name}}' || updatedPhone !== '{{user.mobile}}';
         const passwordInput = document.getElementById('current-password');
+        const bodyData = {}
 
         if (isEmailChanged) {
             // Show the password input field
@@ -376,9 +377,10 @@
                     });
                     console.error('Password verification error:', error);
                 });
+                bodyData.email = updatedEmail
         } else if (isOtherDataChanged) {
-            // If only other data is changed, save without password verification
-            saveProfileChanges(updatedName, updatedPhone);
+            bodyData.name = updatedName
+            bodyData.phone = updatedPhone
         } else {
             Swal.fire({
                 title: 'No Changes',
@@ -390,6 +392,10 @@
                     popup: 'my-swal-border'
                 }
             });
+        }
+        console.log(bodyData.length)
+        if(Object.keys(bodyData).length > 0){
+            saveProfileChanges(bodyData)
         }
     });
 
@@ -470,16 +476,20 @@
         otpCodeInput.value = '';
     });
 
-    function saveProfileChanges(name, phone) {
+    function saveProfileChanges(bodyData) {
         let updateValue = {}
-        if (name) {
-            updateValue.name = name
+        console.log(bodyData)
+        if (bodyData?.name) {
+            updateValue.name = bodyData.name
         }
-        if (phone) {
-            updateValue.mobile = phone
+        if (bodyData?.phone) {
+            updateValue.mobile = bodyData.phone
+        }
+        if(bodyData?.email) {
+            updateValue.email = bodyData.email
         }
 
-        console.log(updateValue)
+        console.log("Body :", updateValue)
         fetch(`/account/update?_id=${userId}`, {
             method: 'POST',
             headers: {
